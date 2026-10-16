@@ -17,7 +17,6 @@
   --navy-dark:#142C52;
   --navy-soft:#2A4F8A;
   --gold:#F2C200;
-  --gold-soft:#FFD95A;
   --red:#D62828;
   --purple:#5B2A86;
   --cream:#FBF6EC;
@@ -31,7 +30,6 @@
   --shadow-md:0 12px 32px -14px rgba(27,58,107,.35);
   --shadow-sm:0 6px 18px -10px rgba(27,58,107,.30);
 }
-
 *{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 html{ scroll-behavior:smooth; }
 body{
@@ -42,35 +40,61 @@ body{
   overflow-x:hidden;
   position:relative;
   line-height:1.5;
-  padding-bottom:110px;
-  perspective:1400px;
+  padding-bottom:40px;
+  -webkit-overflow-scrolling:touch;
 }
 
-/* ============================================================
-   THREE.JS CANVAS
-   ============================================================ */
-#three-bg{
-  position:fixed; inset:0;
-  z-index:0;
-  pointer-events:none;
-}
-.bg-fallback{
-  position:fixed; inset:0; z-index:-1;
+/* BACKGROUND — logo only */
+.bg-stage{
+  position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none;
   background:
-    radial-gradient(1000px 600px at 12% -8%, #1B3A6B1c, transparent 62%),
-    radial-gradient(900px 600px at 100% 4%, #F2C2001c, transparent 58%),
+    radial-gradient(1000px 600px at 12% -8%, #1B3A6B1a, transparent 62%),
+    radial-gradient(900px 600px at 100% 4%, #F2C2001a, transparent 58%),
     linear-gradient(180deg,#FBF6EC 0%,#F5EDDC 100%);
 }
+.bg-logo{
+  position:absolute;
+  top:50%; left:50%;
+  width:min(92vw, 640px);
+  height:min(92vw, 640px);
+  transform:translate(-50%, -50%);
+  opacity:.06;
+  filter:blur(1.5px);
+  animation:logoSpin 60s linear infinite;
+  will-change:transform;
+}
+@keyframes logoSpin{
+  from{ transform:translate(-50%,-50%) rotate(0deg); }
+  to{ transform:translate(-50%,-50%) rotate(360deg); }
+}
+.starfield{
+  position:absolute; inset:0;
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, #F2C20055, transparent),
+    radial-gradient(2px 2px at 120px 90px, #D6282844, transparent),
+    radial-gradient(1.5px 1.5px at 220px 40px, #5B2A8644, transparent);
+  background-size:600px 300px;
+  background-repeat:repeat;
+  opacity:.4;
+  animation:starDrift 100s linear infinite;
+}
+@keyframes starDrift{
+  from{ background-position:0 0; }
+  to{ background-position:600px 300px; }
+}
 
-/* ============================================================
-   TOPBAR
-   ============================================================ */
+/* TOPBAR */
 .topbar{
   position:sticky; top:0; z-index:40;
   background:rgba(251,246,236,.96);
   border-bottom:1px solid rgba(27,58,107,.12);
-  padding:10px 14px;
+  padding:10px 14px 0;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+.topbar-row{
   display:flex; align-items:center; gap:12px;
+  padding-bottom:10px;
 }
 .topbar .back{
   flex:0 0 auto;
@@ -80,32 +104,77 @@ body{
   color:var(--gold); font-size:17px; text-decoration:none;
   box-shadow:var(--shadow-sm);
 }
-.topbar .back:active{ transform:scale(.92); }
-.topbar .brand-mini{
-  flex:1; min-width:0;
-  display:flex; align-items:center; gap:9px;
+.topbar .logo-center{
+  flex:1; display:flex; justify-content:center; align-items:center;
 }
-.topbar .brand-mini img{ width:32px; height:32px; }
-.topbar .brand-mini .nm{
-  font-family:'Cinzel',serif; font-weight:800;
-  color:var(--navy); font-size:14px;
-  letter-spacing:.03em; text-transform:uppercase;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+.topbar .logo-center img{
+  height:44px; width:auto; display:block;
+  filter:drop-shadow(0 4px 10px rgba(27,58,107,.25));
 }
+.topbar .table-chip{
+  flex:0 0 auto;
+  width:38px; height:38px;
+  border-radius:12px;
+  display:none;
+  place-items:center;
+  background:rgba(242,194,0,.15);
+  color:var(--navy);
+  font-family:'Cinzel',serif;
+  font-weight:800;
+  font-size:14px;
+  box-shadow:var(--shadow-sm);
+  border:1px solid rgba(242,194,0,.35);
+}
+.topbar .table-chip.show{ display:grid; }
 
-/* ============================================================
-   HERO
-   ============================================================ */
+.quick-nav{
+  display:flex; gap:8px;
+  padding:8px 0 10px;
+  overflow-x:auto;
+  scrollbar-width:none;
+  border-top:1px solid rgba(27,58,107,.06);
+}
+.quick-nav::-webkit-scrollbar{ display:none; }
+.qn-btn{
+  flex:0 0 auto;
+  display:inline-flex; align-items:center; gap:6px;
+  padding:7px 14px;
+  border-radius:999px;
+  background:#fff;
+  border:1.5px solid rgba(27,58,107,.15);
+  color:var(--navy);
+  font-family:'Cinzel',serif;
+  font-weight:700;
+  font-size:11.5px;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  text-decoration:none;
+  white-space:nowrap;
+  transition:all .25s;
+}
+.qn-btn:hover, .qn-btn:active{
+  border-color:var(--gold);
+  background:linear-gradient(135deg,rgba(242,194,0,.10),rgba(242,194,0,.05));
+}
+.qn-btn.active{
+  background:linear-gradient(135deg,var(--navy),var(--navy-dark));
+  color:var(--gold);
+  border-color:var(--navy);
+  box-shadow:var(--shadow-sm);
+}
+.qn-btn .qn-ico{ font-size:13px; line-height:1; }
+.qn-btn .qn-txt{ line-height:1; }
+
+/* HERO */
 .hero{
   position:relative; z-index:1;
   text-align:center;
-  padding:24px 18px 8px;
-  animation:fadeUp .8s both;
+  padding:22px 18px 6px;
 }
 .hero h1{
   font-family:'Cinzel',serif;
   font-weight:800;
-  font-size:clamp(26px,7.5vw,38px);
+  font-size:clamp(26px,7.5vw,40px);
   color:var(--navy);
   letter-spacing:.03em;
 }
@@ -114,16 +183,10 @@ body{
   font-family:'Cormorant Garamond',serif;
   font-style:italic;
   color:var(--navy-soft);
-  font-size:clamp(14px,4vw,16px);
-}
-@keyframes fadeUp{
-  from{ opacity:0; transform:translateY(14px); }
-  to{ opacity:1; transform:translateY(0); }
+  font-size:clamp(14px,4vw,17px);
 }
 
-/* ============================================================
-   LOCATION GATE
-   ============================================================ */
+/* LOCATION GATE CARD */
 .gate{
   position:relative; z-index:1;
   max-width:460px; margin:16px auto;
@@ -133,7 +196,6 @@ body{
   border-radius:18px;
   box-shadow:var(--shadow-sm);
   text-align:center;
-  animation:fadeUp .9s .15s both;
 }
 .gate .g-icon{ font-size:34px; }
 .gate h3{
@@ -150,31 +212,45 @@ body{
   margin-top:12px;
   font-size:12px; font-weight:600;
   color:var(--navy-soft);
+  padding:8px 12px;
+  background:rgba(27,58,107,.06);
+  border-radius:10px;
+  display:none;
 }
-.gate .status.ok{ color:var(--green); }
-.gate .status.err{ color:var(--red); }
+.gate .status.show{ display:block; }
+.gate .status.ok{ color:var(--green); background:rgba(30,122,58,.10); }
+.gate .status.err{ color:var(--red); background:rgba(214,40,40,.10); }
+.gate-actions{
+  display:flex; flex-direction:column; gap:8px;
+  margin-top:14px;
+}
 .gate button{
-  margin-top:12px;
-  padding:11px 22px;
+  padding:12px 22px;
   border:none; border-radius:12px;
-  background:linear-gradient(135deg,var(--navy),var(--navy-dark));
-  color:var(--gold);
-  font-family:'Cinzel',serif; font-weight:700; font-size:13px;
+  font-family:'Cinzel',serif; font-weight:700; font-size:12.5px;
   letter-spacing:.05em; text-transform:uppercase;
   cursor:pointer;
   transition:transform .2s;
 }
+.gate button.primary{
+  background:linear-gradient(135deg,var(--navy),var(--navy-dark));
+  color:var(--gold);
+}
+.gate button.ghost{
+  background:transparent;
+  color:var(--navy);
+  border:1.5px solid rgba(27,58,107,.25);
+  font-family:'Inter',sans-serif; font-weight:600; text-transform:none;
+  letter-spacing:.02em; font-size:13px;
+}
 .gate button:active{ transform:scale(.96); }
 .gate button:disabled{ opacity:.5; cursor:not-allowed; }
 
-/* ============================================================
-   WHEEL
-   ============================================================ */
+/* WHEEL */
 .wheel-stage{
   position:relative; z-index:1;
   display:flex; flex-direction:column; align-items:center;
   padding:20px 14px 30px;
-  animation:fadeUp 1s .25s both;
   max-width:520px; margin:0 auto;
 }
 .wheel-wrap{
@@ -233,12 +309,8 @@ canvas#wheel{
     0 12px 30px -10px rgba(27,58,107,.6),
     inset 0 -3px 0 rgba(0,0,0,.2),
     0 0 0 2px rgba(242,194,0,.35);
-  transition:transform .2s, box-shadow .3s;
+  transition:transform .2s;
 }
-.spin-btn:hover{ box-shadow:
-    0 16px 36px -10px rgba(27,58,107,.7),
-    inset 0 -3px 0 rgba(0,0,0,.2),
-    0 0 0 2px rgba(242,194,0,.6); }
 .spin-btn:active{ transform:scale(.96); }
 .spin-btn:disabled{ opacity:.55; cursor:not-allowed; }
 
@@ -263,9 +335,7 @@ canvas#wheel{
   letter-spacing:.08em;
 }
 
-/* ============================================================
-   RULES
-   ============================================================ */
+/* RULES */
 .rules{
   position:relative; z-index:1;
   max-width:520px; margin:8px auto 40px;
@@ -297,9 +367,7 @@ canvas#wheel{
 .rules li .ico{ flex:0 0 auto; font-size:14px; }
 .rules li strong{ color:var(--navy); }
 
-/* ============================================================
-   RESULT MODAL
-   ============================================================ */
+/* RESULT MODAL */
 .modal-overlay{
   position:fixed; inset:0; z-index:80;
   background:rgba(26,26,46,.65);
@@ -313,7 +381,7 @@ canvas#wheel{
   width:100%; max-width:400px;
   background:var(--cream);
   border-radius:22px;
-  padding:26px 22px calc(26px + env(safe-area-inset-bottom));
+  padding:26px 22px;
   text-align:center;
   transform:scale(.9) translateY(20px);
   transition:transform .38s cubic-bezier(.2,.8,.25,1);
@@ -334,7 +402,6 @@ canvas#wheel{
   font-family:'Cinzel',serif;
   font-size:22px; font-weight:800;
   color:var(--navy);
-  letter-spacing:.02em;
 }
 .result-desc{
   margin-top:8px;
@@ -383,11 +450,8 @@ canvas#wheel{
   font-family:'Cinzel',serif; font-weight:700; font-size:13.5px;
   letter-spacing:.06em; text-transform:uppercase;
   cursor:pointer;
-  transition:transform .2s;
-  box-shadow:var(--shadow-sm);
 }
 .btn-primary:active{ transform:scale(.97); }
-.btn-primary:disabled{ opacity:.5; cursor:not-allowed; }
 .btn-ghost{
   width:100%; padding:13px;
   border:1.5px solid rgba(27,58,107,.25);
@@ -396,10 +460,7 @@ canvas#wheel{
   color:var(--navy);
   font-family:'Inter',sans-serif; font-weight:600; font-size:13.5px;
   cursor:pointer;
-  transition:all .2s;
 }
-.btn-ghost:active{ transform:scale(.97); }
-
 .coupon-card{
   margin-top:16px;
   padding:18px 16px;
@@ -434,7 +495,6 @@ canvas#wheel{
   font-family:'Cinzel',serif;
   font-size:19px; font-weight:800;
   color:var(--navy);
-  letter-spacing:.02em;
   margin-top:2px;
 }
 .coupon-card .cc-prize{
@@ -463,6 +523,16 @@ canvas#wheel{
 }
 .coupon-card .cc-meta strong{ color:var(--navy); }
 
+#confetti{
+  position:fixed; inset:0;
+  pointer-events:none;
+  z-index:85;
+  opacity:0;
+  transition:opacity .3s;
+}
+#confetti.show{ opacity:1; }
+
+/* TOAST */
 .toast{
   position:fixed; left:50%; bottom:26px;
   transform:translate(-50%, 30px);
@@ -479,40 +549,10 @@ canvas#wheel{
 }
 .toast.show{ opacity:1; transform:translate(-50%,0); }
 
-#confetti{
-  position:fixed; inset:0;
-  pointer-events:none;
-  z-index:85;
-  opacity:0;
-  transition:opacity .3s;
-}
-#confetti.show{ opacity:1; }
-
-/* WA float */
-.wa-float{
-  position:fixed; right:14px; bottom:14px; z-index:46;
-  width:56px; height:56px;
-  border-radius:50%;
-  background:linear-gradient(135deg,#25D366,#128C7E);
-  display:grid; place-items:center;
-  color:#fff;
-  text-decoration:none;
-  box-shadow:
-    0 12px 26px -8px rgba(37,211,102,.7),
-    0 0 0 4px rgba(37,211,102,.15);
-  animation:waPulse 2.4s ease-in-out infinite;
-  transition:transform .25s;
-}
-.wa-float:active{ transform:scale(.93); }
-.wa-float svg{ width:30px; height:30px; }
-@keyframes waPulse{
-  0%,100%{ box-shadow:0 12px 26px -8px rgba(37,211,102,.7), 0 0 0 4px rgba(37,211,102,.15); }
-  50%{ box-shadow:0 12px 26px -8px rgba(37,211,102,.9), 0 0 0 12px rgba(37,211,102,0); }
-}
-
+/* FOOTER */
 .page-footer{
   text-align:center;
-  padding:0 18px 24px;
+  padding:24px 18px 20px;
   position:relative; z-index:1;
 }
 .page-footer .line{
@@ -521,27 +561,13 @@ canvas#wheel{
   margin:0 auto 14px;
   background:linear-gradient(90deg,transparent,rgba(27,58,107,.3),transparent);
 }
-.page-footer .powered{
-  font-size:12px;
-  color:var(--ink-soft);
-  letter-spacing:.03em;
-}
+.page-footer .powered{ font-size:12px; color:var(--ink-soft); letter-spacing:.03em; }
 .page-footer .powered a{
-  font-family:'Cinzel',serif;
-  color:var(--navy);
-  font-weight:700;
-  letter-spacing:.05em;
-  text-decoration:none;
+  font-family:'Cinzel',serif; color:var(--navy); font-weight:700;
+  letter-spacing:.05em; text-decoration:none;
   border-bottom:1px dashed rgba(27,58,107,.35);
-  transition:color .25s, border-color .25s;
 }
-.page-footer .powered a:hover{ color:var(--red); border-color:var(--red); }
-.page-footer .copy{
-  margin-top:8px;
-  font-size:10.5px;
-  color:#8a8a9a;
-  letter-spacing:.04em;
-}
+.page-footer .copy{ margin-top:8px; font-size:10.5px; color:#8a8a9a; letter-spacing:.04em; }
 
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{
@@ -554,16 +580,40 @@ canvas#wheel{
 </head>
 <body>
 
-<div class="bg-fallback" aria-hidden="true"></div>
-<canvas id="three-bg" aria-hidden="true"></canvas>
+<div class="bg-stage" aria-hidden="true">
+  <img class="bg-logo" src="neelkanthlogo.png" alt="" onerror="this.style.display='none'"/>
+  <div class="starfield"></div>
+</div>
+
 <canvas id="confetti"></canvas>
 
+<!-- TOPBAR -->
 <header class="topbar">
-  <a class="back" href="index.html" aria-label="Back">←</a>
-  <div class="brand-mini">
-    <img src="neelkanthlogo.png" alt="" onerror="this.style.display='none'"/>
-    <span class="nm">Neelkanth Star</span>
+  <div class="topbar-row">
+    <a class="back" href="index.html" data-nav="index.html" aria-label="Back">←</a>
+    <div class="logo-center">
+      <img src="neelkanthlogo.png" alt="Neelkanth Star" onerror="this.style.display='none'"/>
+    </div>
+    <div class="table-chip" id="tableChip">—</div>
   </div>
+
+  <nav class="quick-nav" aria-label="Quick navigation">
+    <a class="qn-btn" href="menu.html" data-nav="menu.html">
+      <span class="qn-ico">🍽️</span><span class="qn-txt">Menu</span>
+    </a>
+    <a class="qn-btn active" href="spin.html" data-nav="spin.html">
+      <span class="qn-ico">🎡</span><span class="qn-txt">Spin</span>
+    </a>
+    <a class="qn-btn" href="games/index.html" data-nav="games/index.html">
+      <span class="qn-ico">🎮</span><span class="qn-txt">Games</span>
+    </a>
+    <a class="qn-btn" href="info.html" data-nav="info.html">
+      <span class="qn-ico">🛎️</span><span class="qn-txt">Services</span>
+    </a>
+    <a class="qn-btn" href="index.html" data-nav="index.html">
+      <span class="qn-ico">🏠</span><span class="qn-txt">Home</span>
+    </a>
+  </nav>
 </header>
 
 <section class="hero">
@@ -571,13 +621,16 @@ canvas#wheel{
   <p class="sub">Spin the wheel · Win exciting prizes</p>
 </section>
 
-<!-- LOCATION GATE -->
+<!-- LOCATION GATE — same rules as menu -->
 <div class="gate" id="gate">
-  <div class="g-icon">📍</div>
-  <h3>Verify your location</h3>
-  <p>This lucky spin is only for guests dining at Neelkanth Star. We'll check that you're here before you spin.</p>
-  <div class="status" id="gateStatus">Tap below to check your location</div>
-  <button id="gateBtn">Check Location</button>
+  <div class="g-icon" id="gateIcon">📍</div>
+  <h3 id="gateTitle">Verifying your location</h3>
+  <p id="gateDesc">Please allow location access. This spin is only available from inside Neelkanth Star or within <strong>500 meters</strong> of the restaurant.</p>
+  <div class="status" id="gateStatus"></div>
+  <div class="gate-actions" id="gateActions">
+    <button class="primary" id="gateBtn">Check Location</button>
+    <button class="ghost" id="gateBack" style="display:none;">Back to Menu</button>
+  </div>
 </div>
 
 <!-- WHEEL -->
@@ -614,8 +667,7 @@ canvas#wheel{
 
 <!-- RESULT MODAL -->
 <div class="modal-overlay" id="modalOverlay">
-  <div class="modal" id="modal">
-
+  <div class="modal">
     <div id="step1">
       <div class="result-emoji" id="rEmoji">🎉</div>
       <div class="result-title" id="rTitle">Result</div>
@@ -638,7 +690,7 @@ canvas#wheel{
       <div class="result-title" id="cTitle">Coupon Saved</div>
       <div class="result-desc" id="cDesc">Screenshot this coupon and show it at the counter on your next order.</div>
 
-      <div class="coupon-card" id="couponCard">
+      <div class="coupon-card">
         <div class="cc-brand">Neelkanth Star</div>
         <img class="cc-star" src="neelkanthlogo.png" alt="" onerror="this.outerHTML='★'"/>
         <div class="cc-title" id="ccTitle">PRIZE</div>
@@ -656,31 +708,46 @@ canvas#wheel{
         <button class="btn-ghost" id="closeBtn2">Close</button>
       </div>
     </div>
-
   </div>
 </div>
 
-<canvas id="couponCanvas" width="800" height="500" style="display:none;"></canvas>
+<div class="toast" id="toast"></div>
 
-<a class="wa-float" href="https://wa.me/919812400009?text=Hello%20Neelkanth%20Star!%20I%20have%20a%20query." target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.05 4.91A10.9 10.9 0 0 0 12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.97L2 22l5.25-1.38a9.86 9.86 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.91-7.02zm-7.01 15.25h-.01a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.11.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.39c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.83 2.42a8.2 8.2 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.25 8.24zm4.52-6.17c-.25-.12-1.47-.72-1.7-.81-.23-.08-.4-.12-.56.12-.17.25-.65.81-.79.98-.15.16-.29.19-.54.06-.25-.12-1.05-.39-2-1.23-.74-.66-1.24-1.47-1.38-1.72-.15-.25-.02-.38.11-.5.11-.11.25-.29.37-.44.12-.15.16-.25.25-.42.08-.17.04-.31-.02-.44-.06-.12-.56-1.35-.76-1.85-.2-.48-.4-.42-.56-.42h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.09 0 1.23.9 2.42 1.02 2.59.12.16 1.76 2.69 4.27 3.77.6.26 1.06.41 1.42.53.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.15-1.18-.06-.1-.23-.16-.48-.29z"/></svg>
-</a>
-
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 /* ============================================================
    NEELKANTH STAR — LUCKY SPIN
    ============================================================ */
+document.getElementById('yr').textContent = new Date().getFullYear();
 
-/* ---------- CONFIG ---------- */
+/* ---------- table forwarding ---------- */
+(function initTable(){
+  const params = new URLSearchParams(window.location.search);
+  const tUrl = params.get('table');
+  let table = null;
+  if (tUrl && /^[0-9]{1,3}$/.test(tUrl)){
+    table = tUrl;
+    localStorage.setItem('neelkanth_table', tUrl);
+  } else {
+    const saved = localStorage.getItem('neelkanth_table');
+    if (saved && /^[0-9]{1,3}$/.test(saved)) table = saved;
+  }
+  if (table){
+    const chip = document.getElementById('tableChip');
+    if (chip){ chip.textContent = table; chip.classList.add('show'); }
+    document.querySelectorAll('a[data-nav]').forEach(a=>{
+      const base = a.getAttribute('data-nav');
+      const sep = base.includes('?') ? '&' : '?';
+      a.setAttribute('href', base + sep + 'table=' + table);
+    });
+  }
+})();
+
+/* ---------- config ---------- */
 const RESTAURANT_LAT = 29.6785115;
 const RESTAURANT_LNG = 76.9917663;
-const NEAR_RADIUS_M  = 250;
+const NEAR_RADIUS_M  = 500;  /* same as menu */
 const SPIN_STORAGE_KEY = "neelkanth_spin_data";
 const MAX_SPINS_PER_DAY = 1;
-const WA_NUMBER = "919812400009";
 
 const PRIZE_POOL = [
   { key:"JACKPOT", weight:1,  title:"50% OFF", desc:"Jackpot! Half price on your next order.", emoji:"🏆", color:"#D62828" },
@@ -689,7 +756,6 @@ const PRIZE_POOL = [
   { key:"FREE",    weight:10, title:"FREE ITEM", desc:"Free dessert, drink or papad on your next visit.", emoji:"🍰", color:"#5B2A86" },
   { key:"LOSE",    weight:79, title:"Better Luck Next Time", desc:"No win this time. Come back tomorrow and try again!", emoji:"🙏", color:"#4A4A5E" }
 ];
-
 const WHEEL_SEGMENTS = [
   { label:"50% OFF",   type:"JACKPOT", color:"#D62828" },
   { label:"10% OFF",   type:"P10",     color:"#F2C200" },
@@ -712,7 +778,6 @@ let currentPrize = null;
 let countdownTimer = null;
 
 const $  = (s)=>document.querySelector(s);
-const $$ = (s)=>document.querySelectorAll(s);
 
 function toast(msg){
   const t = $("#toast");
@@ -735,7 +800,7 @@ function saveSpinHistory(){
 }
 
 /* ============================================================
-   LOCATION GATE
+   LOCATION GATE — same rules & design as menu
    ============================================================ */
 function haversineMeters(lat1, lon1, lat2, lon2){
   const R = 6371000;
@@ -747,51 +812,98 @@ function haversineMeters(lat1, lon1, lat2, lon2){
             Math.sin(dLon/2)**2;
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
-function updateGateStatus(msg, cls){
-  const el = $("#gateStatus");
-  el.textContent = msg;
-  el.className = "status" + (cls ? " " + cls : "");
+
+const gateIcon = $("#gateIcon");
+const gateTitle = $("#gateTitle");
+const gateDesc = $("#gateDesc");
+const gateStatus = $("#gateStatus");
+const gateBtn = $("#gateBtn");
+const gateBack = $("#gateBack");
+
+function setGateStatus(msg, cls){
+  gateStatus.textContent = msg;
+  gateStatus.className = "status show" + (cls ? " " + cls : "");
 }
+function resetGateUI(){
+  gateIcon.textContent = "📍";
+  gateTitle.textContent = "Verifying your location";
+  gateDesc.innerHTML = 'Please allow location access. This spin is only available from inside Neelkanth Star or within <strong>500 meters</strong> of the restaurant.';
+  gateStatus.className = "status";
+  gateStatus.textContent = "";
+  gateBtn.style.display = "block";
+  gateBtn.disabled = false;
+  gateBtn.textContent = "Check Location";
+  gateBack.style.display = "none";
+}
+
 function checkLocation(){
   if (!("geolocation" in navigator)){
-    updateGateStatus("Your browser doesn't support location. Please ask staff for help.", "err");
+    gateIcon.textContent = "❌";
+    gateTitle.textContent = "Location not supported";
+    gateDesc.textContent = "Your browser doesn't support location. Please ask staff for help.";
+    setGateStatus("Location not available on this device.", "err");
+    gateBtn.style.display = "none";
+    gateBack.style.display = "block";
     return;
   }
-  updateGateStatus("Checking your location…");
-  $("#gateBtn").disabled = true;
+  gateIcon.textContent = "📍";
+  gateTitle.textContent = "Checking your location";
+  gateDesc.innerHTML = 'Please allow location access. This spin is only available from inside Neelkanth Star or within <strong>500 meters</strong> of the restaurant.';
+  setGateStatus("Locating you…", "");
+  gateBtn.disabled = true;
+  gateBtn.textContent = "Checking…";
+  gateBack.style.display = "none";
 
   navigator.geolocation.getCurrentPosition(
     (pos)=>{
+      gateBtn.disabled = false;
       const { latitude, longitude, accuracy } = pos.coords;
       const dist = haversineMeters(latitude, longitude, RESTAURANT_LAT, RESTAURANT_LNG);
       const effectiveDist = Math.max(0, dist - Math.min(accuracy || 0, 200));
+
       if (effectiveDist <= NEAR_RADIUS_M){
-        updateGateStatus(`✅ You're at Neelkanth Star (~${Math.round(dist)}m away). You can spin!`, "ok");
-        $("#gateBtn").style.display = "none";
-        revealWheel();
+        gateIcon.textContent = "✅";
+        gateTitle.textContent = "You're at Neelkanth Star!";
+        gateDesc.innerHTML = `You're within <strong>${Math.round(dist)}m</strong> of the restaurant. You can spin now.`;
+        setGateStatus("Verified — loading wheel…", "ok");
+        gateBtn.style.display = "none";
+        setTimeout(()=> revealWheel(), 700);
       } else {
-        updateGateStatus(`❌ You're about ${Math.round(dist)}m away. This spin is only available inside Neelkanth Star.`, "err");
-        $("#gateBtn").disabled = false;
-        $("#gateBtn").textContent = "Retry";
+        gateIcon.textContent = "🚫";
+        gateTitle.textContent = "You are away from the restaurant";
+        gateDesc.innerHTML = `You're about <strong>${Math.round(dist)}m</strong> away. This spin is only available from inside Neelkanth Star or within <strong>500 meters</strong>.`;
+        setGateStatus("Please come closer to spin", "err");
+        gateBtn.textContent = "Try Again";
+        gateBtn.style.display = "block";
+        gateBack.style.display = "block";
       }
     },
     (err)=>{
-      let msg = "Couldn't get your location.";
-      if (err.code === 1) msg = "Location permission denied. Please allow location access to spin.";
-      else if (err.code === 2) msg = "Location unavailable. Move to an open area and retry.";
-      else if (err.code === 3) msg = "Location request timed out. Try again.";
-      updateGateStatus("❌ " + msg, "err");
-      $("#gateBtn").disabled = false;
-      $("#gateBtn").textContent = "Retry";
+      gateBtn.disabled = false;
+      gateIcon.textContent = "⚠️";
+      gateTitle.textContent = "Couldn't get your location";
+      let msg = "Please enable location and try again.";
+      if (err.code === 1) msg = "Location permission denied. Please allow it and try again.";
+      else if (err.code === 2) msg = "Location unavailable. Move to an open area and try again.";
+      else if (err.code === 3) msg = "Location request timed out. Please try again.";
+      gateDesc.textContent = "We need your location to confirm you're at Neelkanth Star before you can spin.";
+      setGateStatus(msg, "err");
+      gateBtn.textContent = "Try Again";
+      gateBtn.style.display = "block";
+      gateBack.style.display = "block";
     },
     { enableHighAccuracy:true, timeout:12000, maximumAge:30000 }
   );
 }
-$("#gateBtn").addEventListener("click", checkLocation);
+gateBtn.addEventListener("click", checkLocation);
+gateBack.addEventListener("click", ()=>{
+  // go back to menu
+  const url = new URL(window.location.href);
+  url.pathname = url.pathname.replace(/spin\.html$/, 'menu.html');
+  window.location.href = url.toString();
+});
 
-/* ============================================================
-   WHEEL DRAW
-   ============================================================ */
+/* ---------- WHEEL ---------- */
 const canvas = $("#wheel");
 const ctx = canvas.getContext("2d");
 const CX = canvas.width / 2;
@@ -852,9 +964,7 @@ function drawWheel(){
 }
 drawWheel();
 
-/* ============================================================
-   PRIZE PICK + SPIN
-   ============================================================ */
+/* ---------- SPIN LOGIC ---------- */
 function pickPrize(){
   const totalWeight = PRIZE_POOL.reduce((a, p)=> a + p.weight, 0);
   let r = Math.random() * totalWeight;
@@ -914,7 +1024,6 @@ function startCountdown(el){
   tick();
   countdownTimer = setInterval(tick, 1000);
 }
-
 function spin(){
   if (spinning) return;
   const rec = getTodayRecord();
@@ -924,7 +1033,6 @@ function spin(){
   }
   spinning = true;
   $("#spinBtn").disabled = true;
-
   const prize = pickPrize();
   currentPrize = prize;
   const segIndex = findSegmentIndexForPrize(prize.key);
@@ -936,17 +1044,14 @@ function spin(){
   const duration = 5200 + Math.random() * 800;
   const start = performance.now();
   const startRot = rotation;
-
   function easeOutQuart(t){ return 1 - Math.pow(1 - t, 4); }
-
   function frame(now){
     const t = Math.min(1, (now - start) / duration);
     const eased = easeOutQuart(t);
     rotation = startRot + (finalRotation - startRot) * eased;
     canvas.style.transform = `rotate(${rotation}deg)`;
-    if (t < 1){
-      requestAnimationFrame(frame);
-    } else {
+    if (t < 1){ requestAnimationFrame(frame); }
+    else {
       rotation = finalRotation % 360;
       spinning = false;
       rec.spins += 1;
@@ -962,20 +1067,16 @@ function spin(){
 }
 $("#spinBtn").addEventListener("click", spin);
 
-/* ============================================================
-   RESULT MODAL
-   ============================================================ */
+/* ---------- RESULT MODAL ---------- */
 function showResult(prize){
   $("#step1").style.display = "block";
   $("#step2").style.display = "none";
   $("#numWrap").classList.remove("err");
   $("#numInput").value = "";
   $("#modalOverlay").classList.add("show");
-
   $("#rEmoji").textContent = prize.emoji;
   $("#rTitle").textContent = prize.key === "LOSE" ? "Better Luck Next Time" : "You Won!";
   $("#rDesc").textContent = prize.desc;
-
   if (prize.key === "LOSE"){
     $("#numWrap").style.display = "none";
     $("#claimBtn").textContent = "Come Back Tomorrow";
@@ -990,7 +1091,6 @@ $("#closeBtn2").addEventListener("click", closeModal);
 $("#modalOverlay").addEventListener("click", (e)=>{
   if (e.target === $("#modalOverlay")) closeModal();
 });
-
 $("#claimBtn").addEventListener("click", ()=>{
   if (!currentPrize) return;
   if (currentPrize.key === "LOSE"){ closeModal(); return; }
@@ -1000,8 +1100,7 @@ $("#claimBtn").addEventListener("click", ()=>{
     return;
   }
   $("#numWrap").classList.remove("err");
-  const code = "NEEL-" + randCode(6);
-  currentPrize.coupon = code;
+  currentPrize.coupon = "NEEL-" + randCode(6);
   currentPrize.mobile = num;
   currentPrize.issued = new Date().toISOString();
   showCoupon();
@@ -1012,12 +1111,10 @@ function randCode(len){
   for (let i = 0; i < len; i++) out += chars[Math.floor(Math.random() * chars.length)];
   return out;
 }
-
 function showCoupon(){
   const p = currentPrize;
   $("#step1").style.display = "none";
   $("#step2").style.display = "block";
-
   const emoji = p.key === "FREE" ? "🍰" : "🎟️";
   $("#cEmoji").textContent = emoji;
   $("#cTitle").textContent = p.key === "FREE" ? "Free Item Coupon" : "Discount Coupon";
@@ -1031,73 +1128,67 @@ function showCoupon(){
   startConfetti();
 }
 
-/* ============================================================
-   SAVE COUPON AS IMAGE
-   ============================================================ */
+/* ---------- SAVE COUPON ---------- */
 $("#saveBtn").addEventListener("click", ()=>{
   if (!currentPrize || !currentPrize.coupon){
     toast("No coupon to save");
     return;
   }
-  const canvas = $("#couponCanvas");
-  const c = canvas.getContext("2d");
-  const W = canvas.width, H = canvas.height;
+  const c = document.createElement('canvas');
+  const cx = c.getContext('2d');
+  c.width = 800; c.height = 500;
+  const W = c.width, H = c.height;
 
-  c.fillStyle = "#FBF6EC";
-  c.fillRect(0, 0, W, H);
-  c.strokeStyle = "#F2C200";
-  c.lineWidth = 10;
-  c.strokeRect(15, 15, W - 30, H - 30);
-  c.strokeStyle = "#1B3A6B";
-  c.lineWidth = 2;
-  c.strokeRect(30, 30, W - 60, H - 60);
+  cx.fillStyle = "#FBF6EC";
+  cx.fillRect(0, 0, W, H);
+  cx.strokeStyle = "#F2C200"; cx.lineWidth = 10; cx.strokeRect(15, 15, W - 30, H - 30);
+  cx.strokeStyle = "#1B3A6B"; cx.lineWidth = 2; cx.strokeRect(30, 30, W - 60, H - 60);
 
-  c.fillStyle = "#1B3A6B";
-  c.font = "700 22px Cinzel, serif";
-  c.textAlign = "center";
-  c.fillText("NEELKANTH STAR", W/2, 80);
+  cx.fillStyle = "#1B3A6B";
+  cx.font = "700 22px Cinzel, serif";
+  cx.textAlign = "center";
+  cx.fillText("NEELKANTH STAR", W/2, 80);
 
-  c.fillStyle = "#4A4A5E";
-  c.font = "italic 15px 'Cormorant Garamond', serif";
-  c.fillText("Official Coupon", W/2, 106);
+  cx.fillStyle = "#4A4A5E";
+  cx.font = "italic 15px 'Cormorant Garamond', serif";
+  cx.fillText("Official Coupon", W/2, 106);
 
-  drawStar(c, W/2, 150, 26, "#F2C200", "#1B3A6B");
+  drawStar(cx, W/2, 150, 26, "#F2C200", "#1B3A6B");
 
-  c.fillStyle = "#1B3A6B";
-  c.font = "800 44px Cinzel, serif";
+  cx.fillStyle = "#1B3A6B";
+  cx.font = "800 44px Cinzel, serif";
   const title = currentPrize.key === "FREE" ? "FREE ITEM" : currentPrize.title;
-  c.fillText(title, W/2, 230);
+  cx.fillText(title, W/2, 230);
 
-  c.fillStyle = "#D62828";
-  c.font = "italic 20px 'Cormorant Garamond', serif";
-  c.fillText(currentPrize.desc, W/2, 268);
+  cx.fillStyle = "#D62828";
+  cx.font = "italic 20px 'Cormorant Garamond', serif";
+  cx.fillText(currentPrize.desc, W/2, 268);
 
-  c.fillStyle = "#1B3A6B";
-  roundRect(c, W/2 - 200, 300, 400, 70, 14);
-  c.fill();
-  c.fillStyle = "#F2C200";
-  c.font = "800 30px Cinzel, serif";
-  c.fillText(currentPrize.coupon, W/2, 345);
+  cx.fillStyle = "#1B3A6B";
+  roundRect(cx, W/2 - 200, 300, 400, 70, 14);
+  cx.fill();
+  cx.fillStyle = "#F2C200";
+  cx.font = "800 30px Cinzel, serif";
+  cx.fillText(currentPrize.coupon, W/2, 345);
 
-  c.fillStyle = "#4A4A5E";
-  c.font = "600 15px Inter, sans-serif";
-  c.textAlign = "left";
-  c.fillText("Mobile: XXXXXX" + currentPrize.mobile.slice(-4), 60, 410);
-  c.textAlign = "right";
-  c.fillText("Issued: " + new Date(currentPrize.issued).toLocaleDateString("en-IN"), W - 60, 410);
+  cx.fillStyle = "#4A4A5E";
+  cx.font = "600 15px Inter, sans-serif";
+  cx.textAlign = "left";
+  cx.fillText("Mobile: XXXXXX" + currentPrize.mobile.slice(-4), 60, 410);
+  cx.textAlign = "right";
+  cx.fillText("Issued: " + new Date(currentPrize.issued).toLocaleDateString("en-IN"), W - 60, 410);
 
-  c.textAlign = "center";
-  c.fillStyle = "#8A8A9A";
-  c.font = "13px Inter, sans-serif";
-  c.fillText("Valid 30 days · One use only · Non-transferable · Show at counter", W/2, 445);
+  cx.textAlign = "center";
+  cx.fillStyle = "#8A8A9A";
+  cx.font = "13px Inter, sans-serif";
+  cx.fillText("Valid 30 days · One use only · Non-transferable · Show at counter", W/2, 445);
 
   const link = document.createElement("a");
   link.download = `NeelkanthStar-Coupon-${currentPrize.coupon}.png`;
-  link.href = canvas.toDataURL("image/png");
+  link.href = c.toDataURL("image/png");
   link.click();
   toast("📥 Coupon saved to your device");
 });
-
 function roundRect(c, x, y, w, h, r){
   c.beginPath();
   c.moveTo(x + r, y);
@@ -1124,28 +1215,21 @@ function drawStar(c, cx, cy, r, fill, stroke){
     rot += step;
   }
   c.closePath();
-  c.fillStyle = fill;
-  c.fill();
-  c.strokeStyle = stroke;
-  c.lineWidth = 3;
-  c.stroke();
+  c.fillStyle = fill; c.fill();
+  c.strokeStyle = stroke; c.lineWidth = 3; c.stroke();
 }
 
-/* ============================================================
-   CONFETTI
-   ============================================================ */
+/* ---------- CONFETTI ---------- */
 const confCanvas = $("#confetti");
 const confCtx = confCanvas.getContext("2d");
 let confParticles = [];
 let confAnim = null;
-
 function resizeConfetti(){
   confCanvas.width = window.innerWidth;
   confCanvas.height = window.innerHeight;
 }
 resizeConfetti();
 window.addEventListener("resize", resizeConfetti);
-
 function startConfetti(){
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   resizeConfetti();
@@ -1155,12 +1239,9 @@ function startConfetti(){
     confParticles.push({
       x: Math.random() * confCanvas.width,
       y: -20 - Math.random() * confCanvas.height * 0.4,
-      w: 6 + Math.random() * 8,
-      h: 8 + Math.random() * 10,
-      vy: 2 + Math.random() * 4,
-      vx: -1.5 + Math.random() * 3,
-      rot: Math.random() * Math.PI * 2,
-      vrot: -0.1 + Math.random() * 0.2,
+      w: 6 + Math.random() * 8, h: 8 + Math.random() * 10,
+      vy: 2 + Math.random() * 4, vx: -1.5 + Math.random() * 3,
+      rot: Math.random() * Math.PI * 2, vrot: -0.1 + Math.random() * 0.2,
       color: colors[Math.floor(Math.random() * colors.length)]
     });
   }
@@ -1171,9 +1252,7 @@ function startConfetti(){
     const t = (now - start) / 1000;
     confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
     confParticles.forEach(p=>{
-      p.x += p.vx;
-      p.y += p.vy;
-      p.rot += p.vrot;
+      p.x += p.vx; p.y += p.vy; p.rot += p.vrot;
       confCtx.save();
       confCtx.translate(p.x, p.y);
       confCtx.rotate(p.rot);
@@ -1191,175 +1270,8 @@ function startConfetti(){
   confAnim = requestAnimationFrame(loop);
 }
 
-/* ============================================================
-   THREE.JS 3D BACKGROUND
-   ============================================================ */
-const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-if (typeof THREE !== 'undefined' && !reduceMotion){
-  initThreeBG();
-} else {
-  document.getElementById('three-bg').style.display = 'none';
-}
-
-function initThreeBG(){
-  const canvas = document.getElementById('three-bg');
-  const renderer = new THREE.WebGLRenderer({
-    canvas,
-    alpha:true,
-    antialias:window.devicePixelRatio < 2
-  });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setSize(window.innerWidth, window.innerHeight);
-
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
-  camera.position.set(0, 0, 14);
-
-  scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-
-  const keyLight = new THREE.PointLight(0xFFD95A, 1.2, 40);
-  keyLight.position.set(6, 6, 8);
-  scene.add(keyLight);
-
-  const fillLight = new THREE.PointLight(0x1B3A6B, 1.0, 40);
-  fillLight.position.set(-8, -4, 6);
-  scene.add(fillLight);
-
-  const rimLight = new THREE.PointLight(0xD62828, 0.8, 40);
-  rimLight.position.set(0, 8, -6);
-  scene.add(rimLight);
-
-  const group = new THREE.Group();
-  scene.add(group);
-
-  const rings = [];
-  function addRing(radius, tube, color, pos, rot){
-    const geo = new THREE.TorusGeometry(radius, tube, 20, 60);
-    const mat = new THREE.MeshStandardMaterial({
-      color, metalness: 0.7, roughness: 0.25, transparent: true, opacity: 0.85
-    });
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.position.set(pos.x, pos.y, pos.z);
-    mesh.rotation.set(rot.x, rot.y, rot.z);
-    group.add(mesh);
-    rings.push({ mesh, spinSpeed:(Math.random()-0.5)*0.01, bobPhase:Math.random()*Math.PI*2, baseY:pos.y });
-  }
-  addRing(2.2, 0.08, 0xF2C200, {x:-4.5, y:1.5, z:-2}, {x:0.6, y:0.4, z:0.2});
-  addRing(1.6, 0.06, 0x1B3A6B, {x: 4.8, y:-1.2, z:-1}, {x:-0.4, y:0.7, z:0.3});
-  addRing(1.9, 0.07, 0xD62828, {x: 3.2, y: 2.8, z:-3}, {x:0.5, y:-0.6, z:0.1});
-  addRing(1.4, 0.05, 0x5B2A86, {x:-3.8, y:-2.5, z:-2}, {x:-0.3, y:0.5, z:-0.4});
-
-  const icosas = [];
-  function addIcosa(size, color, pos){
-    const geo = new THREE.IcosahedronGeometry(size, 0);
-    const mat = new THREE.MeshStandardMaterial({
-      color, metalness: 0.85, roughness: 0.15, flatShading: true, transparent: true, opacity: 0.9
-    });
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.position.set(pos.x, pos.y, pos.z);
-    group.add(mesh);
-    icosas.push({ mesh, spinSpeed:(Math.random()-0.5)*0.008, bobPhase:Math.random()*Math.PI*2, baseY:pos.y });
-  }
-  addIcosa(0.55, 0xF2C200, {x:-2.5, y:2.5, z:1});
-  addIcosa(0.4,  0x1B3A6B, {x: 3.6, y:0.5, z:2});
-  addIcosa(0.7,  0x5B2A86, {x:-5.2, y:-0.8, z:0});
-  addIcosa(0.35, 0xF2C200, {x: 5.5, y:3.2, z:-1});
-  addIcosa(0.5,  0x1B3A6B, {x:-1.8, y:-3.2, z:1});
-
-  const octas = [];
-  function addOcta(size, color, pos){
-    const geo = new THREE.OctahedronGeometry(size, 0);
-    const mat = new THREE.MeshStandardMaterial({
-      color, metalness: 0.9, roughness: 0.1, flatShading: true, transparent: true, opacity: 0.85
-    });
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.position.set(pos.x, pos.y, pos.z);
-    group.add(mesh);
-    octas.push({ mesh, spinSpeed:(Math.random()-0.5)*0.012, bobPhase:Math.random()*Math.PI*2, baseY:pos.y });
-  }
-  addOcta(0.5, 0xF2C200, {x:0.5, y:3.5, z:-2});
-  addOcta(0.35, 0xD62828, {x:-3.5, y:0.8, z:2});
-  addOcta(0.45, 0x1B3A6B, {x: 4.2, y:-2.8, z:1});
-  addOcta(0.3, 0x5B2A86, {x:-4.8, y:-2.2, z:-1});
-
-  const starCount = 220;
-  const starGeo = new THREE.BufferGeometry();
-  const starPositions = new Float32Array(starCount * 3);
-  const starColors = new Float32Array(starCount * 3);
-  const palette = [
-    new THREE.Color(0xF2C200), new THREE.Color(0xD62828),
-    new THREE.Color(0x1B3A6B), new THREE.Color(0x5B2A86), new THREE.Color(0xFFFFFF)
-  ];
-  for (let i = 0; i < starCount; i++){
-    starPositions[i*3]   = (Math.random()-0.5)*30;
-    starPositions[i*3+1] = (Math.random()-0.5)*22;
-    starPositions[i*3+2] = (Math.random()-0.5)*20 - 4;
-    const c = palette[Math.floor(Math.random()*palette.length)];
-    starColors[i*3]   = c.r;
-    starColors[i*3+1] = c.g;
-    starColors[i*3+2] = c.b;
-  }
-  starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-  starGeo.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
-  const starMat = new THREE.PointsMaterial({
-    size: 0.06, vertexColors: true, transparent: true, opacity: 0.85, sizeAttenuation: true
-  });
-  const starPoints = new THREE.Points(starGeo, starMat);
-  scene.add(starPoints);
-
-  let targetX = 0, targetY = 0, currentX = 0, currentY = 0;
-  window.addEventListener('mousemove', (e)=>{
-    targetX = (e.clientX / window.innerWidth - 0.5) * 2;
-    targetY = (e.clientY / window.innerHeight - 0.5) * 2;
-  }, { passive:true });
-  window.addEventListener('deviceorientation', (e)=>{
-    targetX = Math.max(-1, Math.min(1, (e.gamma || 0) / 45));
-    targetY = Math.max(-1, Math.min(1, ((e.beta || 0) - 45) / 45));
-  }, { passive:true });
-
-  window.addEventListener('resize', ()=>{
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  });
-
-  const clock = new THREE.Clock();
-  function animate(){
-    requestAnimationFrame(animate);
-    const t = clock.getElapsedTime();
-    currentX += (targetX - currentX) * 0.05;
-    currentY += (targetY - currentY) * 0.05;
-    group.rotation.y = currentX * 0.25 + t * 0.02;
-    group.rotation.x = currentY * 0.15 + Math.sin(t * 0.15) * 0.05;
-
-    rings.forEach(r=>{
-      r.mesh.rotation.z += r.spinSpeed;
-      r.mesh.rotation.x += r.spinSpeed * 0.6;
-      r.mesh.position.y = r.baseY + Math.sin(t + r.bobPhase) * 0.35;
-    });
-    icosas.forEach(o=>{
-      o.mesh.rotation.x += o.spinSpeed;
-      o.mesh.rotation.y += o.spinSpeed * 1.4;
-      o.mesh.position.y = o.baseY + Math.sin(t * 1.2 + o.bobPhase) * 0.4;
-    });
-    octas.forEach(o=>{
-      o.mesh.rotation.x += o.spinSpeed;
-      o.mesh.rotation.y += o.spinSpeed * 1.2;
-      o.mesh.rotation.z += o.spinSpeed * 0.5;
-      o.mesh.position.y = o.baseY + Math.sin(t * 1.4 + o.bobPhase) * 0.5;
-    });
-    starPoints.rotation.y = t * 0.015;
-    starPoints.rotation.x = Math.sin(t * 0.08) * 0.05;
-    renderer.render(scene, camera);
-  }
-  animate();
-}
-
-/* ============================================================
-   INIT
-   ============================================================ */
-document.getElementById('yr').textContent = new Date().getFullYear();
+/* ---------- INIT ---------- */
+resetGateUI();
 updateSpinsLeft();
 </script>
 
