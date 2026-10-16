@@ -15,13 +15,10 @@
 :root{
   --maroon:#3B1414;
   --wine:#6B1F1F;
-  --wine-soft:#8A2E2E;
   --gold:#F2C200;
-  --gold-soft:#FFD95A;
   --red:#D62828;
   --purple:#5B2A86;
   --cream:#FBF6EC;
-  --cream-2:#F5EDDC;
   --ink:#2A1414;
   --ink-soft:#5A3A3A;
   --green:#1E7A3A;
@@ -43,20 +40,19 @@ body{
   position:relative;
   line-height:1.5;
   padding-bottom:130px;
-  perspective:1600px;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:contain;
 }
 
 /* ============================================================
-   BACKGROUND — animated logo, orbs, stars, 3D shapes
+   BACKGROUND (lightweight for smooth scroll)
    ============================================================ */
 .bg-stage{
   position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none;
   background:
     radial-gradient(1000px 600px at 12% -8%, #6B1F1F1a, transparent 62%),
     radial-gradient(900px 600px at 100% 4%, #F2C2001a, transparent 58%),
-    radial-gradient(800px 800px at 50% 115%, #5B2A8614, transparent 62%),
     linear-gradient(180deg,#FBF6EC 0%,#F5EDDC 100%);
-  transform-style:preserve-3d;
 }
 .bg-logo{
   position:absolute;
@@ -65,22 +61,17 @@ body{
   height:min(92vw, 640px);
   transform:translate(-50%, -50%);
   opacity:.06;
-  filter:blur(1.5px) saturate(1.1);
-  animation:logoSpin 48s linear infinite, logoPulse 7s ease-in-out infinite;
-  will-change:transform, opacity;
+  filter:blur(1.5px);
+  animation:logoSpin 60s linear infinite;
+  will-change:transform;
 }
 @keyframes logoSpin{
-  from{ transform:translate(-50%,-50%) rotate(0deg) scale(1); }
-  50%{ transform:translate(-50%,-50%) rotate(180deg) scale(1.06); }
-  to{ transform:translate(-50%,-50%) rotate(360deg) scale(1); }
-}
-@keyframes logoPulse{
-  0%,100%{ opacity:.05; }
-  50%{ opacity:.10; }
+  from{ transform:translate(-50%,-50%) rotate(0deg); }
+  to{ transform:translate(-50%,-50%) rotate(360deg); }
 }
 .orb{
   position:absolute; border-radius:50%; filter:blur(70px); opacity:.28;
-  animation:float 24s ease-in-out infinite;
+  animation:float 30s ease-in-out infinite;
 }
 .orb.a{ width:300px; height:300px; left:-90px; top:-40px;
   background:radial-gradient(circle at 30% 30%,#F2C200,#D62828 70%); }
@@ -100,44 +91,35 @@ body{
   background-size:600px 300px;
   background-repeat:repeat;
   opacity:.5;
-  animation:starDrift 70s linear infinite;
+  animation:starDrift 100s linear infinite;
 }
 @keyframes starDrift{
   from{ background-position:0 0; }
   to{ background-position:600px 300px; }
 }
-
-/* floating 3D shapes (rings + cubes) */
 .float-shape{
   position:absolute;
   border-radius:50%;
   border:2px solid rgba(242,194,0,.28);
-  animation:shapeFloat 18s ease-in-out infinite;
-  transform-style:preserve-3d;
+  animation:shapeFloat 30s ease-in-out infinite;
 }
-.float-shape.s1{ width:110px; height:110px; top:12%; left:8%;  animation-delay:0s; }
-.float-shape.s2{ width:70px;  height:70px;  top:60%; right:6%; animation-delay:-5s; border-color:rgba(214,40,40,.28); }
-.float-shape.s3{ width:90px;  height:90px;  bottom:14%; left:10%; animation-delay:-9s; border-color:rgba(91,42,134,.30); }
-.float-shape.s4{ width:50px;  height:50px;  top:28%; right:14%; animation-delay:-13s; }
-
+.float-shape.s1{ width:110px; height:110px; top:12%; left:8%; }
+.float-shape.s2{ width:70px;  height:70px;  top:60%; right:6%; animation-delay:-12s; border-color:rgba(214,40,40,.28); }
+.float-shape.s3{ width:90px;  height:90px;  bottom:14%; left:10%; animation-delay:-20s; border-color:rgba(91,42,134,.30); }
 .float-cube{
   position:absolute;
   width:40px; height:40px;
   background:linear-gradient(135deg, rgba(242,194,0,.25), rgba(214,40,40,.15));
   border:1px solid rgba(242,194,0,.35);
   border-radius:6px;
-  animation:cubeFloat 22s ease-in-out infinite;
-  transform-style:preserve-3d;
+  animation:cubeFloat 30s ease-in-out infinite;
   transform:rotate(30deg) rotateX(20deg);
 }
-.float-cube.c1{ top:8%;  right:20%; animation-delay:0s; }
-.float-cube.c2{ bottom:18%; right:22%; animation-delay:-7s; background:linear-gradient(135deg, rgba(91,42,134,.25), rgba(107,31,31,.15)); border-color:rgba(91,42,134,.35); }
-.float-cube.c3{ top:50%; left:4%; animation-delay:-14s; background:linear-gradient(135deg, rgba(214,40,40,.22), rgba(242,194,0,.14)); border-color:rgba(214,40,40,.30); }
-
+.float-cube.c1{ top:8%;  right:20%; }
+.float-cube.c2{ bottom:18%; right:22%; animation-delay:-15s; background:linear-gradient(135deg, rgba(91,42,134,.25), rgba(107,31,31,.15)); border-color:rgba(91,42,134,.35); }
 @keyframes shapeFloat{
-  0%,100%{ transform:translate(0,0) rotate(0deg) scale(1); }
-  33%{ transform:translate(20px,-25px) rotate(120deg) scale(1.08); }
-  66%{ transform:translate(-18px,18px) rotate(240deg) scale(.94); }
+  0%,100%{ transform:translate(0,0) rotate(0deg); }
+  50%{ transform:translate(20px,-25px) rotate(180deg); }
 }
 @keyframes cubeFloat{
   0%,100%{ transform:rotate(30deg) rotateX(20deg) translateY(0); }
@@ -149,9 +131,7 @@ body{
    ============================================================ */
 .topbar{
   position:sticky; top:0; z-index:40;
-  background:rgba(251,246,236,.94);
-  backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);
+  background:rgba(251,246,236,.96);
   border-bottom:1px solid rgba(107,31,31,.12);
   padding:10px 14px;
   display:flex; align-items:center; gap:12px;
@@ -163,7 +143,6 @@ body{
   background:linear-gradient(145deg,var(--maroon),var(--wine));
   color:var(--gold); font-size:17px; text-decoration:none;
   box-shadow:var(--shadow-sm);
-  transition:transform .2s;
 }
 .topbar .back:active{ transform:scale(.92); }
 .topbar .brand-mini{
@@ -185,7 +164,6 @@ body{
   background:linear-gradient(145deg,var(--wine),var(--maroon));
   color:var(--gold); font-size:18px; border:none; cursor:pointer;
   box-shadow:var(--shadow-sm);
-  transition:transform .25s;
 }
 .topbar .cart-btn:active{ transform:scale(.94); }
 .cart-count{
@@ -207,7 +185,6 @@ body{
   position:relative; z-index:1;
   text-align:center;
   padding:26px 18px 6px;
-  animation:fadeUp .8s both;
 }
 .hero h1{
   font-family:'Cinzel',serif;
@@ -223,19 +200,13 @@ body{
   color:var(--wine);
   font-size:clamp(14px,4vw,17px);
 }
-@keyframes fadeUp{
-  from{ opacity:0; transform:translateY(14px); }
-  to{ opacity:1; transform:translateY(0); }
-}
 
 /* ============================================================
    CHIPS
    ============================================================ */
 .chips-wrap{
   position:sticky; top:59px; z-index:35;
-  background:rgba(251,246,236,.95);
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
+  background:rgba(251,246,236,.97);
   border-bottom:1px solid rgba(107,31,31,.10);
   padding:10px 0;
 }
@@ -243,7 +214,6 @@ body{
   display:flex; gap:8px; overflow-x:auto;
   padding:0 14px;
   scrollbar-width:none;
-  scroll-snap-type:x proximity;
 }
 .chips::-webkit-scrollbar{ display:none; }
 .chip{
@@ -257,7 +227,6 @@ body{
   cursor:pointer;
   white-space:nowrap;
   transition:all .25s;
-  scroll-snap-align:start;
 }
 .chip.active{
   background:linear-gradient(135deg,var(--maroon),var(--wine));
@@ -268,7 +237,7 @@ body{
 .chip:active{ transform:scale(.96); }
 
 /* ============================================================
-   MENU
+   MENU — SMOOTH
    ============================================================ */
 .menu-wrap{
   position:relative; z-index:1;
@@ -278,6 +247,8 @@ body{
 .section{
   margin-bottom:32px;
   scroll-margin-top:120px;
+  content-visibility:auto;
+  contain-intrinsic-size:800px;
 }
 .section-head{
   display:flex; align-items:center; gap:12px;
@@ -301,8 +272,7 @@ body{
 .item{
   display:flex; align-items:center; gap:12px;
   padding:12px 14px;
-  background:rgba(255,255,255,.92);
-  backdrop-filter:blur(6px);
+  background:#ffffff;
   border:1.5px solid rgba(107,31,31,.10);
   border-radius:16px;
   margin-bottom:9px;
@@ -310,8 +280,6 @@ body{
   transition:transform .25s, box-shadow .25s, border-color .25s;
   box-shadow:0 2px 8px -6px rgba(59,20,20,.3);
   position:relative;
-  overflow:hidden;
-  transform-style:preserve-3d;
 }
 .item:hover, .item:focus-visible{
   transform:translateY(-2px);
@@ -322,7 +290,7 @@ body{
 .item:active{ transform:scale(.995); }
 
 /* ============================================================
-   UNIQUE 3D DISH ICONS — one per dish type
+   3D DISH ICONS (static in list, animates in sheet)
    ============================================================ */
 .dish-ico{
   flex:0 0 auto;
@@ -330,8 +298,6 @@ body{
   position:relative;
   transform-style:preserve-3d;
   perspective:400px;
-  animation:icoFloat 5s ease-in-out infinite;
-  will-change:transform;
 }
 .dish-ico .ico-inner{
   position:absolute; inset:0;
@@ -340,414 +306,79 @@ body{
     0 8px 14px -6px rgba(59,20,20,.45),
     inset 0 -3px 7px rgba(0,0,0,.20),
     inset 0 3px 6px rgba(255,255,255,.35);
-  transition:transform .4s cubic-bezier(.2,.8,.25,1);
+  transition:transform .35s cubic-bezier(.2,.8,.25,1);
   transform-style:preserve-3d;
-  overflow:hidden;
 }
-.item:hover .dish-ico .ico-inner{
+.item:hover .dish-ico .ico-inner,
+.item:focus-visible .dish-ico .ico-inner{
   transform:rotateX(-22deg) rotateY(28deg) scale(1.1);
-}
-@keyframes icoFloat{
-  0%,100%{ transform:translateY(0) rotate(-2deg); }
-  50%{ transform:translateY(-4px) rotate(2deg); }
 }
 
 /* ---- ICON TYPES ---- */
-
-/* CHAI / TEA CUP — cream body with brown tea top */
-.ico-chai .ico-inner{
-  background:radial-gradient(circle at 35% 30%, #fff8e6 0%, #e8d0a0 55%, #b89060 100%);
-  border:2px solid #a07440;
-}
-.ico-chai .ico-inner::after{
-  content:"";
-  position:absolute; inset:24% 22% 34% 22%;
-  border-radius:50%;
-  background:radial-gradient(circle at 40% 35%, #8a4a1a, #3b1414 75%);
-  box-shadow:inset 0 3px 6px rgba(0,0,0,.5);
-}
-/* COFFEE CUP — deep brown top */
-.ico-coffee .ico-inner{
-  background:radial-gradient(circle at 35% 30%, #f4e4c4 0%, #cba074 55%, #6a4020 100%);
-  border:2px solid #4a2810;
-}
-.ico-coffee .ico-inner::after{
-  content:"";
-  position:absolute; inset:22% 20% 32% 20%;
-  border-radius:50%;
-  background:radial-gradient(circle at 40% 35%, #5a2a10, #1a0800 80%);
-  box-shadow:inset 0 3px 6px rgba(0,0,0,.55);
-}
-/* LASSI / CHHACH GLASS — white body with gold rim */
-.ico-lassi .ico-inner{
-  border-radius:24% 24% 45% 45% / 18% 18% 60% 60%;
-  background:linear-gradient(180deg, #fffdf5 0%, #f4e8cc 45%, #d8b878 100%);
-  border:2px solid #b89858;
-}
-.ico-lassi .ico-inner::after{
-  content:"";
-  position:absolute; inset:20% 24% 42% 24%;
-  border-radius:50%;
-  background:radial-gradient(circle at 40% 35%, #fef8e0, #e8d8a0 70%);
-  box-shadow:inset 0 3px 6px rgba(0,0,0,.18);
-}
-/* SODA / MOJITO — green fizzy */
-.ico-soda .ico-inner{
-  background:radial-gradient(circle at 35% 30%, #d4f8b0 0%, #6ba72a 60%, #2a5a10 100%);
-  border:2px solid #4a861a;
-}
-.ico-soda .ico-inner::after{
-  content:"";
-  position:absolute; inset:20%;
-  border-radius:50%;
-  background:radial-gradient(circle at 40% 35%, #e8ffb0, #7ac92a 70%);
-  box-shadow:inset 0 3px 6px rgba(0,0,0,.25);
-}
-/* KHEER / DESSERT BOWL — creamy */
-.ico-kheer .ico-inner{
-  background:radial-gradient(circle at 35% 30%, #fff8e8 0%, #f4dca8 55%, #c8a060 100%);
-  border:2px solid #a88040;
-}
-.ico-kheer .ico-inner::after{
-  content:"";
-  position:absolute; inset:30%;
-  border-radius:50%;
-  background:radial-gradient(circle at 40% 35%, #fff8e0, #e8c878 70%);
-  box-shadow:inset 0 2px 5px rgba(0,0,0,.15);
-}
-/* FALUDA / SUNDAE — pink/orange sweet */
-.ico-faluda .ico-inner{
-  background:radial-gradient(circle at 35% 30%, #ffd8c0 0%, #ff8a5a 55%, #c84020 100%);
-  border:2px solid #a82810;
-}
-.ico-faluda .ico-inner::after{
-  content:"";
-  position:absolute; inset:24%;
-  border-radius:50%;
-  background:radial-gradient(circle at 40% 35%, #ffe8c8, #ff9a60 70%);
-}
-/* RICE / PULAO — white mound with saffron */
-.ico-rice .ico-inner{
-  background:radial-gradient(circle at 35% 30%, #ffffff 0%, #f4e8c8 55%, #d8c890 100%);
-  border:2px solid #b8a860;
-}
-.ico-rice .ico-inner::after{
-  content:"";
-  position:absolute; inset:26%;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 30% 30%, #ff8a1a 0 8%, transparent 12%),
-    radial-gradient(circle at 65% 40%, #ff8a1a 0 6%, transparent 10%),
-    radial-gradient(circle at 45% 70%, #ff8a1a 0 7%, transparent 11%),
-    #fff8e8;
-  box-shadow:inset 0 2px 5px rgba(0,0,0,.12);
-}
-/* BIRYANI — layered orange/brown */
-.ico-biryani .ico-inner{
-  background:radial-gradient(circle at 35% 30%, #ffd8a0 0%, #d87820 55%, #6a3010 100%);
-  border:2px solid #8a4010;
-}
-.ico-biryani .ico-inner::after{
-  content:"";
-  position:absolute; inset:24%;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 35% 40%, #ff9a40 0 20%, transparent 25%),
-    radial-gradient(circle at 65% 55%, #a85010 0 18%, transparent 22%),
-    #e8a050;
-  box-shadow:inset 0 2px 5px rgba(0,0,0,.25);
-}
-/* GREEN SALAD */
-.ico-salad .ico-inner{
-  background:radial-gradient(circle at 35% 30%, #d4f8a0 0%, #6ba72a 55%, #2a5a10 100%);
-  border:2px solid #4a861a;
-}
-.ico-salad .ico-inner::after{
-  content:"";
-  position:absolute; inset:24%;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 30% 30%, #e8ffa0 0 25%, transparent 30%),
-    radial-gradient(circle at 65% 45%, #ff5a3a 0 20%, transparent 25%),
-    radial-gradient(circle at 45% 70%, #a0d860 0 22%, transparent 27%),
-    #b8e878;
-}
-/* RAITA BOWL — white yogurt with swirl */
-.ico-raita .ico-inner{
-  background:radial-gradient(circle at 35% 30%, #ffffff 0%, #f4f4f4 55%, #d8d8d8 100%);
-  border:2px solid #b8b8b8;
-}
-.ico-raita .ico-inner::after{
-  content:"";
-  position:absolute; inset:28%;
-  border-radius:50%;
-  background:radial-gradient(circle at 40% 35%, #ffffff, #e8e8e8 70%);
-  box-shadow:inset 0 2px 5px rgba(0,0,0,.10);
-  border:1.5px dashed rgba(120,120,120,.35);
-}
-/* PAPAD — golden disc */
-.ico-papad .ico-inner{
-  background:radial-gradient(circle at 35% 30%, #ffd890 0%, #d89840 60%, #8a5010 100%);
-  border:2px solid #6a3808;
-}
-.ico-papad .ico-inner::after{
-  content:"";
-  position:absolute; inset:30%;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 40% 40%, rgba(90,40,0,.4) 0 6%, transparent 10%),
-    radial-gradient(circle at 60% 55%, rgba(90,40,0,.4) 0 5%, transparent 9%),
-    #f0b860;
-}
-/* CHINESE NOODLES — tangled */
-.ico-noodle .ico-inner{
-  background:radial-gradient(circle at 35% 30%, #ffe8b0 0%, #d8a860 55%, #8a5018 100%);
-  border:2px solid #6a3808;
-}
-.ico-noodle .ico-inner::after{
-  content:"";
-  position:absolute; inset:24%;
-  border-radius:50%;
-  background:
-    repeating-linear-gradient(45deg, #e8b878 0 3px, #a87020 3px 6px);
-  box-shadow:inset 0 2px 5px rgba(0,0,0,.30);
-}
-/* MANCHURIAN / SAUCE DISH — red glossy */
-.ico-manchurian .ico-inner{
-  background:radial-gradient(circle at 35% 30%, #ffb0a0 0%, #c83020 55%, #6a1010 100%);
-  border:2px solid #8a1818;
-}
-.ico-manchurian .ico-inner::after{
-  content:"";
-  position:absolute; inset:26%;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 35% 35%, #ff5a3a 0 25%, transparent 30%),
-    radial-gradient(circle at 65% 55%, #a82010 0 22%, transparent 28%),
-    #d84020;
-}
-/* SOUP BOWL — warm gold liquid */
-.ico-soup .ico-inner{
-  background:radial-gradient(circle at 35% 30%, #ffe8c0 0%, #e8a040 55%, #a05020 100%);
-  border:2px solid #703810;
-}
-.ico-soup .ico-inner::after{
-  content:"";
-  position:absolute; inset:22% 20% 34% 20%;
-  border-radius:50%;
-  background:radial-gradient(circle at 40% 35%, #ffc880, #d88028 70%);
-  box-shadow:inset 0 3px 6px rgba(0,0,0,.30);
-}
-/* PIZZA / SIZZLER PLATE — dark platter */
-.ico-sizzler .ico-inner{
-  background:radial-gradient(circle at 35% 30%, #6a3820 0%, #3a1810 60%, #180808 100%);
-  border:2px solid #6a4828;
-}
-.ico-sizzler .ico-inner::after{
-  content:"";
-  position:absolute; inset:26%;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 40% 40%, #d87820 0 25%, transparent 32%),
-    radial-gradient(circle at 65% 60%, #a84020 0 20%, transparent 26%),
-    #5a2810;
-}
-/* PANEER CURRY — pale yellow gravy */
-.ico-paneer .ico-inner{
-  background:radial-gradient(circle at 35% 30%, #fff8d0 0%, #f4d878 55%, #c89838 100%);
-  border:2px solid #a07820;
-}
-.ico-paneer .ico-inner::after{
-  content:"";
-  position:absolute; inset:26%;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 35% 35%, #ffffff 0 22%, transparent 28%),
-    radial-gradient(circle at 65% 55%, #ffeed0 0 20%, transparent 26%),
-    #f4dc88;
-  box-shadow:inset 0 2px 5px rgba(0,0,0,.15);
-}
-/* DAL / DARK CURRY — deep brown */
-.ico-dal .ico-inner{
-  background:radial-gradient(circle at 35% 30%, #d8a060 0%, #8a4818 55%, #3a1808 100%);
-  border:2px solid #5a2810;
-}
-.ico-dal .ico-inner::after{
-  content:"";
-  position:absolute; inset:26%;
-  border-radius:50%;
-  background:radial-gradient(circle at 40% 35%, #c88040, #5a2810 75%);
-  box-shadow:inset 0 2px 5px rgba(0,0,0,.35);
-}
-/* GREEN VEG CURRY — palak / veg */
-.ico-vegcurry .ico-inner{
-  background:radial-gradient(circle at 35% 30%, #d8f8a0 0%, #6ba72a 55%, #2a5a10 100%);
-  border:2px solid #4a861a;
-}
-.ico-vegcurry .ico-inner::after{
-  content:"";
-  position:absolute; inset:26%;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 35% 40%, #a8e060 0 30%, transparent 36%),
-    radial-gradient(circle at 65% 55%, #4a8a20 0 25%, transparent 30%),
-    #6aaa28;
-}
-/* MUSHROOM DISH — brown caps */
-.ico-mushroom .ico-inner{
-  background:radial-gradient(circle at 35% 30%, #f4e0c8 0%, #b88858 55%, #6a4020 100%);
-  border:2px solid #5a3818;
-}
-.ico-mushroom .ico-inner::after{
-  content:"";
-  position:absolute; inset:24%;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 35% 40%, #8a5030 0 22%, transparent 28%),
-    radial-gradient(circle at 68% 55%, #6a3818 0 20%, transparent 26%),
-    #d8b088;
-}
-/* CHOLLE / CHANA — orange chickpeas */
-.ico-chana .ico-inner{
-  background:radial-gradient(circle at 35% 30%, #ffd0a0 0%, #d88040 55%, #8a4018 100%);
-  border:2px solid #6a3010;
-}
-.ico-chana .ico-inner::after{
-  content:"";
-  position:absolute; inset:24%;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 35% 35%, #f4a860 0 18%, transparent 24%),
-    radial-gradient(circle at 62% 42%, #c87020 0 16%, transparent 22%),
-    radial-gradient(circle at 45% 68%, #e89050 0 15%, transparent 21%),
-    #d88040;
-}
-/* SANDWICH / TOAST — layered bread */
-.ico-sandwich .ico-inner{
-  border-radius:30% 30% 30% 30% / 20% 20% 30% 30%;
-  background:
-    linear-gradient(180deg,
-      #e8b870 0%, #e8b870 25%,
-      #fff4d8 25%, #fff4d8 35%,
-      #7ac92a 35%, #7ac92a 45%,
-      #ff8a5a 45%, #ff8a5a 55%,
-      #fff4d8 55%, #fff4d8 65%,
-      #e8b870 65%, #e8b870 100%);
-  border:2px solid #a87020;
-}
+.ico-chai .ico-inner{ background:radial-gradient(circle at 35% 30%, #fff8e6 0%, #e8d0a0 55%, #b89060 100%); border:2px solid #a07440; }
+.ico-chai .ico-inner::after{ content:""; position:absolute; inset:24% 22% 34% 22%; border-radius:50%; background:radial-gradient(circle at 40% 35%, #8a4a1a, #3b1414 75%); box-shadow:inset 0 3px 6px rgba(0,0,0,.5); }
+.ico-coffee .ico-inner{ background:radial-gradient(circle at 35% 30%, #f4e4c4 0%, #cba074 55%, #6a4020 100%); border:2px solid #4a2810; }
+.ico-coffee .ico-inner::after{ content:""; position:absolute; inset:22% 20% 32% 20%; border-radius:50%; background:radial-gradient(circle at 40% 35%, #5a2a10, #1a0800 80%); box-shadow:inset 0 3px 6px rgba(0,0,0,.55); }
+.ico-lassi .ico-inner{ border-radius:24% 24% 45% 45% / 18% 18% 60% 60%; background:linear-gradient(180deg, #fffdf5 0%, #f4e8cc 45%, #d8b878 100%); border:2px solid #b89858; }
+.ico-lassi .ico-inner::after{ content:""; position:absolute; inset:20% 24% 42% 24%; border-radius:50%; background:radial-gradient(circle at 40% 35%, #fef8e0, #e8d8a0 70%); box-shadow:inset 0 3px 6px rgba(0,0,0,.18); }
+.ico-soda .ico-inner{ background:radial-gradient(circle at 35% 30%, #d4f8b0 0%, #6ba72a 60%, #2a5a10 100%); border:2px solid #4a861a; }
+.ico-soda .ico-inner::after{ content:""; position:absolute; inset:20%; border-radius:50%; background:radial-gradient(circle at 40% 35%, #e8ffb0, #7ac92a 70%); box-shadow:inset 0 3px 6px rgba(0,0,0,.25); }
+.ico-kheer .ico-inner{ background:radial-gradient(circle at 35% 30%, #fff8e8 0%, #f4dca8 55%, #c8a060 100%); border:2px solid #a88040; }
+.ico-kheer .ico-inner::after{ content:""; position:absolute; inset:30%; border-radius:50%; background:radial-gradient(circle at 40% 35%, #fff8e0, #e8c878 70%); box-shadow:inset 0 2px 5px rgba(0,0,0,.15); }
+.ico-faluda .ico-inner{ background:radial-gradient(circle at 35% 30%, #ffd8c0 0%, #ff8a5a 55%, #c84020 100%); border:2px solid #a82810; }
+.ico-faluda .ico-inner::after{ content:""; position:absolute; inset:24%; border-radius:50%; background:radial-gradient(circle at 40% 35%, #ffe8c8, #ff9a60 70%); }
+.ico-rice .ico-inner{ background:radial-gradient(circle at 35% 30%, #ffffff 0%, #f4e8c8 55%, #d8c890 100%); border:2px solid #b8a860; }
+.ico-rice .ico-inner::after{ content:""; position:absolute; inset:26%; border-radius:50%; background: radial-gradient(circle at 30% 30%, #ff8a1a 0 8%, transparent 12%), radial-gradient(circle at 65% 40%, #ff8a1a 0 6%, transparent 10%), radial-gradient(circle at 45% 70%, #ff8a1a 0 7%, transparent 11%), #fff8e8; box-shadow:inset 0 2px 5px rgba(0,0,0,.12); }
+.ico-biryani .ico-inner{ background:radial-gradient(circle at 35% 30%, #ffd8a0 0%, #d87820 55%, #6a3010 100%); border:2px solid #8a4010; }
+.ico-biryani .ico-inner::after{ content:""; position:absolute; inset:24%; border-radius:50%; background: radial-gradient(circle at 35% 40%, #ff9a40 0 20%, transparent 25%), radial-gradient(circle at 65% 55%, #a85010 0 18%, transparent 22%), #e8a050; box-shadow:inset 0 2px 5px rgba(0,0,0,.25); }
+.ico-salad .ico-inner{ background:radial-gradient(circle at 35% 30%, #d4f8a0 0%, #6ba72a 55%, #2a5a10 100%); border:2px solid #4a861a; }
+.ico-salad .ico-inner::after{ content:""; position:absolute; inset:24%; border-radius:50%; background: radial-gradient(circle at 30% 30%, #e8ffa0 0 25%, transparent 30%), radial-gradient(circle at 65% 45%, #ff5a3a 0 20%, transparent 25%), radial-gradient(circle at 45% 70%, #a0d860 0 22%, transparent 27%), #b8e878; }
+.ico-raita .ico-inner{ background:radial-gradient(circle at 35% 30%, #ffffff 0%, #f4f4f4 55%, #d8d8d8 100%); border:2px solid #b8b8b8; }
+.ico-raita .ico-inner::after{ content:""; position:absolute; inset:28%; border-radius:50%; background:radial-gradient(circle at 40% 35%, #ffffff, #e8e8e8 70%); box-shadow:inset 0 2px 5px rgba(0,0,0,.10); border:1.5px dashed rgba(120,120,120,.35); }
+.ico-papad .ico-inner{ background:radial-gradient(circle at 35% 30%, #ffd890 0%, #d89840 60%, #8a5010 100%); border:2px solid #6a3808; }
+.ico-papad .ico-inner::after{ content:""; position:absolute; inset:30%; border-radius:50%; background: radial-gradient(circle at 40% 40%, rgba(90,40,0,.4) 0 6%, transparent 10%), radial-gradient(circle at 60% 55%, rgba(90,40,0,.4) 0 5%, transparent 9%), #f0b860; }
+.ico-noodle .ico-inner{ background:radial-gradient(circle at 35% 30%, #ffe8b0 0%, #d8a860 55%, #8a5018 100%); border:2px solid #6a3808; }
+.ico-noodle .ico-inner::after{ content:""; position:absolute; inset:24%; border-radius:50%; background: repeating-linear-gradient(45deg, #e8b878 0 3px, #a87020 3px 6px); box-shadow:inset 0 2px 5px rgba(0,0,0,.30); }
+.ico-manchurian .ico-inner{ background:radial-gradient(circle at 35% 30%, #ffb0a0 0%, #c83020 55%, #6a1010 100%); border:2px solid #8a1818; }
+.ico-manchurian .ico-inner::after{ content:""; position:absolute; inset:26%; border-radius:50%; background: radial-gradient(circle at 35% 35%, #ff5a3a 0 25%, transparent 30%), radial-gradient(circle at 65% 55%, #a82010 0 22%, transparent 28%), #d84020; }
+.ico-soup .ico-inner{ background:radial-gradient(circle at 35% 30%, #ffe8c0 0%, #e8a040 55%, #a05020 100%); border:2px solid #703810; }
+.ico-soup .ico-inner::after{ content:""; position:absolute; inset:22% 20% 34% 20%; border-radius:50%; background:radial-gradient(circle at 40% 35%, #ffc880, #d88028 70%); box-shadow:inset 0 3px 6px rgba(0,0,0,.30); }
+.ico-sizzler .ico-inner{ background:radial-gradient(circle at 35% 30%, #6a3820 0%, #3a1810 60%, #180808 100%); border:2px solid #6a4828; }
+.ico-sizzler .ico-inner::after{ content:""; position:absolute; inset:26%; border-radius:50%; background: radial-gradient(circle at 40% 40%, #d87820 0 25%, transparent 32%), radial-gradient(circle at 65% 60%, #a84020 0 20%, transparent 26%), #5a2810; }
+.ico-paneer .ico-inner{ background:radial-gradient(circle at 35% 30%, #fff8d0 0%, #f4d878 55%, #c89838 100%); border:2px solid #a07820; }
+.ico-paneer .ico-inner::after{ content:""; position:absolute; inset:26%; border-radius:50%; background: radial-gradient(circle at 35% 35%, #ffffff 0 22%, transparent 28%), radial-gradient(circle at 65% 55%, #ffeed0 0 20%, transparent 26%), #f4dc88; box-shadow:inset 0 2px 5px rgba(0,0,0,.15); }
+.ico-dal .ico-inner{ background:radial-gradient(circle at 35% 30%, #d8a060 0%, #8a4818 55%, #3a1808 100%); border:2px solid #5a2810; }
+.ico-dal .ico-inner::after{ content:""; position:absolute; inset:26%; border-radius:50%; background:radial-gradient(circle at 40% 35%, #c88040, #5a2810 75%); box-shadow:inset 0 2px 5px rgba(0,0,0,.35); }
+.ico-vegcurry .ico-inner{ background:radial-gradient(circle at 35% 30%, #d8f8a0 0%, #6ba72a 55%, #2a5a10 100%); border:2px solid #4a861a; }
+.ico-vegcurry .ico-inner::after{ content:""; position:absolute; inset:26%; border-radius:50%; background: radial-gradient(circle at 35% 40%, #a8e060 0 30%, transparent 36%), radial-gradient(circle at 65% 55%, #4a8a20 0 25%, transparent 30%), #6aaa28; }
+.ico-mushroom .ico-inner{ background:radial-gradient(circle at 35% 30%, #f4e0c8 0%, #b88858 55%, #6a4020 100%); border:2px solid #5a3818; }
+.ico-mushroom .ico-inner::after{ content:""; position:absolute; inset:24%; border-radius:50%; background: radial-gradient(circle at 35% 40%, #8a5030 0 22%, transparent 28%), radial-gradient(circle at 68% 55%, #6a3818 0 20%, transparent 26%), #d8b088; }
+.ico-chana .ico-inner{ background:radial-gradient(circle at 35% 30%, #ffd0a0 0%, #d88040 55%, #8a4018 100%); border:2px solid #6a3010; }
+.ico-chana .ico-inner::after{ content:""; position:absolute; inset:24%; border-radius:50%; background: radial-gradient(circle at 35% 35%, #f4a860 0 18%, transparent 24%), radial-gradient(circle at 62% 42%, #c87020 0 16%, transparent 22%), radial-gradient(circle at 45% 68%, #e89050 0 15%, transparent 21%), #d88040; }
+.ico-sandwich .ico-inner{ border-radius:30% 30% 30% 30% / 20% 20% 30% 30%; background: linear-gradient(180deg, #e8b870 0%, #e8b870 25%, #fff4d8 25%, #fff4d8 35%, #7ac92a 35%, #7ac92a 45%, #ff8a5a 45%, #ff8a5a 55%, #fff4d8 55%, #fff4d8 65%, #e8b870 65%, #e8b870 100%); border:2px solid #a87020; }
 .ico-sandwich .ico-inner::after{ content:""; }
-/* PAKORA / FRITTER — golden brown crispy */
-.ico-pakora .ico-inner{
-  background:radial-gradient(circle at 35% 30%, #ffd890 0%, #d88020 55%, #8a4810 100%);
-  border:2px solid #6a3808;
-}
-.ico-pakora .ico-inner::after{
-  content:"";
-  position:absolute; inset:24%;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 30% 30%, #ffa040 0 18%, transparent 24%),
-    radial-gradient(circle at 65% 35%, #c86018 0 20%, transparent 26%),
-    radial-gradient(circle at 50% 70%, #e89030 0 22%, transparent 28%),
-    #d88820;
-}
-/* ROTI / NAAN — flatbread */
-.ico-roti .ico-inner{
-  border-radius:45% 55% 48% 52% / 52% 48% 52% 48%;
-  background:radial-gradient(circle at 35% 30%, #ffe8b8 0%, #d8a858 60%, #8a5820 100%);
-  border:2px solid #6a4010;
-}
-.ico-roti .ico-inner::after{
-  content:"";
-  position:absolute; inset:30%;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 40% 40%, rgba(120,70,20,.4) 0 8%, transparent 12%),
-    radial-gradient(circle at 60% 60%, rgba(120,70,20,.4) 0 7%, transparent 11%);
-}
-/* BUTTER — gold block */
-.ico-butter .ico-inner{
-  border-radius:18%;
-  background:linear-gradient(135deg, #fff8c0 0%, #f4d848 55%, #a88020 100%);
-  border:2px solid #8a6810;
-}
+.ico-pakora .ico-inner{ background:radial-gradient(circle at 35% 30%, #ffd890 0%, #d88020 55%, #8a4810 100%); border:2px solid #6a3808; }
+.ico-pakora .ico-inner::after{ content:""; position:absolute; inset:24%; border-radius:50%; background: radial-gradient(circle at 30% 30%, #ffa040 0 18%, transparent 24%), radial-gradient(circle at 65% 35%, #c86018 0 20%, transparent 26%), radial-gradient(circle at 50% 70%, #e89030 0 22%, transparent 28%), #d88820; }
+.ico-roti .ico-inner{ border-radius:45% 55% 48% 52% / 52% 48% 52% 48%; background:radial-gradient(circle at 35% 30%, #ffe8b8 0%, #d8a858 60%, #8a5820 100%); border:2px solid #6a4010; }
+.ico-roti .ico-inner::after{ content:""; position:absolute; inset:30%; border-radius:50%; background: radial-gradient(circle at 40% 40%, rgba(120,70,20,.4) 0 8%, transparent 12%), radial-gradient(circle at 60% 60%, rgba(120,70,20,.4) 0 7%, transparent 11%); }
+.ico-butter .ico-inner{ border-radius:18%; background:linear-gradient(135deg, #fff8c0 0%, #f4d848 55%, #a88020 100%); border:2px solid #8a6810; }
 .ico-butter .ico-inner::after{ content:""; }
-/* COMBO / THALI PLATE — multi-coloured */
-.ico-thali .ico-inner{
-  background:radial-gradient(circle at 35% 30%, #fff8e8 0%, #e8d8b8 55%, #a89068 100%);
-  border:3px solid #6a5028;
-}
-.ico-thali .ico-inner::after{
-  content:"";
-  position:absolute; inset:22%;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 30% 30%, #d84020 0 15%, transparent 20%),
-    radial-gradient(circle at 70% 30%, #d8a020 0 15%, transparent 20%),
-    radial-gradient(circle at 30% 70%, #6ba72a 0 15%, transparent 20%),
-    radial-gradient(circle at 70% 70%, #a85020 0 15%, transparent 20%),
-    #f4e8c8;
-}
-/* STREET FOOD — mixed pink/orange */
-.ico-street .ico-inner{
-  background:radial-gradient(circle at 35% 30%, #ffd8b0 0%, #e87840 55%, #8a3010 100%);
-  border:2px solid #6a2008;
-}
-.ico-street .ico-inner::after{
-  content:"";
-  position:absolute; inset:24%;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 35% 35%, #ff9a5a 0 22%, transparent 28%),
-    radial-gradient(circle at 65% 60%, #a83810 0 20%, transparent 26%),
-    #e87040;
-}
-/* TANDOORI GRILL — charred with green */
-.ico-tandoori .ico-inner{
-  background:radial-gradient(circle at 35% 30%, #a85020 0%, #5a2010 55%, #1a0800 100%);
-  border:2px solid #4a1808;
-}
-.ico-tandoori .ico-inner::after{
-  content:"";
-  position:absolute; inset:22%;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 35% 35%, #d87828 0 22%, transparent 28%),
-    radial-gradient(circle at 68% 55%, #6ba72a 0 18%, transparent 24%),
-    #7a3010;
-}
-/* SWEET / MITHAI — golden sugar */
-.ico-sweet .ico-inner{
-  background:radial-gradient(circle at 35% 30%, #fff4c8 0%, #ffb060 55%, #b8621a 100%);
-  border:2px solid #d1832a;
-}
-.ico-sweet .ico-inner::after{
-  content:"";
-  position:absolute; inset:28%;
-  border-radius:50%;
-  background:radial-gradient(circle at 40% 35%, #fff2a0, #e88a2a 70%);
-  box-shadow:inset 0 2px 5px rgba(0,0,0,.22);
-}
-/* JALEBI — orange spiral */
-.ico-jalebi .ico-inner{
-  background:radial-gradient(circle at 35% 30%, #ffb060 0%, #e87020 55%, #8a3808 100%);
-  border:2px solid #6a2808;
-}
-.ico-jalebi .ico-inner::after{
-  content:"";
-  position:absolute; inset:24%;
-  border-radius:50%;
-  background:
-    conic-gradient(#ffb060 0 15%, #e87020 15% 30%, #ffb060 30% 45%, #e87020 45% 60%, #ffb060 60% 75%, #e87020 75% 90%, #ffb060 90% 100%);
-  box-shadow:inset 0 2px 5px rgba(0,0,0,.25);
-}
+.ico-thali .ico-inner{ background:radial-gradient(circle at 35% 30%, #fff8e8 0%, #e8d8b8 55%, #a89068 100%); border:3px solid #6a5028; }
+.ico-thali .ico-inner::after{ content:""; position:absolute; inset:22%; border-radius:50%; background: radial-gradient(circle at 30% 30%, #d84020 0 15%, transparent 20%), radial-gradient(circle at 70% 30%, #d8a020 0 15%, transparent 20%), radial-gradient(circle at 30% 70%, #6ba72a 0 15%, transparent 20%), radial-gradient(circle at 70% 70%, #a85020 0 15%, transparent 20%), #f4e8c8; }
+.ico-street .ico-inner{ background:radial-gradient(circle at 35% 30%, #ffd8b0 0%, #e87840 55%, #8a3010 100%); border:2px solid #6a2008; }
+.ico-street .ico-inner::after{ content:""; position:absolute; inset:24%; border-radius:50%; background: radial-gradient(circle at 35% 35%, #ff9a5a 0 22%, transparent 28%), radial-gradient(circle at 65% 60%, #a83810 0 20%, transparent 26%), #e87040; }
+.ico-tandoori .ico-inner{ background:radial-gradient(circle at 35% 30%, #a85020 0%, #5a2010 55%, #1a0800 100%); border:2px solid #4a1808; }
+.ico-tandoori .ico-inner::after{ content:""; position:absolute; inset:22%; border-radius:50%; background: radial-gradient(circle at 35% 35%, #d87828 0 22%, transparent 28%), radial-gradient(circle at 68% 55%, #6ba72a 0 18%, transparent 24%), #7a3010; }
+.ico-sweet .ico-inner{ background:radial-gradient(circle at 35% 30%, #fff4c8 0%, #ffb060 55%, #b8621a 100%); border:2px solid #d1832a; }
+.ico-sweet .ico-inner::after{ content:""; position:absolute; inset:28%; border-radius:50%; background:radial-gradient(circle at 40% 35%, #fff2a0, #e88a2a 70%); box-shadow:inset 0 2px 5px rgba(0,0,0,.22); }
+.ico-jalebi .ico-inner{ background:radial-gradient(circle at 35% 30%, #ffb060 0%, #e87020 55%, #8a3808 100%); border:2px solid #6a2808; }
+.ico-jalebi .ico-inner::after{ content:""; position:absolute; inset:24%; border-radius:50%; background: conic-gradient(#ffb060 0 15%, #e87020 15% 30%, #ffb060 30% 45%, #e87020 45% 60%, #ffb060 60% 75%, #e87020 75% 90%, #ffb060 90% 100%); box-shadow:inset 0 2px 5px rgba(0,0,0,.25); }
 
 .item-body{ flex:1; min-width:0; }
 .item-name{
   font-weight:600;
   font-size:14.5px;
   color:var(--ink);
-  letter-spacing:.01em;
 }
 .item-price{
   flex:0 0 auto;
@@ -757,7 +388,6 @@ body{
   color:var(--maroon);
   white-space:nowrap;
 }
-
 .veg-mark{
   flex:0 0 auto;
   width:14px; height:14px;
@@ -765,13 +395,10 @@ body{
   border-radius:3px;
   display:grid; place-items:center;
 }
-.veg-mark::after{
-  content:""; width:6px; height:6px; border-radius:50%;
-  background:var(--green);
-}
+.veg-mark::after{ content:""; width:6px; height:6px; border-radius:50%; background:var(--green); }
 
 /* ============================================================
-   NOTE
+   NOTE + CONTACT + FOOTER
    ============================================================ */
 .menu-note{
   max-width:760px; margin:0 auto 22px;
@@ -787,9 +414,6 @@ body{
 .menu-note strong{ color:var(--maroon); }
 .menu-note .row{ display:block; margin-top:3px; }
 
-/* ============================================================
-   CONTACT BAR
-   ============================================================ */
 .contact-bar{
   max-width:760px; margin:0 auto 26px;
   padding:22px 20px;
@@ -807,21 +431,8 @@ body{
   background:radial-gradient(circle at 90% 10%, rgba(242,194,0,.18), transparent 50%);
   pointer-events:none;
 }
-.contact-bar .cb-label{
-  font-family:'Cinzel',serif;
-  font-size:11px; font-weight:700;
-  letter-spacing:.15em; text-transform:uppercase;
-  color:var(--gold);
-  opacity:.9;
-}
-.contact-bar .cb-title{
-  font-family:'Cinzel',serif;
-  font-size:clamp(18px,5vw,22px);
-  font-weight:800;
-  margin-top:8px;
-  color:#fff;
-  letter-spacing:.02em;
-}
+.contact-bar .cb-label{ font-family:'Cinzel',serif; font-size:11px; font-weight:700; letter-spacing:.15em; text-transform:uppercase; color:var(--gold); opacity:.9; }
+.contact-bar .cb-title{ font-family:'Cinzel',serif; font-size:clamp(18px,5vw,22px); font-weight:800; margin-top:8px; color:#fff; letter-spacing:.02em; }
 .contact-bar .cb-number{
   display:inline-flex; align-items:center; gap:10px;
   margin-top:14px;
@@ -835,49 +446,14 @@ body{
   font-size:clamp(16px,4.6vw,20px);
   letter-spacing:.06em;
   text-decoration:none;
-  transition:transform .2s, background .25s;
 }
-.contact-bar .cb-number:active{ transform:scale(.97); }
-.contact-bar .cb-number:hover{ background:rgba(242,194,0,.28); }
-.contact-bar .cb-sub{
-  margin-top:10px;
-  font-size:11.5px;
-  color:rgba(251,246,236,.7);
-  letter-spacing:.03em;
-}
+.contact-bar .cb-sub{ margin-top:10px; font-size:11.5px; color:rgba(251,246,236,.7); letter-spacing:.03em; }
 
-/* footer */
-.page-footer{
-  text-align:center;
-  padding:6px 18px 0;
-}
-.page-footer .line{
-  width:min(280px,70%);
-  height:1px;
-  margin:0 auto 14px;
-  background:linear-gradient(90deg,transparent,rgba(107,31,31,.3),transparent);
-}
-.page-footer .powered{
-  font-size:12px;
-  color:var(--ink-soft);
-  letter-spacing:.03em;
-}
-.page-footer .powered a{
-  font-family:'Cinzel',serif;
-  color:var(--wine);
-  font-weight:700;
-  letter-spacing:.05em;
-  text-decoration:none;
-  border-bottom:1px dashed rgba(107,31,31,.35);
-  transition:color .25s, border-color .25s;
-}
-.page-footer .powered a:hover{ color:var(--red); border-color:var(--red); }
-.page-footer .copy{
-  margin-top:8px;
-  font-size:10.5px;
-  color:#8a6a6a;
-  letter-spacing:.04em;
-}
+.page-footer{ text-align:center; padding:6px 18px 0; }
+.page-footer .line{ width:min(280px,70%); height:1px; margin:0 auto 14px; background:linear-gradient(90deg,transparent,rgba(107,31,31,.3),transparent); }
+.page-footer .powered{ font-size:12px; color:var(--ink-soft); letter-spacing:.03em; }
+.page-footer .powered a{ font-family:'Cinzel',serif; color:var(--wine); font-weight:700; letter-spacing:.05em; text-decoration:none; border-bottom:1px dashed rgba(107,31,31,.35); }
+.page-footer .copy{ margin-top:8px; font-size:10.5px; color:#8a6a6a; letter-spacing:.04em; }
 
 /* ============================================================
    BOTTOM SHEET
@@ -885,7 +461,6 @@ body{
 .sheet-overlay{
   position:fixed; inset:0; z-index:60;
   background:rgba(42,20,20,.55);
-  backdrop-filter:blur(3px);
   opacity:0; pointer-events:none;
   transition:opacity .3s;
 }
@@ -902,54 +477,29 @@ body{
   max-height:85dvh; overflow-y:auto;
 }
 .sheet.show{ transform:translateY(0); }
-.sheet .grab{
-  width:44px; height:4px; border-radius:2px;
-  background:rgba(107,31,31,.25);
-  margin:0 auto 16px;
-}
-.sheet .sheet-ico-wrap{
-  display:flex; justify-content:center;
-  margin-bottom:14px;
-}
+.sheet .grab{ width:44px; height:4px; border-radius:2px; background:rgba(107,31,31,.25); margin:0 auto 16px; }
+.sheet .sheet-ico-wrap{ display:flex; justify-content:center; margin-bottom:14px; }
 .sheet .sheet-ico-wrap .dish-ico{
   width:76px; height:76px;
-  animation-duration:4s;
+  animation:icoFloat 5s ease-in-out infinite;
 }
-.sheet h3{
-  font-family:'Cinzel',serif;
-  font-size:20px; font-weight:700;
-  color:var(--maroon);
-  letter-spacing:.02em;
-  text-align:center;
+@keyframes icoFloat{
+  0%,100%{ transform:translateY(0) rotate(-2deg); }
+  50%{ transform:translateY(-4px) rotate(2deg); }
 }
-.sheet .sdesc{
-  margin-top:6px; font-size:13px; color:var(--ink-soft); line-height:1.5;
-  text-align:center;
-}
-.sheet .sprice{
-  margin-top:14px;
-  font-family:'Cinzel',serif;
-  font-size:22px; font-weight:700;
-  color:var(--wine);
-  text-align:center;
-}
-.qty-row{
-  display:flex; align-items:center; justify-content:center; gap:18px;
-  margin:20px 0 18px;
-}
+.sheet h3{ font-family:'Cinzel',serif; font-size:20px; font-weight:700; color:var(--maroon); text-align:center; }
+.sheet .sdesc{ margin-top:6px; font-size:13px; color:var(--ink-soft); line-height:1.5; text-align:center; }
+.sheet .sprice{ margin-top:14px; font-family:'Cinzel',serif; font-size:22px; font-weight:700; color:var(--wine); text-align:center; }
+.qty-row{ display:flex; align-items:center; justify-content:center; gap:18px; margin:20px 0 18px; }
 .qty-btn{
   width:44px; height:44px; border-radius:50%;
   border:1.5px solid rgba(107,31,31,.25);
   background:#fff; font-size:20px; font-weight:600;
   color:var(--maroon); cursor:pointer;
   display:grid; place-items:center;
-  transition:all .2s;
 }
 .qty-btn:active{ transform:scale(.9); }
-.qty-val{
-  font-family:'Cinzel',serif; font-size:22px; font-weight:700;
-  color:var(--maroon); min-width:36px; text-align:center;
-}
+.qty-val{ font-family:'Cinzel',serif; font-size:22px; font-weight:700; color:var(--maroon); min-width:36px; text-align:center; }
 .add-btn{
   width:100%; padding:16px;
   border:none; border-radius:14px;
@@ -959,7 +509,6 @@ body{
   letter-spacing:.06em; text-transform:uppercase;
   cursor:pointer;
   box-shadow:var(--shadow-md);
-  transition:transform .2s;
 }
 .add-btn:active{ transform:scale(.98); }
 
@@ -969,7 +518,6 @@ body{
 .cart-overlay{
   position:fixed; inset:0; z-index:70;
   background:rgba(42,20,20,.55);
-  backdrop-filter:blur(3px);
   opacity:0; pointer-events:none;
   transition:opacity .3s;
 }
@@ -990,41 +538,21 @@ body{
   color:var(--gold);
   display:flex; align-items:center; justify-content:space-between;
 }
-.cart-head h3{
-  font-family:'Cinzel',serif;
-  font-size:18px; font-weight:700; letter-spacing:.05em;
-}
+.cart-head h3{ font-family:'Cinzel',serif; font-size:18px; font-weight:700; letter-spacing:.05em; }
 .cart-head .close{
   width:34px; height:34px; border-radius:50%;
   background:rgba(242,194,0,.15); color:var(--gold);
   border:none; font-size:18px; cursor:pointer;
   display:grid; place-items:center;
 }
-.cart-body{
-  flex:1; overflow-y:auto;
-  padding:16px 18px;
-}
-.cart-empty{
-  text-align:center; padding:60px 20px;
-  color:var(--ink-soft); font-size:13.5px;
-}
+.cart-body{ flex:1; overflow-y:auto; padding:16px 18px; }
+.cart-empty{ text-align:center; padding:60px 20px; color:var(--ink-soft); font-size:13.5px; }
 .cart-empty .big{ font-size:44px; margin-bottom:12px; }
-.cart-item{
-  display:flex; gap:12px; align-items:center;
-  padding:12px 0;
-  border-bottom:1px dashed rgba(107,31,31,.15);
-}
+.cart-item{ display:flex; gap:12px; align-items:center; padding:12px 0; border-bottom:1px dashed rgba(107,31,31,.15); }
 .cart-item .ci-body{ flex:1; min-width:0; }
-.cart-item .ci-name{
-  font-weight:600; font-size:14px; color:var(--ink);
-}
-.cart-item .ci-price{
-  font-family:'Cinzel',serif; font-weight:700; font-size:13px;
-  color:var(--wine); margin-top:2px;
-}
-.cart-item .ci-qty{
-  display:flex; align-items:center; gap:8px;
-}
+.cart-item .ci-name{ font-weight:600; font-size:14px; color:var(--ink); }
+.cart-item .ci-price{ font-family:'Cinzel',serif; font-weight:700; font-size:13px; color:var(--wine); margin-top:2px; }
+.cart-item .ci-qty{ display:flex; align-items:center; gap:8px; }
 .cart-item .ci-qty button{
   width:28px; height:28px; border-radius:50%;
   border:1.5px solid rgba(107,31,31,.25);
@@ -1032,24 +560,11 @@ body{
   font-size:15px; font-weight:700; cursor:pointer;
   display:grid; place-items:center;
 }
-.cart-item .ci-qty span{
-  font-weight:700; min-width:20px; text-align:center;
-  font-family:'Cinzel',serif;
-}
-.cart-foot{
-  padding:16px 18px calc(16px + env(safe-area-inset-bottom));
-  background:#fff;
-  border-top:1px solid rgba(107,31,31,.12);
-}
-.cart-total{
-  display:flex; justify-content:space-between; align-items:center;
-  margin-bottom:12px;
-}
+.cart-item .ci-qty span{ font-weight:700; min-width:20px; text-align:center; font-family:'Cinzel',serif; }
+.cart-foot{ padding:16px 18px calc(16px + env(safe-area-inset-bottom)); background:#fff; border-top:1px solid rgba(107,31,31,.12); }
+.cart-total{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
 .cart-total .lbl{ font-size:13px; color:var(--ink-soft); }
-.cart-total .amt{
-  font-family:'Cinzel',serif; font-size:22px; font-weight:800;
-  color:var(--maroon);
-}
+.cart-total .amt{ font-family:'Cinzel',serif; font-size:22px; font-weight:800; color:var(--maroon); }
 .wa-btn{
   width:100%; padding:15px;
   border:none; border-radius:14px;
@@ -1058,7 +573,6 @@ body{
   font-size:14.5px; letter-spacing:.05em; text-transform:uppercase;
   cursor:pointer; display:flex; align-items:center; justify-content:center; gap:9px;
   box-shadow:0 10px 24px -10px rgba(37,211,102,.6);
-  transition:transform .2s;
 }
 .wa-btn:active{ transform:scale(.98); }
 .wa-btn:disabled{ opacity:.5; cursor:not-allowed; }
@@ -1081,19 +595,10 @@ body{
 }
 .cart-bar.show{ transform:translateY(0); }
 .cart-bar .left{ display:flex; align-items:center; gap:12px; }
-.cart-bar .icon{
-  width:36px; height:36px; border-radius:50%;
-  background:rgba(242,194,0,.18);
-  display:grid; place-items:center; font-size:16px;
-}
+.cart-bar .icon{ width:36px; height:36px; border-radius:50%; background:rgba(242,194,0,.18); display:grid; place-items:center; font-size:16px; }
 .cart-bar .info{ line-height:1.2; }
-.cart-bar .info .n{
-  font-weight:700; font-size:13px; letter-spacing:.03em;
-}
-.cart-bar .info .t{
-  font-family:'Cinzel',serif; font-size:16px; font-weight:800;
-  margin-top:2px;
-}
+.cart-bar .info .n{ font-weight:700; font-size:13px; letter-spacing:.03em; }
+.cart-bar .info .t{ font-family:'Cinzel',serif; font-size:16px; font-weight:800; margin-top:2px; }
 .cart-bar .arrow{ font-size:18px; }
 
 /* WA float */
@@ -1105,11 +610,8 @@ body{
   display:grid; place-items:center;
   color:#fff;
   text-decoration:none;
-  box-shadow:
-    0 12px 26px -8px rgba(37,211,102,.7),
-    0 0 0 4px rgba(37,211,102,.15);
+  box-shadow: 0 12px 26px -8px rgba(37,211,102,.7), 0 0 0 4px rgba(37,211,102,.15);
   animation:waPulse 2.4s ease-in-out infinite;
-  transition:transform .25s;
 }
 .wa-float:active{ transform:scale(.93); }
 .wa-float svg{ width:30px; height:30px; }
@@ -1118,6 +620,7 @@ body{
   50%{ box-shadow:0 12px 26px -8px rgba(37,211,102,.9), 0 0 0 12px rgba(37,211,102,0); }
 }
 
+/* toast */
 .toast{
   position:fixed; left:50%; bottom:130px;
   transform:translate(-50%, 30px);
@@ -1133,6 +636,91 @@ body{
   max-width:90vw;
 }
 .toast.show{ opacity:1; transform:translate(-50%,0); }
+
+/* ============================================================
+   LOCATION CHECK MODAL
+   ============================================================ */
+.loc-overlay{
+  position:fixed; inset:0; z-index:90;
+  background:rgba(42,20,20,.7);
+  display:grid; place-items:center;
+  padding:20px;
+  opacity:0; pointer-events:none;
+  transition:opacity .3s;
+}
+.loc-overlay.show{ opacity:1; pointer-events:auto; }
+.loc-modal{
+  width:100%; max-width:380px;
+  background:var(--cream);
+  border-radius:22px;
+  padding:26px 22px;
+  text-align:center;
+  box-shadow:var(--shadow-lg);
+  transform:scale(.9) translateY(20px);
+  transition:transform .38s cubic-bezier(.2,.8,.25,1);
+}
+.loc-overlay.show .loc-modal{ transform:scale(1) translateY(0); }
+.loc-icon{
+  width:70px; height:70px;
+  margin:0 auto 14px;
+  border-radius:50%;
+  background:linear-gradient(135deg, var(--gold), var(--red));
+  display:grid; place-items:center;
+  font-size:32px;
+  animation:pulseIcon 1.6s ease-in-out infinite;
+  box-shadow:0 0 0 0 rgba(242,194,0,.6);
+}
+@keyframes pulseIcon{
+  0%,100%{ box-shadow:0 0 0 0 rgba(242,194,0,.6); transform:scale(1); }
+  50%{ box-shadow:0 0 0 16px rgba(242,194,0,0); transform:scale(1.06); }
+}
+.loc-modal h3{
+  font-family:'Cinzel',serif;
+  font-size:18px; font-weight:700;
+  color:var(--maroon);
+  letter-spacing:.02em;
+}
+.loc-modal p{
+  margin-top:8px;
+  font-size:13px;
+  color:var(--ink-soft);
+  line-height:1.55;
+}
+.loc-modal .loc-status{
+  margin-top:14px;
+  font-size:12px;
+  font-weight:600;
+  color:var(--wine);
+  min-height:18px;
+}
+.loc-modal .loc-status.ok{ color:var(--green); }
+.loc-modal .loc-status.err{ color:var(--red); }
+.loc-actions{
+  display:flex; flex-direction:column; gap:10px;
+  margin-top:18px;
+}
+.loc-btn{
+  width:100%; padding:14px;
+  border:none; border-radius:12px;
+  font-family:'Cinzel',serif; font-weight:700;
+  font-size:13.5px; letter-spacing:.05em; text-transform:uppercase;
+  cursor:pointer;
+  transition:transform .2s;
+}
+.loc-btn.primary{
+  background:linear-gradient(135deg,var(--maroon),var(--wine));
+  color:var(--gold);
+  box-shadow:var(--shadow-sm);
+}
+.loc-btn.ghost{
+  background:transparent;
+  color:var(--wine);
+  border:1.5px solid rgba(107,31,31,.25);
+  font-family:'Inter',sans-serif; font-weight:600; text-transform:none;
+  letter-spacing:.02em;
+}
+.loc-btn:active{ transform:scale(.97); }
+.loc-btn:disabled{ opacity:.5; cursor:not-allowed; }
 
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{
@@ -1153,10 +741,8 @@ body{
   <div class="float-shape s1"></div>
   <div class="float-shape s2"></div>
   <div class="float-shape s3"></div>
-  <div class="float-shape s4"></div>
   <div class="float-cube c1"></div>
   <div class="float-cube c2"></div>
-  <div class="float-cube c3"></div>
 </div>
 
 <header class="topbar">
@@ -1257,280 +843,257 @@ body{
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<!-- LOCATION CHECK MODAL -->
+<div class="loc-overlay" id="locOverlay">
+  <div class="loc-modal">
+    <div class="loc-icon" id="locIcon">📍</div>
+    <h3 id="locTitle">Verifying your location</h3>
+    <p id="locDesc">Please allow location access. Orders can only be placed from inside Neelkanth or the surrounding shops.</p>
+    <div class="loc-status" id="locStatus">Checking…</div>
+    <div class="loc-actions">
+      <button class="loc-btn primary" id="locRetry" style="display:none;">Retry</button>
+      <button class="loc-btn ghost" id="locClose">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ============================================================
-   NEELKANTH MENU — data with PER-DISH ico types
+   NEELKANTH MENU — data + logic
    ============================================================ */
 
 const WA_NUMBER = "919812400009";
 
-/* Available ico types — see CSS */
+/* Neelkanth Star Dhaba — coords from Google Maps link */
+const RESTAURANT_LAT = 29.6785115;
+const RESTAURANT_LNG = 76.9917663;
+/* 250m radius — covers Neelkanth + surrounding 3-4 shops */
+const NEAR_RADIUS_M  = 250;
+
 const MENU = [
-  {
-    id:"beverages", name:"Beverages",
-    items:[
-      { n:"Tea", p:49, ico:"chai" },
-      { n:"Black Tea", p:49, ico:"chai" },
-      { n:"Dip Tea", p:49, ico:"chai" },
-      { n:"Lemon Tea", p:49, ico:"chai" },
-      { n:"Hot Milk", p:49, ico:"lassi" },
-      { n:"Hot Coffee", p:129, ico:"coffee" },
-      { n:"Black Coffee", p:129, ico:"coffee" },
-      { n:"Cold Coffee", p:159, ico:"coffee" },
-      { n:"Lime Water", p:99, ico:"soda" },
-      { n:"Fresh Lime Soda", p:119, ico:"soda" },
-      { n:"Lassi (Sweet & Salty)", p:149, ico:"lassi" },
-      { n:"Chhach Per Glass", p:149, ico:"lassi" },
-      { n:"Chhach Per Jug", p:259, ico:"lassi" },
-      { n:"Mineral Water", p:"MRP", ico:"soda" },
-      { n:"Mojito (Pan / Kacha Aamb / Water Melon)", p:149, ico:"soda" },
-      { n:"Soft Drink", p:"MRP", ico:"soda" },
-      { n:"Oreo Kitkat Shake", p:169, ico:"faluda" },
-      { n:"Strawberry Shake", p:169, ico:"faluda" }
-    ]
-  },
-  {
-    id:"desserts", name:"Desserts",
-    items:[
-      { n:"Special Chilled Kheer", p:119, ico:"kheer" },
-      { n:"Rabri Faluda", p:169, ico:"faluda" }
-    ]
-  },
-  {
-    id:"rice", name:"Rice",
-    items:[
-      { n:"Plain Rice", p:249, ico:"rice" },
-      { n:"Kashmiri Pulao", p:349, ico:"rice" },
-      { n:"Jeera Rice", p:249, ico:"rice" },
-      { n:"Veg. Fried Rice", p:299, ico:"rice" },
-      { n:"Veg. Biryani", p:349, ico:"biryani" },
-      { n:"Cheese Biryani", p:369, ico:"biryani" },
-      { n:"Veg. Pulao", p:299, ico:"rice" },
-      { n:"Veg. Hyderabadi Biryani", p:369, ico:"biryani" },
-      { n:"Neelkanth Special Biryani", p:399, ico:"biryani" }
-    ]
-  },
-  {
-    id:"salad", name:"Salad & Raita",
-    items:[
-      { n:"Green Salad", p:129, ico:"salad" },
-      { n:"Aloo Raita", p:169, ico:"raita" },
-      { n:"Plain Raita (Dahi)", p:99, ico:"raita" },
-      { n:"Mix Raita", p:169, ico:"raita" },
-      { n:"Pudina Raita", p:169, ico:"raita" },
-      { n:"Papad (Fried/Roasted)", p:30, ico:"papad" },
-      { n:"Onion Ring Salad", p:99, ico:"salad" },
-      { n:"Boondi Raita", p:169, ico:"raita" },
-      { n:"Pineapple Raita", p:199, ico:"raita" },
-      { n:"Masala Papad", p:69, ico:"papad" }
-    ]
-  },
-  {
-    id:"chinese", name:"Chinese",
-    items:[
-      { n:"Chana Chilli", p:269, ico:"chana" },
-      { n:"Honey Chilly Cauliflower", p:269, ico:"manchurian" },
-      { n:"Chilli Potato", p:269, ico:"manchurian" },
-      { n:"Spring Roll", p:269, ico:"pakora" },
-      { n:"Crispy Chilly Baby Corn", p:399, ico:"manchurian" },
-      { n:"Cheese Manchurian", p:399, ico:"manchurian" },
-      { n:"Gobhi Manchurian", p:419, ico:"manchurian" },
-      { n:"Veg. Manchurian-Gravy", p:399, ico:"manchurian" },
-      { n:"Veg. Manchurian-Dry", p:419, ico:"manchurian" },
-      { n:"Cheese Chilly-Dry", p:429, ico:"manchurian" },
-      { n:"Cheese Chilly Gravy", p:429, ico:"manchurian" },
-      { n:"Mushroom Chilly Gravy", p:419, ico:"mushroom" },
-      { n:"Mushroom Chilly-Dry", p:279, ico:"mushroom" },
-      { n:"Veg. Chowmin", p:299, ico:"noodle" },
-      { n:"Veg. Hakka Noodles", p:249, ico:"noodle" },
-      { n:"Veg. Manchow Soup", p:249, ico:"soup" },
-      { n:"Lemon Coriander Soup", p:249, ico:"soup" },
-      { n:"Veg. Sweet Corn Soup", p:249, ico:"soup" },
-      { n:"Hot & Sour Soup", p:249, ico:"soup" },
-      { n:"Talumein Soup", p:249, ico:"soup" },
-      { n:"Tomato Soup", p:249, ico:"soup" },
-      { n:"Veg. Cream Soup", p:249, ico:"soup" },
-      { n:"Mushroom Cream Soup", p:249, ico:"soup" },
-      { n:"Cream of Broccoli Soup", p:249, ico:"soup" },
-      { n:"Tomato Shorba", p:249, ico:"soup" },
-      { n:"Orien Sizzlers", p:499, ico:"sizzler" },
-      { n:"Italian Sizzlers", p:499, ico:"sizzler" },
-      { n:"Cheese Sizzlers", p:499, ico:"sizzler" },
-      { n:"Pasta Red Sauce", p:279, ico:"noodle" },
-      { n:"Pasta White Sauce", p:279, ico:"noodle" }
-    ]
-  },
-  {
-    id:"indian", name:"Indian Main Course",
-    items:[
-      { n:"Kadhai Paneer", p:419, ico:"paneer" },
-      { n:"Shahi Paneer", p:419, ico:"paneer" },
-      { n:"Paneer Handi", p:419, ico:"paneer" },
-      { n:"Palak Paneer", p:419, ico:"vegcurry" },
-      { n:"Paneer Pasanda", p:439, ico:"paneer" },
-      { n:"Cheese Butter Masala", p:439, ico:"paneer" },
-      { n:"Paneer Tikka Butter Masala", p:439, ico:"paneer" },
-      { n:"Matar Paneer", p:419, ico:"paneer" },
-      { n:"Cheese Tomato", p:419, ico:"paneer" },
-      { n:"Malai Kofta", p:419, ico:"paneer" },
-      { n:"Tawa Vegetable", p:439, ico:"vegcurry" },
-      { n:"Jeera Aloo", p:329, ico:"vegcurry" },
-      { n:"Chana Masala", p:329, ico:"chana" },
-      { n:"Dum Aloo Bhojpuri", p:329, ico:"dal" },
-      { n:"Navrattan Korma", p:439, ico:"vegcurry" },
-      { n:"Gobhi Masala", p:329, ico:"vegcurry" },
-      { n:"Paneer Maharaja", p:439, ico:"paneer" },
-      { n:"Dal Tadka Yellow", p:329, ico:"dal" },
-      { n:"Dal Makhani", p:329, ico:"dal" },
-      { n:"Dal Balti", p:339, ico:"dal" },
-      { n:"Dal Handi", p:339, ico:"dal" },
-      { n:"Dal Pachranga", p:339, ico:"dal" },
-      { n:"Mushroom Matar", p:419, ico:"mushroom" },
-      { n:"Mushroom Masala", p:419, ico:"mushroom" },
-      { n:"Mushroom Chilly", p:419, ico:"mushroom" },
-      { n:"Paneer Bhurji", p:419, ico:"paneer" },
-      { n:"Paneer Do Pyaza", p:419, ico:"paneer" },
-      { n:"Paneer Takatak", p:419, ico:"paneer" },
-      { n:"Neelkanth Special Paneer", p:449, ico:"paneer" },
-      { n:"Kadi Pakora", p:329, ico:"pakora" },
-      { n:"Rajma", p:329, ico:"dal" },
-      { n:"Mix Vegetable", p:329, ico:"vegcurry" },
-      { n:"Sarson Ka Saag (Seasonal)", p:329, ico:"vegcurry" },
-      { n:"Aloo Gobhi", p:329, ico:"vegcurry" },
-      { n:"Bhindi", p:329, ico:"vegcurry" },
-      { n:"Gajar Matar", p:329, ico:"vegcurry" },
-      { n:"Manchurian With Gravy", p:419, ico:"manchurian" },
-      { n:"Palak Corn", p:419, ico:"vegcurry" },
-      { n:"Paneer Lababdar", p:419, ico:"paneer" },
-      { n:"Paneer Banjara", p:419, ico:"paneer" },
-      { n:"Cheese Chilly", p:419, ico:"manchurian" },
-      { n:"Methi Malai Matar", p:419, ico:"vegcurry" },
-      { n:"Cheese Chilly With Gravy", p:429, ico:"manchurian" },
-      { n:"Mushroom Chilly With Gravy", p:429, ico:"mushroom" },
-      { n:"Mushroom Do Pyaza", p:419, ico:"mushroom" },
-      { n:"Soya Chaap With Gravy", p:419, ico:"vegcurry" }
-    ]
-  },
-  {
-    id:"mini", name:"Mini Meals",
-    items:[
-      { n:"Mini Meal (Sarson Ka Saag + Makki Ki Roti + 1 Glass Chhachh + Gur)", p:329, ico:"thali" }
-    ]
-  },
-  {
-    id:"snack", name:"Snack",
-    items:[
-      { n:"Veg Sandwich", p:169, ico:"sandwich" },
-      { n:"Butter Toast / Butter Slice", p:169, ico:"sandwich" },
-      { n:"Cheese Sandwich", p:189, ico:"sandwich" },
-      { n:"Grilled Mushroom Sandwich", p:189, ico:"sandwich" },
-      { n:"Grilled Sandwich / Coleslaw Sandwich", p:189, ico:"sandwich" },
-      { n:"Club Sandwich", p:219, ico:"sandwich" }
-    ]
-  },
-  {
-    id:"pakora", name:"Pakora Superhit",
-    items:[
-      { n:"Bread Pakora With Cheese", p:89, ico:"pakora" },
-      { n:"Veg Cutlets (2 Pcs) / French Fries", p:169, ico:"pakora" },
-      { n:"Paneer Pakora", p:189, ico:"pakora" },
-      { n:"Cheese Cutlet (2 Pcs)", p:179, ico:"pakora" },
-      { n:"Mix Pakora", p:169, ico:"pakora" },
-      { n:"Fresh Cheese", p:169, ico:"paneer" }
-    ]
-  },
-  {
-    id:"breads", name:"Breads",
-    items:[
-      { n:"Tandoori Roti / Tawa Roti", p:40, ico:"roti" },
-      { n:"Tawa Roti With Butter", p:42, ico:"roti" },
-      { n:"Tandoori Butter Roti", p:42, ico:"roti" },
-      { n:"Onion Chilly Roti", p:69, ico:"roti" },
-      { n:"Makki Ki Roti", p:69, ico:"roti" },
-      { n:"Missi Roti", p:69, ico:"roti" },
-      { n:"Lachha Parantha (With Butter)", p:99, ico:"roti" },
-      { n:"Aloo Parantha (With Butter)", p:129, ico:"roti" },
-      { n:"Stuffed Parantha (With Butter)", p:129, ico:"roti" },
-      { n:"Gobhi Parantha (With Butter)", p:129, ico:"roti" },
-      { n:"Paneer Parantha (With Butter)", p:129, ico:"roti" },
-      { n:"Mix Parantha (With Butter)", p:129, ico:"roti" },
-      { n:"Pudina Parantha (With Butter)", p:99, ico:"roti" },
-      { n:"Chilly Parantha (With Butter)", p:99, ico:"roti" },
-      { n:"Onion Parantha (With Butter)", p:129, ico:"roti" },
-      { n:"Onion Kulcha", p:139, ico:"roti" },
-      { n:"Cheese Kulcha", p:139, ico:"roti" },
-      { n:"Stuffed Kulcha", p:139, ico:"roti" },
-      { n:"Plain Naan", p:129, ico:"roti" },
-      { n:"Garlic Naan", p:139, ico:"roti" },
-      { n:"Stuffed Naan", p:139, ico:"roti" },
-      { n:"Paneer Naan", p:139, ico:"roti" },
-      { n:"Aloo Naan", p:139, ico:"roti" },
-      { n:"Butter Naan", p:129, ico:"roti" },
-      { n:"Amul Butter", p:15, ico:"butter" },
-      { n:"White Butter", p:15, ico:"butter" }
-    ]
-  },
-  {
-    id:"combo", name:"Combos & Thali",
-    items:[
-      { n:"Neelkanth Spl. (Gravy + 1 Cheese Naan & Plain Raita)", p:319, ico:"thali" },
-      { n:"Cholle Bhatura", p:219, ico:"chana" },
-      { n:"Poori Aloo", p:219, ico:"dal" },
-      { n:"Combo (Rajma + Rice + Raita + Dry Papad)", p:319, ico:"thali" },
-      { n:"Combo (Veg. Manchurian Gravy + Veg. Fried Rice)", p:319, ico:"thali" },
-      { n:"Combo (Cheese Chilly With Gravy + Veg. Noodles)", p:319, ico:"thali" },
-      { n:"Combo (Chana Masala + Stuffed Kulcha + Curd)", p:319, ico:"thali" },
-      { n:"Combo (Kadhi Pakora + Jeera Rice + 1 Lachha Parantha)", p:319, ico:"thali" },
-      { n:"Combo (Dal + 1 Stuffed Naan + Curd)", p:319, ico:"thali" },
-      { n:"Special Thali", p:495, ico:"thali" },
-      { n:"Takeaway Thali", p:359, ico:"thali" },
-      { n:"Veg. Biryani + Mix Raita", p:289, ico:"biryani" }
-    ]
-  },
-  {
-    id:"street", name:"Street Style",
-    items:[
-      { n:"Gol Gappe 6 Pcs.", p:89, ico:"street" },
-      { n:"Bharwa Gol Gappe", p:109, ico:"street" },
-      { n:"Dahi Bhalla / Chaat Papri / Bhalla Papri", p:119, ico:"raita" },
-      { n:"Raj Kachori", p:119, ico:"street" },
-      { n:"Pav Bhaji", p:169, ico:"street" },
-      { n:"Samosa 1 Pc.", p:59, ico:"pakora" },
-      { n:"Samosa Cholle / Kachori Aloo / Tikki", p:119, ico:"chana" },
-      { n:"Kachori Chutney", p:89, ico:"street" },
-      { n:"Vada Pav", p:89, ico:"street" },
-      { n:"Red Bull", p:"MRP", ico:"soda" },
-      { n:"Cold Drink 600ml", p:"MRP", ico:"soda" }
-    ]
-  },
-  {
-    id:"tandoori", name:"Tandoori Local",
-    items:[
-      { n:"Soya Chaap Tikka / Haryali Chaap Tikka", p:249, ico:"tandoori" },
-      { n:"Malai Chaap Tikka / Mushroom Tikka", p:279, ico:"tandoori" },
-      { n:"Mushroom Malai Tikka / Stuffed Mushroom", p:289, ico:"mushroom" },
-      { n:"Paneer Tikka / Paneer Achari Tikka", p:259, ico:"tandoori" },
-      { n:"Paneer Garlic Tikka / Paneer Malai", p:279, ico:"tandoori" },
-      { n:"Paneer Afgani Tikka / Paneer Mint Tikka", p:279, ico:"tandoori" },
-      { n:"Special Tandoori Platter", p:499, ico:"thali" },
-      { n:"Veg. Seekh Kabab / Methi Paneer Seekh", p:259, ico:"tandoori" },
-      { n:"Makhmali Chaap", p:269, ico:"tandoori" },
-      { n:"Harabhara Kabab", p:249, ico:"tandoori" }
-    ]
-  },
-  {
-    id:"sweets", name:"Sweets Treat",
-    items:[
-      { n:"Jalebi", p:119, ico:"jalebi" },
-      { n:"Jalebi With Rabri", p:139, ico:"jalebi" },
-      { n:"Gulab Jamun (1 Pc)", p:49, ico:"sweet" },
-      { n:"Sponge Rasgulla (1 Pc)", p:69, ico:"sweet" },
-      { n:"Rabri", p:89, ico:"kheer" },
-      { n:"Rasmalai (2 Pcs)", p:199, ico:"sweet" },
-      { n:"Kasora Milk / Gajar Halwa (Seasonal)", p:199, ico:"kheer" },
-      { n:"Moong Dal Halwa (Seasonal)", p:199, ico:"sweet" }
-    ]
-  }
+  { id:"beverages", name:"Beverages", items:[
+    { n:"Tea", p:49, ico:"chai" },
+    { n:"Black Tea", p:49, ico:"chai" },
+    { n:"Dip Tea", p:49, ico:"chai" },
+    { n:"Lemon Tea", p:49, ico:"chai" },
+    { n:"Hot Milk", p:49, ico:"lassi" },
+    { n:"Hot Coffee", p:129, ico:"coffee" },
+    { n:"Black Coffee", p:129, ico:"coffee" },
+    { n:"Cold Coffee", p:159, ico:"coffee" },
+    { n:"Lime Water", p:99, ico:"soda" },
+    { n:"Fresh Lime Soda", p:119, ico:"soda" },
+    { n:"Lassi (Sweet & Salty)", p:149, ico:"lassi" },
+    { n:"Chhach Per Glass", p:149, ico:"lassi" },
+    { n:"Chhach Per Jug", p:259, ico:"lassi" },
+    { n:"Mineral Water", p:"MRP", ico:"soda" },
+    { n:"Mojito (Pan / Kacha Aamb / Water Melon)", p:149, ico:"soda" },
+    { n:"Soft Drink", p:"MRP", ico:"soda" },
+    { n:"Oreo Kitkat Shake", p:169, ico:"faluda" },
+    { n:"Strawberry Shake", p:169, ico:"faluda" }
+  ]},
+  { id:"desserts", name:"Desserts", items:[
+    { n:"Special Chilled Kheer", p:119, ico:"kheer" },
+    { n:"Rabri Faluda", p:169, ico:"faluda" }
+  ]},
+  { id:"rice", name:"Rice", items:[
+    { n:"Plain Rice", p:249, ico:"rice" },
+    { n:"Kashmiri Pulao", p:349, ico:"rice" },
+    { n:"Jeera Rice", p:249, ico:"rice" },
+    { n:"Veg. Fried Rice", p:299, ico:"rice" },
+    { n:"Veg. Biryani", p:349, ico:"biryani" },
+    { n:"Cheese Biryani", p:369, ico:"biryani" },
+    { n:"Veg. Pulao", p:299, ico:"rice" },
+    { n:"Veg. Hyderabadi Biryani", p:369, ico:"biryani" },
+    { n:"Neelkanth Special Biryani", p:399, ico:"biryani" }
+  ]},
+  { id:"salad", name:"Salad & Raita", items:[
+    { n:"Green Salad", p:129, ico:"salad" },
+    { n:"Aloo Raita", p:169, ico:"raita" },
+    { n:"Plain Raita (Dahi)", p:99, ico:"raita" },
+    { n:"Mix Raita", p:169, ico:"raita" },
+    { n:"Pudina Raita", p:169, ico:"raita" },
+    { n:"Papad (Fried/Roasted)", p:30, ico:"papad" },
+    { n:"Onion Ring Salad", p:99, ico:"salad" },
+    { n:"Boondi Raita", p:169, ico:"raita" },
+    { n:"Pineapple Raita", p:199, ico:"raita" },
+    { n:"Masala Papad", p:69, ico:"papad" }
+  ]},
+  { id:"chinese", name:"Chinese", items:[
+    { n:"Chana Chilli", p:269, ico:"chana" },
+    { n:"Honey Chilly Cauliflower", p:269, ico:"manchurian" },
+    { n:"Chilli Potato", p:269, ico:"manchurian" },
+    { n:"Spring Roll", p:269, ico:"pakora" },
+    { n:"Crispy Chilly Baby Corn", p:399, ico:"manchurian" },
+    { n:"Cheese Manchurian", p:399, ico:"manchurian" },
+    { n:"Gobhi Manchurian", p:419, ico:"manchurian" },
+    { n:"Veg. Manchurian-Gravy", p:399, ico:"manchurian" },
+    { n:"Veg. Manchurian-Dry", p:419, ico:"manchurian" },
+    { n:"Cheese Chilly-Dry", p:429, ico:"manchurian" },
+    { n:"Cheese Chilly Gravy", p:429, ico:"manchurian" },
+    { n:"Mushroom Chilly Gravy", p:419, ico:"mushroom" },
+    { n:"Mushroom Chilly-Dry", p:279, ico:"mushroom" },
+    { n:"Veg. Chowmin", p:299, ico:"noodle" },
+    { n:"Veg. Hakka Noodles", p:249, ico:"noodle" },
+    { n:"Veg. Manchow Soup", p:249, ico:"soup" },
+    { n:"Lemon Coriander Soup", p:249, ico:"soup" },
+    { n:"Veg. Sweet Corn Soup", p:249, ico:"soup" },
+    { n:"Hot & Sour Soup", p:249, ico:"soup" },
+    { n:"Talumein Soup", p:249, ico:"soup" },
+    { n:"Tomato Soup", p:249, ico:"soup" },
+    { n:"Veg. Cream Soup", p:249, ico:"soup" },
+    { n:"Mushroom Cream Soup", p:249, ico:"soup" },
+    { n:"Cream of Broccoli Soup", p:249, ico:"soup" },
+    { n:"Tomato Shorba", p:249, ico:"soup" },
+    { n:"Orien Sizzlers", p:499, ico:"sizzler" },
+    { n:"Italian Sizzlers", p:499, ico:"sizzler" },
+    { n:"Cheese Sizzlers", p:499, ico:"sizzler" },
+    { n:"Pasta Red Sauce", p:279, ico:"noodle" },
+    { n:"Pasta White Sauce", p:279, ico:"noodle" }
+  ]},
+  { id:"indian", name:"Indian Main Course", items:[
+    { n:"Kadhai Paneer", p:419, ico:"paneer" },
+    { n:"Shahi Paneer", p:419, ico:"paneer" },
+    { n:"Paneer Handi", p:419, ico:"paneer" },
+    { n:"Palak Paneer", p:419, ico:"vegcurry" },
+    { n:"Paneer Pasanda", p:439, ico:"paneer" },
+    { n:"Cheese Butter Masala", p:439, ico:"paneer" },
+    { n:"Paneer Tikka Butter Masala", p:439, ico:"paneer" },
+    { n:"Matar Paneer", p:419, ico:"paneer" },
+    { n:"Cheese Tomato", p:419, ico:"paneer" },
+    { n:"Malai Kofta", p:419, ico:"paneer" },
+    { n:"Tawa Vegetable", p:439, ico:"vegcurry" },
+    { n:"Jeera Aloo", p:329, ico:"vegcurry" },
+    { n:"Chana Masala", p:329, ico:"chana" },
+    { n:"Dum Aloo Bhojpuri", p:329, ico:"dal" },
+    { n:"Navrattan Korma", p:439, ico:"vegcurry" },
+    { n:"Gobhi Masala", p:329, ico:"vegcurry" },
+    { n:"Paneer Maharaja", p:439, ico:"paneer" },
+    { n:"Dal Tadka Yellow", p:329, ico:"dal" },
+    { n:"Dal Makhani", p:329, ico:"dal" },
+    { n:"Dal Balti", p:339, ico:"dal" },
+    { n:"Dal Handi", p:339, ico:"dal" },
+    { n:"Dal Pachranga", p:339, ico:"dal" },
+    { n:"Mushroom Matar", p:419, ico:"mushroom" },
+    { n:"Mushroom Masala", p:419, ico:"mushroom" },
+    { n:"Mushroom Chilly", p:419, ico:"mushroom" },
+    { n:"Paneer Bhurji", p:419, ico:"paneer" },
+    { n:"Paneer Do Pyaza", p:419, ico:"paneer" },
+    { n:"Paneer Takatak", p:419, ico:"paneer" },
+    { n:"Neelkanth Special Paneer", p:449, ico:"paneer" },
+    { n:"Kadi Pakora", p:329, ico:"pakora" },
+    { n:"Rajma", p:329, ico:"dal" },
+    { n:"Mix Vegetable", p:329, ico:"vegcurry" },
+    { n:"Sarson Ka Saag (Seasonal)", p:329, ico:"vegcurry" },
+    { n:"Aloo Gobhi", p:329, ico:"vegcurry" },
+    { n:"Bhindi", p:329, ico:"vegcurry" },
+    { n:"Gajar Matar", p:329, ico:"vegcurry" },
+    { n:"Manchurian With Gravy", p:419, ico:"manchurian" },
+    { n:"Palak Corn", p:419, ico:"vegcurry" },
+    { n:"Paneer Lababdar", p:419, ico:"paneer" },
+    { n:"Paneer Banjara", p:419, ico:"paneer" },
+    { n:"Cheese Chilly", p:419, ico:"manchurian" },
+    { n:"Methi Malai Matar", p:419, ico:"vegcurry" },
+    { n:"Cheese Chilly With Gravy", p:429, ico:"manchurian" },
+    { n:"Mushroom Chilly With Gravy", p:429, ico:"mushroom" },
+    { n:"Mushroom Do Pyaza", p:419, ico:"mushroom" },
+    { n:"Soya Chaap With Gravy", p:419, ico:"vegcurry" }
+  ]},
+  { id:"mini", name:"Mini Meals", items:[
+    { n:"Mini Meal (Sarson Ka Saag + Makki Ki Roti + 1 Glass Chhachh + Gur)", p:329, ico:"thali" }
+  ]},
+  { id:"snack", name:"Snack", items:[
+    { n:"Veg Sandwich", p:169, ico:"sandwich" },
+    { n:"Butter Toast / Butter Slice", p:169, ico:"sandwich" },
+    { n:"Cheese Sandwich", p:189, ico:"sandwich" },
+    { n:"Grilled Mushroom Sandwich", p:189, ico:"sandwich" },
+    { n:"Grilled Sandwich / Coleslaw Sandwich", p:189, ico:"sandwich" },
+    { n:"Club Sandwich", p:219, ico:"sandwich" }
+  ]},
+  { id:"pakora", name:"Pakora Superhit", items:[
+    { n:"Bread Pakora With Cheese", p:89, ico:"pakora" },
+    { n:"Veg Cutlets (2 Pcs) / French Fries", p:169, ico:"pakora" },
+    { n:"Paneer Pakora", p:189, ico:"pakora" },
+    { n:"Cheese Cutlet (2 Pcs)", p:179, ico:"pakora" },
+    { n:"Mix Pakora", p:169, ico:"pakora" },
+    { n:"Fresh Cheese", p:169, ico:"paneer" }
+  ]},
+  { id:"breads", name:"Breads", items:[
+    { n:"Tandoori Roti / Tawa Roti", p:40, ico:"roti" },
+    { n:"Tawa Roti With Butter", p:42, ico:"roti" },
+    { n:"Tandoori Butter Roti", p:42, ico:"roti" },
+    { n:"Onion Chilly Roti", p:69, ico:"roti" },
+    { n:"Makki Ki Roti", p:69, ico:"roti" },
+    { n:"Missi Roti", p:69, ico:"roti" },
+    { n:"Lachha Parantha (With Butter)", p:99, ico:"roti" },
+    { n:"Aloo Parantha (With Butter)", p:129, ico:"roti" },
+    { n:"Stuffed Parantha (With Butter)", p:129, ico:"roti" },
+    { n:"Gobhi Parantha (With Butter)", p:129, ico:"roti" },
+    { n:"Paneer Parantha (With Butter)", p:129, ico:"roti" },
+    { n:"Mix Parantha (With Butter)", p:129, ico:"roti" },
+    { n:"Pudina Parantha (With Butter)", p:99, ico:"roti" },
+    { n:"Chilly Parantha (With Butter)", p:99, ico:"roti" },
+    { n:"Onion Parantha (With Butter)", p:129, ico:"roti" },
+    { n:"Onion Kulcha", p:139, ico:"roti" },
+    { n:"Cheese Kulcha", p:139, ico:"roti" },
+    { n:"Stuffed Kulcha", p:139, ico:"roti" },
+    { n:"Plain Naan", p:129, ico:"roti" },
+    { n:"Garlic Naan", p:139, ico:"roti" },
+    { n:"Stuffed Naan", p:139, ico:"roti" },
+    { n:"Paneer Naan", p:139, ico:"roti" },
+    { n:"Aloo Naan", p:139, ico:"roti" },
+    { n:"Butter Naan", p:129, ico:"roti" },
+    { n:"Amul Butter", p:15, ico:"butter" },
+    { n:"White Butter", p:15, ico:"butter" }
+  ]},
+  { id:"combo", name:"Combos & Thali", items:[
+    { n:"Neelkanth Spl. (Gravy + 1 Cheese Naan & Plain Raita)", p:319, ico:"thali" },
+    { n:"Cholle Bhatura", p:219, ico:"chana" },
+    { n:"Poori Aloo", p:219, ico:"dal" },
+    { n:"Combo (Rajma + Rice + Raita + Dry Papad)", p:319, ico:"thali" },
+    { n:"Combo (Veg. Manchurian Gravy + Veg. Fried Rice)", p:319, ico:"thali" },
+    { n:"Combo (Cheese Chilly With Gravy + Veg. Noodles)", p:319, ico:"thali" },
+    { n:"Combo (Chana Masala + Stuffed Kulcha + Curd)", p:319, ico:"thali" },
+    { n:"Combo (Kadhi Pakora + Jeera Rice + 1 Lachha Parantha)", p:319, ico:"thali" },
+    { n:"Combo (Dal + 1 Stuffed Naan + Curd)", p:319, ico:"thali" },
+    { n:"Special Thali", p:495, ico:"thali" },
+    { n:"Takeaway Thali", p:359, ico:"thali" },
+    { n:"Veg. Biryani + Mix Raita", p:289, ico:"biryani" }
+  ]},
+  { id:"street", name:"Street Style", items:[
+    { n:"Gol Gappe 6 Pcs.", p:89, ico:"street" },
+    { n:"Bharwa Gol Gappe", p:109, ico:"street" },
+    { n:"Dahi Bhalla / Chaat Papri / Bhalla Papri", p:119, ico:"raita" },
+    { n:"Raj Kachori", p:119, ico:"street" },
+    { n:"Pav Bhaji", p:169, ico:"street" },
+    { n:"Samosa 1 Pc.", p:59, ico:"pakora" },
+    { n:"Samosa Cholle / Kachori Aloo / Tikki", p:119, ico:"chana" },
+    { n:"Kachori Chutney", p:89, ico:"street" },
+    { n:"Vada Pav", p:89, ico:"street" },
+    { n:"Red Bull", p:"MRP", ico:"soda" },
+    { n:"Cold Drink 600ml", p:"MRP", ico:"soda" }
+  ]},
+  { id:"tandoori", name:"Tandoori Local", items:[
+    { n:"Soya Chaap Tikka / Haryali Chaap Tikka", p:249, ico:"tandoori" },
+    { n:"Malai Chaap Tikka / Mushroom Tikka", p:279, ico:"tandoori" },
+    { n:"Mushroom Malai Tikka / Stuffed Mushroom", p:289, ico:"mushroom" },
+    { n:"Paneer Tikka / Paneer Achari Tikka", p:259, ico:"tandoori" },
+    { n:"Paneer Garlic Tikka / Paneer Malai", p:279, ico:"tandoori" },
+    { n:"Paneer Afgani Tikka / Paneer Mint Tikka", p:279, ico:"tandoori" },
+    { n:"Special Tandoori Platter", p:499, ico:"thali" },
+    { n:"Veg. Seekh Kabab / Methi Paneer Seekh", p:259, ico:"tandoori" },
+    { n:"Makhmali Chaap", p:269, ico:"tandoori" },
+    { n:"Harabhara Kabab", p:249, ico:"tandoori" }
+  ]},
+  { id:"sweets", name:"Sweets Treat", items:[
+    { n:"Jalebi", p:119, ico:"jalebi" },
+    { n:"Jalebi With Rabri", p:139, ico:"jalebi" },
+    { n:"Gulab Jamun (1 Pc)", p:49, ico:"sweet" },
+    { n:"Sponge Rasgulla (1 Pc)", p:69, ico:"sweet" },
+    { n:"Rabri", p:89, ico:"kheer" },
+    { n:"Rasmalai (2 Pcs)", p:199, ico:"sweet" },
+    { n:"Kasora Milk / Gajar Halwa (Seasonal)", p:199, ico:"kheer" },
+    { n:"Moong Dal Halwa (Seasonal)", p:199, ico:"sweet" }
+  ]}
 ];
 
 let cart = JSON.parse(localStorage.getItem('neelkanth_cart') || '{}');
@@ -1550,6 +1113,7 @@ function toast(msg){
   t._tm = setTimeout(()=>t.classList.remove("show"), 1900);
 }
 
+/* ---------- render ---------- */
 function renderChips(){
   const wrap = $("#chips");
   MENU.forEach((sec, i)=>{
@@ -1581,12 +1145,12 @@ function renderMenu(){
         <span class="line"></span>
       </div>
     `;
-    sec.items.forEach((item, idx)=>{
+    sec.items.forEach((item)=>{
       const el = document.createElement("div");
       el.className = "item";
       el.tabIndex = 0;
       el.innerHTML = `
-        <div class="dish-ico ico-${item.ico}" aria-hidden="true" style="animation-delay:${(idx%6)*0.35}s">
+        <div class="dish-ico ico-${item.ico}" aria-hidden="true">
           <div class="ico-inner"></div>
         </div>
         <div class="item-body">
@@ -1614,15 +1178,14 @@ function initScrollSpy(){
       if (en.isIntersecting){
         chips.forEach(c=> c.classList.toggle("active", c.dataset.target === en.target.id));
         const activeChip = document.querySelector('.chip.active');
-        if (activeChip){
-          activeChip.scrollIntoView({ behavior:"smooth", inline:"center", block:"nearest" });
-        }
+        if (activeChip) activeChip.scrollIntoView({ behavior:"smooth", inline:"center", block:"nearest" });
       }
     });
   }, { rootMargin:"-120px 0px -70% 0px", threshold:0 });
   sections.forEach(s=> obs.observe(s));
 }
 
+/* ---------- sheet ---------- */
 function openSheet(sec, item){
   activeItem = { ...item, section: sec.name };
   activeQty = 1;
@@ -1660,20 +1223,16 @@ $("#addBtn").addEventListener("click", ()=>{
   toast("✅ Added to order");
 });
 
+/* ---------- cart ---------- */
 function saveCart(){
   localStorage.setItem('neelkanth_cart', JSON.stringify(cart));
   renderCart();
   updateBadges();
 }
-function cartCount(){
-  return Object.values(cart).reduce((a, c)=> a + c.qty, 0);
-}
-function cartTotal(){
-  return Object.values(cart).reduce((a, c)=> a + priceNum(c.price) * c.qty, 0);
-}
-function hasMRP(){
-  return Object.values(cart).some(c=> c.price === "MRP");
-}
+function cartCount(){ return Object.values(cart).reduce((a, c)=> a + c.qty, 0); }
+function cartTotal(){ return Object.values(cart).reduce((a, c)=> a + priceNum(c.price) * c.qty, 0); }
+function hasMRP(){ return Object.values(cart).some(c=> c.price === "MRP"); }
+
 function updateBadges(){
   const n = cartCount();
   const cc = $("#cartCount");
@@ -1688,6 +1247,7 @@ function updateBadges(){
     bar.classList.remove("show");
   }
 }
+
 function renderCart(){
   const body = $("#cartBody");
   const keys = Object.keys(cart);
@@ -1716,10 +1276,7 @@ function renderCart(){
       b.addEventListener("click", ()=>{
         const k = b.dataset.k;
         if (b.dataset.act === "inc") cart[k].qty++;
-        else {
-          cart[k].qty--;
-          if (cart[k].qty <= 0) delete cart[k];
-        }
+        else { cart[k].qty--; if (cart[k].qty <= 0) delete cart[k]; }
         saveCart();
       });
     });
@@ -1744,9 +1301,123 @@ $("#cartBar").addEventListener("click", openCart);
 $("#cartClose").addEventListener("click", closeCart);
 $("#cartOverlay").addEventListener("click", closeCart);
 
+/* ============================================================
+   LOCATION GATE — before WhatsApp order
+   ============================================================ */
+const locOverlay = $("#locOverlay");
+const locIcon = $("#locIcon");
+const locTitle = $("#locTitle");
+const locDesc = $("#locDesc");
+const locStatus = $("#locStatus");
+const locRetry = $("#locRetry");
+const locClose = $("#locClose");
+
+let pendingWAMessage = null;
+let locChecking = false;
+
+function haversineMeters(lat1, lon1, lat2, lon2){
+  const R = 6371000;
+  const toRad = (d)=> d * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat/2)**2 +
+            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+            Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function openLocModal(){
+  locOverlay.classList.add("show");
+  document.body.style.overflow = "hidden";
+}
+function closeLocModal(){
+  locOverlay.classList.remove("show");
+  document.body.style.overflow = "";
+  pendingWAMessage = null;
+  locRetry.style.display = "none";
+  locIcon.textContent = "📍";
+  locTitle.textContent = "Verifying your location";
+  locDesc.textContent = "Please allow location access. Orders can only be placed from inside Neelkanth or the surrounding shops.";
+  locStatus.textContent = "Checking…";
+  locStatus.className = "loc-status";
+}
+
+function setLocStatus(msg, cls){
+  locStatus.textContent = msg;
+  locStatus.className = "loc-status" + (cls ? " " + cls : "");
+}
+
+function checkLocationAndSend(){
+  if (!("geolocation" in navigator)){
+    locIcon.textContent = "❌";
+    locTitle.textContent = "Location not supported";
+    locDesc.textContent = "Your browser doesn't support location. Please place your order at the counter.";
+    setLocStatus("Location not available on this device.", "err");
+    locRetry.style.display = "block";
+    return;
+  }
+  locChecking = true;
+  locRetry.disabled = true;
+  setLocStatus("Checking your location…");
+  locIcon.textContent = "📍";
+
+  navigator.geolocation.getCurrentPosition(
+    (pos)=>{
+      locChecking = false;
+      locRetry.disabled = false;
+      const { latitude, longitude, accuracy } = pos.coords;
+      const dist = haversineMeters(latitude, longitude, RESTAURANT_LAT, RESTAURANT_LNG);
+      // GPS inaccuracy buffer — indoor can be 50-150m
+      const effectiveDist = Math.max(0, dist - Math.min(accuracy || 0, 200));
+
+      if (effectiveDist <= NEAR_RADIUS_M){
+        locIcon.textContent = "✅";
+        locTitle.textContent = "You're at Neelkanth!";
+        setLocStatus(`Within ${Math.round(dist)}m — opening WhatsApp…`, "ok");
+        locDesc.textContent = "Thanks! We're opening WhatsApp to send your order.";
+        // short delay so user sees the success state, then fire WhatsApp
+        setTimeout(()=>{
+          closeLocModal();
+          closeCart();
+          window.open(pendingWAMessage, "_blank");
+          pendingWAMessage = null;
+        }, 900);
+      } else {
+        locIcon.textContent = "🚫";
+        locTitle.textContent = "You're too far away";
+        locDesc.textContent = "Orders can only be placed from inside Neelkanth Star Dhaba or the surrounding shops.";
+        setLocStatus(`You're about ${Math.round(dist)}m away.`, "err");
+        locRetry.style.display = "block";
+      }
+    },
+    (err)=>{
+      locChecking = false;
+      locRetry.disabled = false;
+      locIcon.textContent = "⚠️";
+      locTitle.textContent = "Couldn't get location";
+      let msg = "Please enable location and try again.";
+      if (err.code === 1) msg = "Location permission denied. Please allow it and try again.";
+      else if (err.code === 2) msg = "Location unavailable. Move to an open area and retry.";
+      else if (err.code === 3) msg = "Location request timed out. Try again.";
+      locDesc.textContent = "We need your location to confirm you're at Neelkanth before sending the order.";
+      setLocStatus(msg, "err");
+      locRetry.style.display = "block";
+    },
+    { enableHighAccuracy:true, timeout:12000, maximumAge:30000 }
+  );
+}
+
+locRetry.addEventListener("click", checkLocationAndSend);
+locClose.addEventListener("click", closeLocModal);
+locOverlay.addEventListener("click", (e)=>{
+  if (e.target === locOverlay) closeLocModal();
+});
+
+/* ---------- WhatsApp order (with location gate) ---------- */
 $("#waBtn").addEventListener("click", ()=>{
   const keys = Object.keys(cart);
   if (keys.length === 0) return;
+
   let msg = "Hello Neelkanth! 👋%0A%0AI'd like to place an order:%0A%0A";
   keys.forEach(k=>{
     const c = cart[k];
@@ -1754,41 +1425,20 @@ $("#waBtn").addEventListener("click", ()=>{
   });
   msg += `%0A*Subtotal:* ${hasMRP() ? "₹" + cartTotal() + " + MRP items" : "₹" + cartTotal()}`;
   msg += `%0A(Self Food Charges ₹30/person + taxes extra)%0A%0AName: %0ATable No: `;
-  window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`, "_blank");
+  pendingWAMessage = `https://wa.me/${WA_NUMBER}?text=${msg}`;
+
+  // fire location check
+  openLocModal();
+  checkLocationAndSend();
 });
 
+/* ---------- init ---------- */
 document.getElementById('yr').textContent = new Date().getFullYear();
 renderChips();
 renderMenu();
 renderCart();
 updateBadges();
 initScrollSpy();
-
-/* 3D icon tilt on hover — desktop */
-const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-if (!reduce && window.matchMedia('(pointer:fine)').matches){
-  document.querySelectorAll('.item').forEach(item=>{
-    item.addEventListener('mousemove', (e)=>{
-      const ico = item.querySelector('.dish-ico .ico-inner');
-      if (!ico) return;
-      const r = item.getBoundingClientRect();
-      const px = (e.clientX - r.left) / r.width - .5;
-      const py = (e.clientY - r.top) / r.height - .5;
-      ico.style.transform = `rotateX(${py * -28}deg) rotateY(${px * 28}deg) scale(1.1)`;
-    });
-    item.addEventListener('mouseleave', ()=>{
-      const ico = item.querySelector('.dish-ico .ico-inner');
-      if (ico) ico.style.transform = '';
-    });
-  });
-
-  const bgLogo = document.querySelector('.bg-logo');
-  window.addEventListener('mousemove', (e)=>{
-    const x = (e.clientX / window.innerWidth - .5);
-    const y = (e.clientY / window.innerHeight - .5);
-    if (bgLogo) bgLogo.style.transform = `translate(-50%,-50%) translate(${x * 14}px, ${y * 14}px)`;
-  }, { passive:true });
-}
 </script>
 
 </body>
