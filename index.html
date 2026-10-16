@@ -17,7 +17,6 @@
   --navy-dark:#142C52;
   --navy-soft:#2A4F8A;
   --gold:#F2C200;
-  --gold-soft:#FFD95A;
   --red:#D62828;
   --purple:#5B2A86;
   --cream:#FBF6EC;
@@ -28,7 +27,6 @@
   --shadow-md:0 12px 32px -14px rgba(27,58,107,.35);
   --shadow-sm:0 6px 18px -10px rgba(27,58,107,.30);
 }
-
 *{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 html{ scroll-behavior:smooth; }
 body{
@@ -41,19 +39,14 @@ body{
   line-height:1.5;
 }
 
-/* ============================================================
-   ANIMATED BACKGROUND — logo + orbs + stars (no 3D shapes)
-   ============================================================ */
+/* BACKGROUND */
 .bg-stage{
   position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none;
   background:
     radial-gradient(1000px 600px at 12% -8%, #1B3A6B1a, transparent 62%),
     radial-gradient(900px 600px at 100% 4%, #F2C2001a, transparent 58%),
-    radial-gradient(800px 800px at 50% 115%, #5B2A8614, transparent 62%),
     linear-gradient(180deg,#FBF6EC 0%,#F5EDDC 100%);
 }
-
-/* rotating logo behind everything */
 .bg-logo{
   position:absolute;
   top:50%; left:50%;
@@ -61,7 +54,7 @@ body{
   height:min(92vw, 680px);
   transform:translate(-50%, -50%);
   opacity:.07;
-  filter:blur(1.5px) saturate(1.05);
+  filter:blur(1.5px);
   animation:logoSpin 52s linear infinite, logoPulse 8s ease-in-out infinite;
   will-change:transform, opacity;
 }
@@ -73,46 +66,28 @@ body{
   0%,100%{ opacity:.06; }
   50%{ opacity:.11; }
 }
-
-/* soft gradient orbs */
 .orb{
-  position:absolute;
-  border-radius:50%;
-  filter:blur(80px);
-  opacity:.32;
+  position:absolute; border-radius:50%; filter:blur(80px); opacity:.32;
   animation:orbFloat 28s ease-in-out infinite;
 }
-.orb.a{
-  width:320px; height:320px; left:-90px; top:-50px;
-  background:radial-gradient(circle at 30% 30%, #F2C200, #D62828 70%);
-}
-.orb.b{
-  width:280px; height:280px; right:-80px; top:35%;
-  background:radial-gradient(circle at 30% 30%, #5B2A86, #1B3A6B 70%);
-  animation-delay:-9s;
-}
-.orb.c{
-  width:240px; height:240px; left:18%; bottom:-70px;
-  background:radial-gradient(circle at 30% 30%, #D62828, #F2C200 70%);
-  animation-delay:-16s;
-  opacity:.26;
-}
+.orb.a{ width:320px; height:320px; left:-90px; top:-50px;
+  background:radial-gradient(circle at 30% 30%, #F2C200, #D62828 70%); }
+.orb.b{ width:280px; height:280px; right:-80px; top:35%;
+  background:radial-gradient(circle at 30% 30%, #5B2A86, #1B3A6B 70%); animation-delay:-9s; }
+.orb.c{ width:240px; height:240px; left:18%; bottom:-70px;
+  background:radial-gradient(circle at 30% 30%, #D62828, #F2C200 70%); animation-delay:-16s; opacity:.26; }
 @keyframes orbFloat{
   0%,100%{ transform:translate(0,0) scale(1); }
   50%{ transform:translate(25px,-30px) scale(1.08); }
 }
-
-/* subtle drifting star dots */
 .starfield{
-  position:absolute;
-  inset:0;
+  position:absolute; inset:0;
   background-image:
     radial-gradient(2px 2px at 20px 30px, #F2C20055, transparent),
     radial-gradient(2px 2px at 120px 90px, #D6282844, transparent),
     radial-gradient(1.5px 1.5px at 220px 40px, #5B2A8644, transparent),
     radial-gradient(2px 2px at 320px 150px, #F2C20055, transparent),
-    radial-gradient(1.5px 1.5px at 420px 80px, #8A2E2E44, transparent),
-    radial-gradient(2px 2px at 520px 200px, #F2C20055, transparent);
+    radial-gradient(1.5px 1.5px at 420px 80px, #8A2E2E44, transparent);
   background-size:600px 300px;
   background-repeat:repeat;
   opacity:.5;
@@ -122,19 +97,31 @@ body{
   from{ background-position:0 0; }
   to{ background-position:600px 300px; }
 }
-
-/* light grain */
 .grain{
-  position:absolute;
-  inset:0;
-  opacity:.05;
-  mix-blend-mode:multiply;
+  position:absolute; inset:0; opacity:.05; mix-blend-mode:multiply;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
 }
 
-/* ============================================================
-   PAGE WRAP
-   ============================================================ */
+/* TABLE BADGE */
+.table-badge{
+  position:fixed; top:14px; right:14px;
+  z-index:50;
+  padding:8px 14px;
+  border-radius:999px;
+  background:linear-gradient(135deg,var(--navy),var(--navy-dark));
+  color:var(--gold);
+  font-family:'Cinzel',serif;
+  font-weight:700;
+  font-size:12px;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  box-shadow:var(--shadow-md);
+  display:none;
+  border:1px solid rgba(242,194,0,.35);
+  animation:fadeUp .6s both;
+}
+.table-badge.show{ display:block; }
+
 .page{
   position:relative; z-index:1;
   max-width:1100px;
@@ -144,10 +131,6 @@ body{
   flex-direction:column;
   min-height:100dvh;
 }
-
-/* ============================================================
-   BRAND
-   ============================================================ */
 .brand{
   text-align:center;
   animation:dropIn .9s cubic-bezier(.2,.8,.25,1) both;
@@ -156,7 +139,6 @@ body{
   from{ opacity:0; transform:translateY(-18px); }
   to{ opacity:1; transform:translateY(0); }
 }
-
 .brand-logo{
   width:min(260px, 68vw);
   max-width:260px;
@@ -169,7 +151,6 @@ body{
   0%,100%{ transform:translateY(0); }
   50%{ transform:translateY(-8px); }
 }
-
 .tagline{
   margin-top:14px;
   font-family:'Cormorant Garamond', serif;
@@ -191,10 +172,6 @@ body{
   border-radius:2px;
   animation:fadeUp 1s .35s both;
 }
-
-/* ============================================================
-   WELCOME
-   ============================================================ */
 .welcome{
   text-align:center;
   margin:26px 0 22px;
@@ -212,10 +189,6 @@ body{
   color:var(--ink-soft);
   font-size:clamp(13.5px, 3.8vw, 15px);
 }
-
-/* ============================================================
-   CARDS
-   ============================================================ */
 .cards{
   display:grid;
   grid-template-columns:1fr;
@@ -225,7 +198,6 @@ body{
 @media(min-width:640px){
   .cards{ grid-template-columns:1fr 1fr; gap:18px; }
 }
-
 .card{
   position:relative;
   display:flex;
@@ -252,18 +224,15 @@ body{
 @keyframes cardIn{
   to{ opacity:1; transform:translateY(0); }
 }
-
 .card::before{
   content:"";
-  position:absolute;
-  inset:0;
+  position:absolute; inset:0;
   background:linear-gradient(120deg, transparent 30%, rgba(242,194,0,.16) 50%, transparent 70%);
   transform:translateX(-120%);
   transition:transform .8s ease;
   pointer-events:none;
 }
 .card:hover::before, .card:focus-visible::before{ transform:translateX(120%); }
-
 .card:hover, .card:focus-visible{
   transform:translateY(-4px);
   box-shadow:var(--shadow-lg);
@@ -271,23 +240,19 @@ body{
   outline:none;
 }
 .card:active{ transform:translateY(-1px) scale(.99); }
-
 .card-icon{
   flex:0 0 auto;
   width:58px; height:58px;
   border-radius:16px;
-  display:grid;
-  place-items:center;
+  display:grid; place-items:center;
   font-size:26px;
   color:var(--gold);
   box-shadow:inset 0 -3px 0 rgba(0,0,0,.18), 0 8px 18px -10px rgba(27,58,107,.5);
-  position:relative;
-  z-index:1;
+  position:relative; z-index:1;
 }
 .card-icon::after{
   content:"";
-  position:absolute;
-  inset:3px;
+  position:absolute; inset:3px;
   border-radius:13px;
   border:1px solid rgba(242,194,0,.35);
   pointer-events:none;
@@ -296,7 +261,6 @@ body{
 .card:nth-child(2) .card-icon{ background:linear-gradient(145deg,#5B2A86,#1B3A6B); }
 .card:nth-child(3) .card-icon{ background:linear-gradient(145deg,#D62828,#1B3A6B); }
 .card:nth-child(4) .card-icon{ background:linear-gradient(145deg,#142C52,#5B2A86); }
-
 .card-body{ flex:1; min-width:0; position:relative; z-index:1; }
 .card-title{
   font-family:'Cinzel', serif;
@@ -304,10 +268,7 @@ body{
   font-size:clamp(15px, 4.4vw, 18px);
   color:var(--navy);
   letter-spacing:.03em;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  flex-wrap:wrap;
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
 }
 .card-sub{
   margin-top:4px;
@@ -319,21 +280,18 @@ body{
   flex:0 0 auto;
   width:34px; height:34px;
   border-radius:50%;
-  display:grid;
-  place-items:center;
+  display:grid; place-items:center;
   background:rgba(242,194,0,.15);
   color:var(--navy);
   font-size:16px;
   transition:transform .35s, background .35s;
-  position:relative;
-  z-index:1;
+  position:relative; z-index:1;
 }
 .card:hover .card-arrow{
   transform:translateX(4px);
   background:var(--gold);
   color:var(--navy-dark);
 }
-
 .badge{
   display:inline-block;
   font-family:'Inter', sans-serif;
@@ -352,10 +310,6 @@ body{
   0%,100%{ transform:scale(1); }
   50%{ transform:scale(1.06); }
 }
-
-/* ============================================================
-   FOOTER
-   ============================================================ */
 .footer{
   margin-top:auto;
   padding-top:34px;
@@ -389,7 +343,6 @@ body{
   color:#8a8a9a;
   letter-spacing:.04em;
 }
-
 @media (prefers-reduced-motion: reduce){
   *, *::before, *::after{
     animation-duration:.001ms !important;
@@ -403,26 +356,20 @@ body{
 </head>
 <body>
 
-<!-- ============ ANIMATED BACKGROUND ============ -->
 <div class="bg-stage" aria-hidden="true">
-
-  <!-- rotating logo -->
   <img class="bg-logo" src="neelkanthlogo.png" alt="" onerror="this.style.display='none'"/>
-
-  <!-- drifting stars -->
   <div class="starfield"></div>
-
-  <!-- gradient orbs -->
   <div class="orb a"></div>
   <div class="orb b"></div>
   <div class="orb c"></div>
-
   <div class="grain"></div>
 </div>
 
-<!-- ============ PAGE ============ -->
-<main class="page">
+<div class="table-badge" id="tableBadge">
+  Table <span id="tableBadgeNum">—</span>
+</div>
 
+<main class="page">
   <header class="brand">
     <img src="neelkanthlogo.png" alt="Neelkanth Star" class="brand-logo" onerror="this.style.display='none'"/>
     <p class="tagline">Authentic Indian flavours · Warm hospitality</p>
@@ -436,7 +383,7 @@ body{
 
   <nav class="cards" aria-label="Main options">
 
-    <a class="card" href="menu.html">
+    <a class="card" href="menu.html" data-nav="menu.html">
       <div class="card-icon">🍽️</div>
       <div class="card-body">
         <div class="card-title">See Menu</div>
@@ -445,7 +392,7 @@ body{
       <div class="card-arrow">→</div>
     </a>
 
-    <a class="card" href="info.html">
+    <a class="card" href="info.html" data-nav="info.html">
       <div class="card-icon">🛎️</div>
       <div class="card-body">
         <div class="card-title">Guest Services</div>
@@ -454,7 +401,7 @@ body{
       <div class="card-arrow">→</div>
     </a>
 
-    <a class="card" href="spin.html">
+    <a class="card" href="spin.html" data-nav="spin.html">
       <div class="card-icon">🎡</div>
       <div class="card-body">
         <div class="card-title">Lucky Spin</div>
@@ -463,7 +410,7 @@ body{
       <div class="card-arrow">→</div>
     </a>
 
-    <a class="card" href="games/index.html">
+    <a class="card" href="games/index.html" data-nav="games/index.html">
       <div class="card-icon">🎮</div>
       <div class="card-body">
         <div class="card-title">Games <span class="badge">Live</span></div>
@@ -481,11 +428,39 @@ body{
     </p>
     <p class="copy">© <span id="yr"></span> Neelkanth Star · All rights reserved</p>
   </footer>
-
 </main>
 
 <script>
-  document.getElementById('yr').textContent = new Date().getFullYear();
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+/* ============================================================
+   TABLE NUMBER — read from URL, save to localStorage, forward
+   ============================================================ */
+(function tableForwarding(){
+  const params = new URLSearchParams(window.location.search);
+  const t = params.get('table');
+
+  // if URL has table, save it
+  if (t && /^[0-9]{1,3}$/.test(t)){
+    localStorage.setItem('neelkanth_table', t);
+  }
+
+  // read saved (from this URL, or from a previous page)
+  const saved = localStorage.getItem('neelkanth_table');
+
+  // show badge if we have one
+  if (saved && /^[0-9]{1,3}$/.test(saved)){
+    document.getElementById('tableBadgeNum').textContent = saved;
+    document.getElementById('tableBadge').classList.add('show');
+
+    // append ?table=N to every internal nav link
+    document.querySelectorAll('a[data-nav]').forEach(a=>{
+      const base = a.getAttribute('data-nav');
+      const sep = base.includes('?') ? '&' : '?';
+      a.setAttribute('href', base + sep + 'table=' + saved);
+    });
+  }
+})();
 </script>
 
 </body>
