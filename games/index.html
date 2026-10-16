@@ -32,7 +32,6 @@
   --shadow-md:0 12px 32px -14px rgba(27,58,107,.35);
   --shadow-sm:0 6px 18px -10px rgba(27,58,107,.30);
 }
-
 *{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 html{ scroll-behavior:smooth; }
 body{
@@ -45,16 +44,14 @@ body{
   line-height:1.5;
   padding-bottom:40px;
   -webkit-overflow-scrolling:touch;
-  overscroll-behavior-y:contain;
 }
 
-/* BACKGROUND */
+/* BACKGROUND — logo only */
 .bg-stage{
   position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none;
   background:
     radial-gradient(1000px 600px at 12% -8%, #1B3A6B1a, transparent 62%),
     radial-gradient(900px 600px at 100% 4%, #F2C2001a, transparent 58%),
-    radial-gradient(800px 800px at 50% 115%, #5B2A8614, transparent 62%),
     linear-gradient(180deg,#FBF6EC 0%,#F5EDDC 100%);
 }
 .bg-logo{
@@ -62,46 +59,25 @@ body{
   top:50%; left:50%;
   width:min(92vw, 640px);
   height:min(92vw, 640px);
-  transform:translate(-50%,-50%);
-  opacity:.07;
+  transform:translate(-50%, -50%);
+  opacity:.06;
   filter:blur(1.5px);
-  animation:logoSpin 52s linear infinite, logoPulse 8s ease-in-out infinite;
-  will-change:transform, opacity;
+  animation:logoSpin 60s linear infinite;
+  will-change:transform;
 }
 @keyframes logoSpin{
   from{ transform:translate(-50%,-50%) rotate(0deg); }
   to{ transform:translate(-50%,-50%) rotate(360deg); }
-}
-@keyframes logoPulse{
-  0%,100%{ opacity:.06; }
-  50%{ opacity:.11; }
-}
-.orb{
-  position:absolute;
-  border-radius:50%;
-  filter:blur(80px);
-  opacity:.32;
-  animation:orbFloat 28s ease-in-out infinite;
-}
-.orb.a{ width:320px; height:320px; left:-90px; top:-50px;
-  background:radial-gradient(circle at 30% 30%, #F2C200, #D62828 70%); }
-.orb.b{ width:280px; height:280px; right:-80px; top:35%;
-  background:radial-gradient(circle at 30% 30%, #5B2A86, #1B3A6B 70%); animation-delay:-9s; }
-@keyframes orbFloat{
-  0%,100%{ transform:translate(0,0) scale(1); }
-  50%{ transform:translate(25px,-30px) scale(1.08); }
 }
 .starfield{
   position:absolute; inset:0;
   background-image:
     radial-gradient(2px 2px at 20px 30px, #F2C20055, transparent),
     radial-gradient(2px 2px at 120px 90px, #D6282844, transparent),
-    radial-gradient(1.5px 1.5px at 220px 40px, #5B2A8644, transparent),
-    radial-gradient(2px 2px at 320px 150px, #F2C20055, transparent),
-    radial-gradient(1.5px 1.5px at 420px 80px, #8A2E2E44, transparent);
+    radial-gradient(1.5px 1.5px at 220px 40px, #5B2A8644, transparent);
   background-size:600px 300px;
   background-repeat:repeat;
-  opacity:.5;
+  opacity:.4;
   animation:starDrift 100s linear infinite;
 }
 @keyframes starDrift{
@@ -114,8 +90,13 @@ body{
   position:sticky; top:0; z-index:40;
   background:rgba(251,246,236,.96);
   border-bottom:1px solid rgba(27,58,107,.12);
-  padding:10px 14px;
+  padding:10px 14px 0;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+.topbar-row{
   display:flex; align-items:center; gap:12px;
+  padding-bottom:10px;
 }
 .topbar .back{
   flex:0 0 auto;
@@ -125,25 +106,72 @@ body{
   color:var(--gold); font-size:17px; text-decoration:none;
   box-shadow:var(--shadow-sm);
 }
-.topbar .back:active{ transform:scale(.92); }
-.topbar .brand-mini{
-  flex:1; min-width:0;
-  display:flex; align-items:center; gap:9px;
+.topbar .logo-center{
+  flex:1; display:flex; justify-content:center; align-items:center;
 }
-.topbar .brand-mini img{ width:32px; height:32px; }
-.topbar .brand-mini .nm{
-  font-family:'Cinzel',serif; font-weight:800;
-  color:var(--navy); font-size:14px;
-  letter-spacing:.03em; text-transform:uppercase;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+.topbar .logo-center img{
+  height:44px; width:auto; display:block;
+  filter:drop-shadow(0 4px 10px rgba(27,58,107,.25));
 }
+.topbar .table-chip{
+  flex:0 0 auto;
+  width:38px; height:38px;
+  border-radius:12px;
+  display:none;
+  place-items:center;
+  background:rgba(242,194,0,.15);
+  color:var(--navy);
+  font-family:'Cinzel',serif;
+  font-weight:800;
+  font-size:14px;
+  box-shadow:var(--shadow-sm);
+  border:1px solid rgba(242,194,0,.35);
+}
+.topbar .table-chip.show{ display:grid; }
+
+.quick-nav{
+  display:flex; gap:8px;
+  padding:8px 0 10px;
+  overflow-x:auto;
+  scrollbar-width:none;
+  border-top:1px solid rgba(27,58,107,.06);
+}
+.quick-nav::-webkit-scrollbar{ display:none; }
+.qn-btn{
+  flex:0 0 auto;
+  display:inline-flex; align-items:center; gap:6px;
+  padding:7px 14px;
+  border-radius:999px;
+  background:#fff;
+  border:1.5px solid rgba(27,58,107,.15);
+  color:var(--navy);
+  font-family:'Cinzel',serif;
+  font-weight:700;
+  font-size:11.5px;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  text-decoration:none;
+  white-space:nowrap;
+  transition:all .25s;
+}
+.qn-btn:hover, .qn-btn:active{
+  border-color:var(--gold);
+  background:linear-gradient(135deg,rgba(242,194,0,.10),rgba(242,194,0,.05));
+}
+.qn-btn.active{
+  background:linear-gradient(135deg,var(--navy),var(--navy-dark));
+  color:var(--gold);
+  border-color:var(--navy);
+  box-shadow:var(--shadow-sm);
+}
+.qn-btn .qn-ico{ font-size:13px; line-height:1; }
+.qn-btn .qn-txt{ line-height:1; }
 
 /* HERO */
 .hero{
   position:relative; z-index:1;
   text-align:center;
-  padding:26px 18px 6px;
-  animation:fadeUp .8s both;
+  padding:22px 18px 6px;
 }
 .hero h1{
   font-family:'Cinzel',serif;
@@ -159,19 +187,12 @@ body{
   color:var(--navy-soft);
   font-size:clamp(14px,4vw,17px);
 }
-@keyframes fadeUp{
-  from{ opacity:0; transform:translateY(14px); }
-  to{ opacity:1; transform:translateY(0); }
-}
 
-/* WRAP */
 .wrap{
   position:relative; z-index:1;
-  max-width:760px;
-  margin:0 auto;
+  max-width:760px; margin:0 auto;
   padding:18px 14px 10px;
 }
-
 .section-label{
   font-family:'Cinzel',serif;
   font-weight:700;
@@ -186,7 +207,6 @@ body{
   flex:1; height:1px;
   background:linear-gradient(90deg,transparent,rgba(27,58,107,.3),transparent);
 }
-
 .grid{
   display:grid;
   grid-template-columns:1fr;
@@ -196,7 +216,6 @@ body{
 @media(min-width:640px){
   .grid{ grid-template-columns:1fr 1fr; }
 }
-
 .game-card{
   display:flex; align-items:center; gap:14px;
   padding:18px;
@@ -224,7 +243,6 @@ body{
   box-shadow:var(--shadow-md);
   border-color:rgba(242,194,0,.5);
 }
-
 .game-card .g-ico{
   flex:0 0 auto;
   width:60px; height:60px;
@@ -234,13 +252,11 @@ body{
   box-shadow:inset 0 -3px 0 rgba(0,0,0,.18), 0 8px 16px -8px rgba(27,58,107,.5);
 }
 .game-card .g-ico svg{ width:32px; height:32px; }
-
 .game-card.ludo .g-ico{ background:linear-gradient(145deg,var(--ludo-red),var(--ludo-blue)); }
 .game-card.karnal .g-ico{ background:linear-gradient(145deg,var(--purple),var(--navy)); }
 .game-card.chess .g-ico{ background:linear-gradient(145deg,#4A4A5E,#1A1A2E); }
 .game-card.cricket .g-ico{ background:linear-gradient(145deg,#1E7A3A,#0F5A28); }
 .game-card.quiz .g-ico{ background:linear-gradient(145deg,var(--gold),#B88800); }
-
 .game-card .g-body{ flex:1; min-width:0; }
 .game-card .g-title{
   font-family:'Cinzel',serif;
@@ -276,7 +292,6 @@ body{
   0%,100%{ transform:scale(1); }
   50%{ transform:scale(1.06); }
 }
-
 .game-card .g-arrow{
   flex:0 0 auto;
   width:34px; height:34px;
@@ -292,7 +307,6 @@ body{
   color:var(--navy-dark);
   transform:translateX(3px);
 }
-
 .game-card.locked{
   cursor:not-allowed;
   filter:saturate(.75);
@@ -308,7 +322,7 @@ body{
   color:#6a6a7e;
 }
 
-/* footer */
+/* FOOTER */
 .page-footer{
   text-align:center;
   padding:24px 18px 20px;
@@ -328,7 +342,7 @@ body{
 }
 .page-footer .copy{ margin-top:8px; font-size:10.5px; color:#8a8a9a; letter-spacing:.04em; }
 
-/* toast */
+/* TOAST */
 .toast{
   position:fixed; left:50%; bottom:100px;
   transform:translate(-50%, 30px);
@@ -359,16 +373,35 @@ body{
 <div class="bg-stage" aria-hidden="true">
   <img class="bg-logo" src="../neelkanthlogo.png" alt="" onerror="this.style.display='none'"/>
   <div class="starfield"></div>
-  <div class="orb a"></div>
-  <div class="orb b"></div>
 </div>
 
+<!-- TOPBAR -->
 <header class="topbar">
-  <a class="back" href="../index.html" aria-label="Back">←</a>
-  <div class="brand-mini">
-    <img src="../neelkanthlogo.png" alt="" onerror="this.style.display='none'"/>
-    <span class="nm">Neelkanth Star</span>
+  <div class="topbar-row">
+    <a class="back" href="../index.html" data-nav="../index.html" aria-label="Back">←</a>
+    <div class="logo-center">
+      <img src="../neelkanthlogo.png" alt="Neelkanth Star" onerror="this.style.display='none'"/>
+    </div>
+    <div class="table-chip" id="tableChip">—</div>
   </div>
+
+  <nav class="quick-nav" aria-label="Quick navigation">
+    <a class="qn-btn" href="../menu.html" data-nav="../menu.html">
+      <span class="qn-ico">🍽️</span><span class="qn-txt">Menu</span>
+    </a>
+    <a class="qn-btn" href="../spin.html" data-nav="../spin.html">
+      <span class="qn-ico">🎡</span><span class="qn-txt">Spin</span>
+    </a>
+    <a class="qn-btn active" href="index.html" data-nav="index.html">
+      <span class="qn-ico">🎮</span><span class="qn-txt">Games</span>
+    </a>
+    <a class="qn-btn" href="../info.html" data-nav="../info.html">
+      <span class="qn-ico">🛎️</span><span class="qn-txt">Services</span>
+    </a>
+    <a class="qn-btn" href="../index.html" data-nav="../index.html">
+      <span class="qn-ico">🏠</span><span class="qn-txt">Home</span>
+    </a>
+  </nav>
 </header>
 
 <section class="hero">
@@ -378,7 +411,6 @@ body{
 
 <main class="wrap">
 
-  <!-- ============ LIVE NOW ============ -->
   <div class="section-label">
     <span class="ln"></span>
     <span>Live Now</span>
@@ -388,19 +420,10 @@ body{
   <div class="grid">
     <a class="game-card ludo" href="ludo/index.html">
       <div class="g-ico">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="18" height="18" rx="2"/>
-          <path d="M9 3v18"/>
-          <path d="M15 3v18"/>
-          <path d="M3 9h18"/>
-          <path d="M3 15h18"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M15 3v18"/><path d="M3 9h18"/><path d="M3 15h18"/></svg>
       </div>
       <div class="g-body">
-        <div class="g-title">
-          Ludo
-          <span class="g-tag live">Live</span>
-        </div>
+        <div class="g-title">Ludo <span class="g-tag live">Live</span></div>
         <div class="g-sub">Table vs table · Friends · Bots · Offline pass &amp; play</div>
       </div>
       <div class="g-arrow">→</div>
@@ -408,24 +431,16 @@ body{
 
     <a class="game-card karnal" href="karnal-knowledge/index.html">
       <div class="g-ico">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-          <line x1="12" y1="17" x2="12.01" y2="17"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
       </div>
       <div class="g-body">
-        <div class="g-title">
-          Karnal Knowledge
-          <span class="g-tag live">Live</span>
-        </div>
+        <div class="g-title">Karnal Knowledge <span class="g-tag live">Live</span></div>
         <div class="g-sub">Quiz about Karnal — how well do you know your city?</div>
       </div>
       <div class="g-arrow">→</div>
     </a>
   </div>
 
-  <!-- ============ COMING SOON ============ -->
   <div class="section-label">
     <span class="ln"></span>
     <span>Coming Soon</span>
@@ -435,18 +450,10 @@ body{
   <div class="grid">
     <div class="game-card locked chess" data-locked="Chess">
       <div class="g-ico">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2v6"/>
-          <path d="M8 8h8l-1 6H9z"/>
-          <path d="M7 14h10v3H7z"/>
-          <path d="M6 17h12v3H6z"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6"/><path d="M8 8h8l-1 6H9z"/><path d="M7 14h10v3H7z"/><path d="M6 17h12v3H6z"/></svg>
       </div>
       <div class="g-body">
-        <div class="g-title">
-          Chess
-          <span class="g-tag">Soon</span>
-        </div>
+        <div class="g-title">Chess <span class="g-tag">Soon</span></div>
         <div class="g-sub">Classic 2-player chess — vs bots and other tables</div>
       </div>
       <div class="g-arrow">🔒</div>
@@ -454,18 +461,10 @@ body{
 
     <div class="game-card locked cricket" data-locked="Cricket">
       <div class="g-ico">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="9"/>
-          <path d="M5 5l14 14"/>
-          <path d="M5 19l3-3"/>
-          <path d="M16 8l3-3"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M5 5l14 14"/><path d="M5 19l3-3"/><path d="M16 8l3-3"/></svg>
       </div>
       <div class="g-body">
-        <div class="g-title">
-          Cricket
-          <span class="g-tag">Soon</span>
-        </div>
+        <div class="g-title">Cricket <span class="g-tag">Soon</span></div>
         <div class="g-sub">Quick 5-over matches — bat, bowl, win</div>
       </div>
       <div class="g-arrow">🔒</div>
@@ -473,15 +472,10 @@ body{
 
     <div class="game-card locked quiz" data-locked="Quiz">
       <div class="g-ico">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2l3 6 6 .5-4.5 4 1.5 6-6-3.5L6 18.5 7.5 12.5 3 8.5l6-.5z"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6 6 .5-4.5 4 1.5 6-6-3.5L6 18.5 7.5 12.5 3 8.5l6-.5z"/></svg>
       </div>
       <div class="g-body">
-        <div class="g-title">
-          Quiz
-          <span class="g-tag">Soon</span>
-        </div>
+        <div class="g-title">Quiz <span class="g-tag">Soon</span></div>
         <div class="g-sub">General knowledge · Bollywood · Sports — win coupons</div>
       </div>
       <div class="g-arrow">🔒</div>
@@ -503,7 +497,31 @@ body{
 <script>
 document.getElementById('yr').textContent = new Date().getFullYear();
 
-/* Coming Soon toast for locked cards */
+/* ---------- table forwarding ---------- */
+(function initTable(){
+  const params = new URLSearchParams(window.location.search);
+  const tUrl = params.get('table');
+  let table = null;
+  if (tUrl && /^[0-9]{1,3}$/.test(tUrl)){
+    table = tUrl;
+    localStorage.setItem('neelkanth_table', tUrl);
+  } else {
+    const saved = localStorage.getItem('neelkanth_table');
+    if (saved && /^[0-9]{1,3}$/.test(saved)) table = saved;
+  }
+
+  if (table){
+    const chip = document.getElementById('tableChip');
+    if (chip){ chip.textContent = table; chip.classList.add('show'); }
+    document.querySelectorAll('a[data-nav]').forEach(a=>{
+      const base = a.getAttribute('data-nav');
+      const sep = base.includes('?') ? '&' : '?';
+      a.setAttribute('href', base + sep + 'table=' + table);
+    });
+  }
+})();
+
+/* ---------- coming soon toast ---------- */
 const toast = document.getElementById('toast');
 let toastTimer;
 function showToast(msg){
