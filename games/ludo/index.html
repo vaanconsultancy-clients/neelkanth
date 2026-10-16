@@ -1,0 +1,1552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+<meta name="theme-color" content="#1B3A6B" />
+<title>Ludo — Neelkanth Star</title>
+<meta name="description" content="Play Ludo at Neelkanth Star — vs other tables, with friends, against bots, or offline pass & play." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --navy:#1B3A6B;
+  --navy-dark:#142C52;
+  --navy-soft:#2A4F8A;
+  --gold:#F2C200;
+  --gold-soft:#FFD95A;
+  --red:#D62828;
+  --purple:#5B2A86;
+  --cream:#FBF6EC;
+  --cream-2:#F5EDDC;
+  --ink:#1A1A2E;
+  --ink-soft:#4A4A5E;
+  --green:#1E7A3A;
+  --ludo-red:#E63946;
+  --ludo-green:#2A9D3F;
+  --ludo-yellow:#F2C200;
+  --ludo-blue:#2B7FD6;
+  --shadow-lg:0 24px 60px -20px rgba(27,58,107,.45);
+  --shadow-md:0 12px 32px -14px rgba(27,58,107,.35);
+  --shadow-sm:0 6px 18px -10px rgba(27,58,107,.30);
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html{ scroll-behavior:smooth; }
+body{
+  font-family:'Inter', system-ui, -apple-system, sans-serif;
+  background:var(--cream);
+  color:var(--ink);
+  min-height:100dvh;
+  overflow-x:hidden;
+  position:relative;
+  line-height:1.5;
+  padding-bottom:40px;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:contain;
+}
+
+#three-bg{ position:fixed; inset:0; z-index:0; pointer-events:none; }
+.bg-fallback{
+  position:fixed; inset:0; z-index:-1;
+  background:
+    radial-gradient(1000px 600px at 12% -8%, #1B3A6B1c, transparent 62%),
+    radial-gradient(900px 600px at 100% 4%, #F2C2001c, transparent 58%),
+    linear-gradient(180deg,#FBF6EC 0%,#F5EDDC 100%);
+}
+
+/* TOPBAR */
+.topbar{
+  position:sticky; top:0; z-index:40;
+  background:rgba(251,246,236,.96);
+  border-bottom:1px solid rgba(27,58,107,.12);
+  padding:10px 14px;
+  display:flex; align-items:center; gap:12px;
+}
+.topbar .back{
+  flex:0 0 auto;
+  width:38px; height:38px; border-radius:12px;
+  display:grid; place-items:center;
+  background:linear-gradient(145deg,var(--navy),var(--navy-dark));
+  color:var(--gold); font-size:17px; text-decoration:none;
+  box-shadow:var(--shadow-sm);
+  border:none; cursor:pointer;
+}
+.topbar .back:active{ transform:scale(.92); }
+.topbar .brand-mini{
+  flex:1; min-width:0;
+  display:flex; align-items:center; gap:9px;
+}
+.topbar .brand-mini img{ width:32px; height:32px; }
+.topbar .brand-mini .nm{
+  font-family:'Cinzel',serif; font-weight:800;
+  color:var(--navy); font-size:14px;
+  letter-spacing:.03em; text-transform:uppercase;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+
+/* SCREENS */
+.screen{
+  display:none;
+  position:relative; z-index:1;
+  max-width:640px;
+  margin:0 auto;
+  padding:22px 14px 20px;
+  animation:fadeIn .45s both;
+}
+.screen.show{ display:block; }
+@keyframes fadeIn{
+  from{ opacity:0; transform:translateY(10px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+
+.hero{
+  text-align:center;
+  margin-bottom:18px;
+}
+.hero h1{
+  font-family:'Cinzel',serif;
+  font-weight:800;
+  font-size:clamp(24px,7vw,36px);
+  color:var(--navy);
+  letter-spacing:.03em;
+}
+.hero .sub{
+  margin-top:6px;
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  color:var(--navy-soft);
+  font-size:clamp(13px,3.8vw,16px);
+}
+
+/* OPTION CARDS */
+.opt{
+  display:flex; align-items:center; gap:14px;
+  padding:16px;
+  background:rgba(255,255,255,.96);
+  border:1.5px solid rgba(27,58,107,.10);
+  border-radius:20px;
+  box-shadow:var(--shadow-sm);
+  cursor:pointer;
+  color:inherit;
+  transition:transform .22s, box-shadow .22s, border-color .22s;
+  margin-bottom:12px;
+}
+.opt:hover, .opt:active{
+  transform:translateY(-2px);
+  box-shadow:var(--shadow-md);
+  border-color:rgba(242,194,0,.5);
+}
+.opt .o-ico{
+  flex:0 0 auto;
+  width:52px; height:52px;
+  border-radius:14px;
+  display:grid; place-items:center;
+  color:#fff;
+  box-shadow:inset 0 -3px 0 rgba(0,0,0,.18), 0 8px 16px -8px rgba(27,58,107,.5);
+}
+.opt .o-ico svg{ width:26px; height:26px; }
+.opt.o1 .o-ico{ background:linear-gradient(145deg,var(--ludo-red),#A51928); }
+.opt.o2 .o-ico{ background:linear-gradient(145deg,var(--ludo-blue),#1B4F8E); }
+.opt.o3 .o-ico{ background:linear-gradient(145deg,var(--ludo-green),#145A25); }
+.opt.o4 .o-ico{ background:linear-gradient(145deg,var(--navy),var(--navy-dark)); }
+.opt .o-body{ flex:1; min-width:0; }
+.opt .o-title{
+  font-family:'Cinzel',serif;
+  font-weight:700;
+  font-size:clamp(14.5px,4.2vw,16.5px);
+  color:var(--navy);
+  letter-spacing:.03em;
+}
+.opt .o-sub{
+  margin-top:3px;
+  font-size:12px;
+  color:var(--ink-soft);
+  line-height:1.4;
+}
+.opt .o-arrow{
+  flex:0 0 auto;
+  width:30px; height:30px;
+  border-radius:50%;
+  background:rgba(242,194,0,.15);
+  color:var(--navy);
+  display:grid; place-items:center;
+  font-size:15px;
+}
+
+/* PICK GRIDS */
+.pick-grid{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:12px;
+  margin:18px 0;
+}
+.pick-grid.two{ grid-template-columns:repeat(2, 1fr); }
+
+.pick-btn{
+  padding:22px 12px;
+  background:rgba(255,255,255,.96);
+  border:2px solid rgba(27,58,107,.15);
+  border-radius:18px;
+  cursor:pointer;
+  text-align:center;
+  transition:transform .2s, border-color .22s, box-shadow .22s;
+}
+.pick-btn:hover, .pick-btn:active{
+  transform:translateY(-2px);
+  border-color:var(--gold);
+  box-shadow:var(--shadow-sm);
+}
+.pick-btn.selected{
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(242,194,0,.35), var(--shadow-sm);
+}
+.pick-btn .pb-num{
+  font-family:'Cinzel',serif;
+  font-weight:800;
+  font-size:32px;
+  color:var(--navy);
+  line-height:1;
+}
+.pick-btn .pb-label{
+  margin-top:8px;
+  font-weight:600;
+  font-size:12px;
+  color:var(--ink-soft);
+  letter-spacing:.03em;
+  text-transform:uppercase;
+}
+
+/* colour picker */
+.color-pick{
+  display:flex; gap:14px; justify-content:center; flex-wrap:wrap;
+  margin:18px 0 24px;
+}
+.color-btn{
+  width:64px; height:64px;
+  border-radius:50%;
+  border:4px solid #fff;
+  box-shadow:0 0 0 2px rgba(27,58,107,.15), 0 8px 16px -8px rgba(27,58,107,.5);
+  cursor:pointer;
+  transition:transform .22s, box-shadow .25s;
+  position:relative;
+}
+.color-btn:hover{ transform:scale(1.06); }
+.color-btn.selected{
+  box-shadow:0 0 0 3px var(--gold), 0 0 0 5px var(--navy), 0 10px 22px -6px rgba(27,58,107,.5);
+  transform:scale(1.08);
+}
+.color-btn[data-color="red"]{ background:var(--ludo-red); }
+.color-btn[data-color="green"]{ background:var(--ludo-green); }
+.color-btn[data-color="yellow"]{ background:var(--ludo-yellow); }
+.color-btn[data-color="blue"]{ background:var(--ludo-blue); }
+.color-btn .cb-check{
+  position:absolute; inset:0;
+  display:grid; place-items:center;
+  color:#fff;
+  font-size:26px;
+  opacity:0;
+  transition:opacity .25s;
+  text-shadow:0 2px 4px rgba(0,0,0,.35);
+}
+.color-btn.selected .cb-check{ opacity:1; }
+
+.diff-row{
+  display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
+  margin:12px 0 22px;
+}
+.diff-btn{
+  padding:11px 20px;
+  border-radius:12px;
+  background:#fff;
+  border:1.5px solid rgba(27,58,107,.18);
+  cursor:pointer;
+  font-weight:600;
+  font-size:13px;
+  color:var(--navy);
+  transition:all .22s;
+}
+.diff-btn.selected{
+  background:linear-gradient(135deg,var(--navy),var(--navy-dark));
+  color:var(--gold);
+  border-color:var(--navy);
+  box-shadow:var(--shadow-sm);
+}
+
+.pick-label{
+  font-family:'Cinzel',serif;
+  font-weight:700;
+  font-size:13px;
+  color:var(--navy);
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  text-align:center;
+  margin-top:16px;
+}
+
+.big-btn{
+  display:block;
+  width:100%;
+  padding:16px;
+  margin-top:16px;
+  border:none; border-radius:14px;
+  background:linear-gradient(135deg,var(--navy),var(--navy-dark));
+  color:var(--gold);
+  font-family:'Cinzel',serif;
+  font-weight:800;
+  font-size:15px;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  cursor:pointer;
+  box-shadow:var(--shadow-md);
+  transition:transform .2s;
+}
+.big-btn:active{ transform:scale(.98); }
+.big-btn:disabled{ opacity:.5; cursor:not-allowed; }
+
+.ghost-btn{
+  display:block;
+  width:100%;
+  padding:13px;
+  margin-top:10px;
+  background:transparent;
+  border:1.5px solid rgba(27,58,107,.25);
+  border-radius:12px;
+  color:var(--navy);
+  font-weight:600;
+  font-size:13.5px;
+  cursor:pointer;
+}
+
+/* GAME SCREEN */
+.game-meta{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+  padding:10px 14px;
+  background:rgba(255,255,255,.96);
+  border:1.5px solid rgba(27,58,107,.10);
+  border-radius:14px;
+  box-shadow:var(--shadow-sm);
+}
+.turn-indicator{
+  display:flex; align-items:center; gap:10px;
+  font-family:'Cinzel',serif;
+  font-weight:700;
+  font-size:13.5px;
+  color:var(--navy);
+  letter-spacing:.03em;
+}
+.turn-dot{
+  width:16px; height:16px;
+  border-radius:50%;
+  box-shadow:0 0 0 3px rgba(255,255,255,.9), 0 0 0 4px rgba(27,58,107,.2);
+  transition:background .3s;
+}
+.turn-dot.red{ background:var(--ludo-red); }
+.turn-dot.green{ background:var(--ludo-green); }
+.turn-dot.yellow{ background:var(--ludo-yellow); }
+.turn-dot.blue{ background:var(--ludo-blue); }
+.meta-right{
+  font-size:11.5px;
+  color:var(--ink-soft);
+  font-weight:600;
+  letter-spacing:.03em;
+  text-align:right;
+}
+
+.board-area{
+  position:relative;
+  width:100%;
+  max-width:560px;
+  aspect-ratio:1/1;
+  margin:0 auto 14px;
+}
+.board-wrap{
+  position:relative;
+  width:100%;
+  height:100%;
+  border-radius:20px;
+  overflow:hidden;
+  background:#fff;
+  box-shadow:
+    0 0 0 3px var(--gold),
+    0 0 0 6px var(--navy),
+    0 20px 40px -16px rgba(27,58,107,.5);
+}
+canvas#board{
+  width:100%; height:100%;
+  display:block;
+  touch-action:manipulation;
+}
+
+/* floating dice — position set dynamically near active colour */
+.dice-floating{
+  position:absolute;
+  width:60px; height:60px;
+  border-radius:14px;
+  background:linear-gradient(145deg,#ffffff,#F0E6D0);
+  box-shadow:
+    inset 0 -4px 0 rgba(0,0,0,.12),
+    inset 0 4px 8px rgba(255,255,255,.9),
+    0 10px 22px -8px rgba(27,58,107,.5),
+    0 0 0 3px var(--gold),
+    0 0 0 5px var(--navy);
+  display:grid; place-items:center;
+  cursor:pointer;
+  transition:left .5s cubic-bezier(.2,.8,.25,1), top .5s cubic-bezier(.2,.8,.25,1), opacity .3s;
+  z-index:5;
+  animation:diceIdle 2s ease-in-out infinite;
+}
+@keyframes diceIdle{
+  0%,100%{ transform:translateY(0) scale(1); }
+  50%{ transform:translateY(-4px) scale(1.02); }
+}
+.dice-floating:active{ transform:scale(.94); }
+.dice-floating.rolling{ animation:diceRoll .7s cubic-bezier(.2,.8,.25,1); }
+@keyframes diceRoll{
+  0%{ transform:rotate(0deg) scale(1); }
+  50%{ transform:rotate(360deg) scale(1.1); }
+  100%{ transform:rotate(720deg) scale(1); }
+}
+.dice-floating svg{ width:100%; height:100%; }
+.dice-floating.disabled{ opacity:.55; cursor:not-allowed; animation:none; }
+.dice-floating.bot{ cursor:not-allowed; }
+
+.token-picker{
+  display:none;
+  margin:8px 0 14px;
+  padding:14px;
+  background:rgba(255,255,255,.96);
+  border:1.5px solid rgba(27,58,107,.10);
+  border-radius:16px;
+  box-shadow:var(--shadow-sm);
+  text-align:center;
+}
+.token-picker.show{ display:block; }
+.token-picker h3{
+  font-family:'Cinzel',serif;
+  font-size:13px; font-weight:700;
+  color:var(--navy);
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  margin-bottom:10px;
+}
+.token-buttons{
+  display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
+}
+.token-btn{
+  padding:10px 16px;
+  border-radius:12px;
+  border:2px solid;
+  background:#fff;
+  font-family:'Cinzel',serif;
+  font-weight:700;
+  font-size:12.5px;
+  cursor:pointer;
+  transition:transform .2s;
+}
+.token-btn:active{ transform:scale(.95); }
+.token-btn.t-red{ border-color:var(--ludo-red); color:var(--ludo-red); }
+.token-btn.t-green{ border-color:var(--ludo-green); color:var(--ludo-green); }
+.token-btn.t-yellow{ border-color:var(--ludo-yellow); color:#8A6A00; }
+.token-btn.t-blue{ border-color:var(--ludo-blue); color:var(--ludo-blue); }
+
+.roll-info{
+  font-family:'Cinzel',serif;
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.05em;
+  color:var(--navy);
+  text-align:center;
+  min-height:20px;
+  margin-top:6px;
+}
+.roll-info strong{ color:var(--red); }
+
+.action-row{
+  display:flex; gap:10px; margin-top:14px;
+  justify-content:center; flex-wrap:wrap;
+}
+.abtn{
+  padding:11px 22px;
+  border:none; border-radius:12px;
+  font-family:'Cinzel',serif;
+  font-weight:700; font-size:12.5px;
+  letter-spacing:.06em; text-transform:uppercase;
+  cursor:pointer;
+  transition:transform .2s;
+}
+.abtn.primary{
+  background:linear-gradient(135deg,var(--navy),var(--navy-dark));
+  color:var(--gold);
+  box-shadow:var(--shadow-sm);
+}
+.abtn.ghost{
+  background:transparent;
+  color:var(--navy);
+  border:1.5px solid rgba(27,58,107,.25);
+}
+.abtn:active{ transform:scale(.96); }
+
+.modal-overlay{
+  position:fixed; inset:0; z-index:90;
+  background:rgba(26,26,46,.75);
+  display:grid; place-items:center;
+  padding:20px;
+  opacity:0; pointer-events:none;
+  transition:opacity .3s;
+}
+.modal-overlay.show{ opacity:1; pointer-events:auto; }
+.modal{
+  background:var(--cream);
+  border-radius:22px;
+  padding:26px 22px;
+  text-align:center;
+  max-width:380px;
+  width:100%;
+  box-shadow:var(--shadow-lg);
+  transform:scale(.9);
+  transition:transform .35s cubic-bezier(.2,1.3,.4,1);
+}
+.modal-overlay.show .modal{ transform:scale(1); }
+.modal .m-emoji{ font-size:58px; line-height:1; margin-bottom:10px; }
+.modal h2{ font-family:'Cinzel',serif; font-size:20px; font-weight:800; color:var(--navy); }
+.modal p{ margin-top:8px; font-size:13.5px; color:var(--ink-soft); line-height:1.55; }
+.modal .actions{ display:flex; flex-direction:column; gap:10px; margin-top:20px; }
+
+.toast{
+  position:fixed; left:50%; bottom:100px;
+  transform:translate(-50%, 30px);
+  background:var(--navy); color:var(--cream);
+  padding:11px 18px; border-radius:999px;
+  font-size:13px; font-weight:500;
+  box-shadow:var(--shadow-lg);
+  opacity:0; pointer-events:none;
+  transition:opacity .35s, transform .35s;
+  z-index:95;
+  border:1px solid rgba(242,194,0,.35);
+  text-align:center;
+  max-width:90vw;
+}
+.toast.show{ opacity:1; transform:translate(-50%,0); }
+
+.page-footer{
+  text-align:center;
+  padding:24px 18px 20px;
+  position:relative; z-index:1;
+}
+.page-footer .line{
+  width:min(280px,70%);
+  height:1px;
+  margin:0 auto 14px;
+  background:linear-gradient(90deg,transparent,rgba(27,58,107,.3),transparent);
+}
+.page-footer .powered{ font-size:12px; color:var(--ink-soft); letter-spacing:.03em; }
+.page-footer .powered a{
+  font-family:'Cinzel',serif; color:var(--navy); font-weight:700;
+  letter-spacing:.05em; text-decoration:none;
+  border-bottom:1px dashed rgba(27,58,107,.35);
+}
+.page-footer .copy{ margin-top:8px; font-size:10.5px; color:#8a8a9a; letter-spacing:.04em; }
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-fallback" aria-hidden="true"></div>
+<canvas id="three-bg" aria-hidden="true"></canvas>
+
+<header class="topbar">
+  <button class="back" id="btnBack" aria-label="Back">←</button>
+  <div class="brand-mini">
+    <img src="../../neelkanthlogo.png" alt="" onerror="this.style.display='none'"/>
+    <span class="nm">Neelkanth Star</span>
+  </div>
+</header>
+
+<!-- ============================================================ -->
+<!-- SCREEN 1: LUDO HOME — 4 OPTIONS                              -->
+<!-- ============================================================ -->
+<section class="screen show" id="screenHome">
+  <div class="hero">
+    <h1>Ludo</h1>
+    <p class="sub">Roll the dice · Beat the table</p>
+  </div>
+
+  <div class="opt o1" id="optTables">
+    <div class="o-ico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    </div>
+    <div class="o-body">
+      <div class="o-title">Play vs Other Tables</div>
+      <div class="o-sub">Match with another table dining here now</div>
+    </div>
+    <div class="o-arrow">→</div>
+  </div>
+
+  <div class="opt o2" id="optFriends">
+    <div class="o-ico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+    </div>
+    <div class="o-body">
+      <div class="o-title">Play with Friends</div>
+      <div class="o-sub">Share a link — invite up to 3 friends</div>
+    </div>
+    <div class="o-arrow">→</div>
+  </div>
+
+  <div class="opt o3" id="optBots">
+    <div class="o-ico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
+    </div>
+    <div class="o-body">
+      <div class="o-title">Play with Bots</div>
+      <div class="o-sub">2, 3 or 4 players — pick difficulty</div>
+    </div>
+    <div class="o-arrow">→</div>
+  </div>
+
+  <div class="opt o4" id="optOffline">
+    <div class="o-ico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
+    </div>
+    <div class="o-body">
+      <div class="o-title">Offline · Pass &amp; Play</div>
+      <div class="o-sub">Same device, take turns — no internet needed</div>
+    </div>
+    <div class="o-arrow">→</div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SCREEN 2: SELECT PLAYER COUNT                                 -->
+<!-- ============================================================ -->
+<section class="screen" id="screenCount">
+  <div class="hero">
+    <h1>How many players?</h1>
+    <p class="sub" id="countSubText">You play as one — the rest are bots</p>
+  </div>
+
+  <div class="pick-grid" id="countGrid">
+    <div class="pick-btn" data-count="2"><div class="pb-num">2</div><div class="pb-label">Players</div></div>
+    <div class="pick-btn" data-count="3"><div class="pb-num">3</div><div class="pb-label">Players</div></div>
+    <div class="pick-btn" data-count="4"><div class="pb-num">4</div><div class="pb-label">Players</div></div>
+  </div>
+
+  <button class="ghost-btn" id="btnBackToHome">← Back</button>
+</section>
+
+<!-- ============================================================ -->
+<!-- SCREEN 3: PICK COLOUR + DIFFICULTY                            -->
+<!-- ============================================================ -->
+<section class="screen" id="screenColor">
+  <div class="hero">
+    <h1>Pick Your Colour</h1>
+    <p class="sub" id="colorSubText">2 players · 1 bot opponent</p>
+  </div>
+
+  <div class="pick-label">Your colour</div>
+  <div class="color-pick" id="colorPick"></div>
+
+  <div id="diffSection">
+    <div class="pick-label">Bot difficulty</div>
+    <div class="diff-row" id="diffRow">
+      <button class="diff-btn" data-diff="easy">Easy</button>
+      <button class="diff-btn selected" data-diff="medium">Medium</button>
+      <button class="diff-btn" data-diff="hard">Hard</button>
+    </div>
+  </div>
+
+  <button class="big-btn" id="btnStartGame" disabled>Start Game</button>
+  <button class="ghost-btn" id="btnBackToCount">← Change player count</button>
+</section>
+
+<!-- ============================================================ -->
+<!-- SCREEN 4: GAME                                                -->
+<!-- ============================================================ -->
+<section class="screen" id="screenGame">
+  <div class="game-meta">
+    <div class="turn-indicator">
+      <span class="turn-dot red" id="turnDot"></span>
+      <span id="turnText">Red's turn</span>
+    </div>
+    <div class="meta-right" id="gameMeta"></div>
+  </div>
+
+  <div class="board-area" id="boardArea">
+    <div class="board-wrap">
+      <canvas id="board" width="600" height="600"></canvas>
+    </div>
+    <div class="dice-floating" id="dice" role="button" tabindex="0" aria-label="Roll dice">
+      <svg viewBox="0 0 100 100" id="diceFace"></svg>
+    </div>
+  </div>
+
+  <div class="token-picker" id="tokenPicker">
+    <h3 id="tokenPickerTitle">Pick a token</h3>
+    <div class="token-buttons" id="tokenButtons"></div>
+  </div>
+
+  <div class="roll-info" id="rollInfo">Tap the dice to roll</div>
+
+  <div class="action-row">
+    <button class="abtn ghost" id="btnQuit">Quit</button>
+    <button class="abtn primary" id="btnRestart">Restart</button>
+  </div>
+</section>
+
+<!-- modals -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="m-emoji" id="mEmoji">🚧</div>
+    <h2 id="mTitle">Coming Soon</h2>
+    <p id="mText"></p>
+    <div class="actions">
+      <button class="abtn primary" id="mClose">Got it</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<footer class="page-footer">
+  <div class="line"></div>
+  <p class="powered">
+    Powered by <a href="https://vaanconsultancy.in" target="_blank" rel="noopener">VAAN Consultancy</a>
+  </p>
+  <p class="copy">© <span id="yr"></span> Neelkanth Star · All rights reserved</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ============================================================
+   NEELKANTH STAR — LUDO
+   ============================================================ */
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+const toast = document.getElementById('toast');
+let toastTimer;
+function showToast(msg){
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> toast.classList.remove('show'), 1900);
+}
+
+/* ---------- CONSTANTS ---------- */
+const colorHex = { red:"#E63946", green:"#2A9D3F", yellow:"#F2C200", blue:"#2B7FD6" };
+const colorName = { red:"Red", green:"Green", yellow:"Yellow", blue:"Blue" };
+const ALL_COLORS = ["red", "green", "yellow", "blue"];
+
+/* Standard Ludo board layout (15x15) */
+const BOARD_SIZE = 15;
+const MAIN_PATH = [
+  [6,1],[6,2],[6,3],[6,4],[6,5],
+  [5,6],[4,6],[3,6],[2,6],[1,6],[0,6],
+  [0,7],
+  [0,8],[1,8],[2,8],[3,8],[4,8],[5,8],
+  [6,9],[6,10],[6,11],[6,12],[6,13],[6,14],
+  [7,14],
+  [8,14],[8,13],[8,12],[8,11],[8,10],[8,9],
+  [9,8],[10,8],[11,8],[12,8],[13,8],[14,8],
+  [14,7],
+  [14,6],[13,6],[12,6],[11,6],[10,6],[9,6],
+  [8,5],[8,4],[8,3],[8,2],[8,1],[8,0],
+  [7,0],
+  [6,0]
+];
+const START_INDEX = { red:0, green:13, yellow:26, blue:39 };
+
+const HOME_PATH = {
+  red:    [[7,1],[7,2],[7,3],[7,4],[7,5]],
+  green:  [[1,7],[2,7],[3,7],[4,7],[5,7]],
+  yellow: [[7,13],[7,12],[7,11],[7,10],[7,9]],
+  blue:   [[13,7],[12,7],[11,7],[10,7],[9,7]]
+};
+
+const YARD = {
+  red:    [[1.5,1.5],[3.5,1.5],[1.5,3.5],[3.5,3.5]],
+  green:  [[1.5,10.5],[3.5,10.5],[1.5,12.5],[3.5,12.5]],
+  yellow: [[10.5,10.5],[12.5,10.5],[10.5,12.5],[12.5,12.5]],
+  blue:   [[10.5,1.5],[12.5,1.5],[10.5,3.5],[12.5,3.5]]
+};
+
+const SAFE_INDICES = [0, 8, 13, 21, 26, 34, 39, 47];
+
+/* ---------- STATE ---------- */
+let GAME = null;
+let screenFlow = { mode:null, count:null, color:null, difficulty:"medium" };
+
+/* ---------- SCREEN NAVIGATION ---------- */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=> s.classList.remove('show'));
+  document.getElementById(id).classList.add('show');
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+document.getElementById('btnBack').addEventListener('click', ()=>{
+  const cur = document.querySelector('.screen.show').id;
+  if (cur === 'screenHome') window.location.href = "../index.html";
+  else if (cur === 'screenCount') showScreen('screenHome');
+  else if (cur === 'screenColor') showScreen('screenCount');
+  else if (cur === 'screenGame') {
+    if (confirm("Quit current game?")) { GAME = null; showScreen('screenHome'); }
+  }
+});
+document.getElementById('btnBackToHome').addEventListener('click', ()=> showScreen('screenHome'));
+document.getElementById('btnBackToCount').addEventListener('click', ()=> showScreen('screenCount'));
+
+/* ---------- HOME OPTIONS ---------- */
+document.getElementById('optBots').addEventListener('click', ()=>{
+  screenFlow.mode = 'bots';
+  screenFlow.count = null;
+  document.getElementById('countSubText').textContent = "You play as one — the rest are bots";
+  showScreen('screenCount');
+});
+
+document.getElementById('optOffline').addEventListener('click', ()=>{
+  screenFlow.mode = 'offline';
+  screenFlow.count = null;
+  document.getElementById('countSubText').textContent = "All players share this device — take turns";
+  showScreen('screenCount');
+});
+
+document.getElementById('optTables').addEventListener('click', ()=>{
+  showModal("👥", "Table vs Table", "Auto-matching with other tables needs a live server. This will be enabled after the demo is approved.");
+});
+
+document.getElementById('optFriends').addEventListener('click', ()=>{
+  showModal("🔗", "Play with Friends", "Link-sharing multiplayer needs a live server. This will be enabled after the demo is approved.");
+});
+
+function showModal(emoji, title, text){
+  document.getElementById('mEmoji').textContent = emoji;
+  document.getElementById('mTitle').textContent = title;
+  document.getElementById('mText').textContent = text;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+document.getElementById('mClose').addEventListener('click', ()=>{
+  document.getElementById('modalOverlay').classList.remove('show');
+});
+
+/* ---------- PLAYER COUNT ---------- */
+document.querySelectorAll('#countGrid .pick-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#countGrid .pick-btn').forEach(b=> b.classList.remove('selected'));
+    btn.classList.add('selected');
+    screenFlow.count = parseInt(btn.dataset.count);
+
+    setTimeout(()=>{
+      prepColorScreen();
+      showScreen('screenColor');
+    }, 200);
+  });
+});
+
+/* ---------- COLOUR PICKER ---------- */
+function prepColorScreen(){
+  const count = screenFlow.count || 2;
+  const isBotMode = screenFlow.mode === 'bots';
+  const bots = isBotMode ? (count - 1) : 0;
+  document.getElementById('colorSubText').textContent =
+    isBotMode
+      ? `${count} players · you + ${bots} bot${bots === 1 ? '' : 's'}`
+      : `${count} players · pass & play`;
+
+  // colours available depends on count
+  const availableColors = ALL_COLORS.slice(0, count);
+  const colorPick = document.getElementById('colorPick');
+  colorPick.innerHTML = "";
+  availableColors.forEach(c=>{
+    const b = document.createElement('button');
+    b.className = "color-btn";
+    b.dataset.color = c;
+    b.setAttribute('aria-label', colorName[c]);
+    b.innerHTML = '<span class="cb-check">✓</span>';
+    b.addEventListener('click', ()=>{
+      document.querySelectorAll('.color-btn').forEach(x=> x.classList.remove('selected'));
+      b.classList.add('selected');
+      screenFlow.color = c;
+      document.getElementById('btnStartGame').disabled = false;
+    });
+    colorPick.appendChild(b);
+  });
+
+  // default select first colour
+  screenFlow.color = null;
+  document.getElementById('btnStartGame').disabled = true;
+
+  // show/hide difficulty
+  document.getElementById('diffSection').style.display = isBotMode ? 'block' : 'none';
+}
+
+/* ---------- DIFFICULTY ---------- */
+document.querySelectorAll('#diffRow .diff-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#diffRow .diff-btn').forEach(b=> b.classList.remove('selected'));
+    btn.classList.add('selected');
+    screenFlow.difficulty = btn.dataset.diff;
+  });
+});
+
+/* ---------- START ---------- */
+document.getElementById('btnStartGame').addEventListener('click', ()=>{
+  if (!screenFlow.color) return;
+  startGame({
+    mode: screenFlow.mode,
+    count: screenFlow.count,
+    color: screenFlow.color,
+    difficulty: screenFlow.difficulty
+  });
+  showScreen('screenGame');
+});
+
+/* ============================================================
+   GAME LOGIC
+   ============================================================ */
+function createGameState(opts){
+  const { mode, count, color, difficulty } = opts;
+  const availableColors = ALL_COLORS.slice(0, count);
+  // ensure player's chosen colour is used
+  if (!availableColors.includes(color)) availableColors[0] = color;
+
+  const state = {
+    mode, count, difficulty,
+    myColor: color,
+    activeColors: availableColors,
+    players: {},
+    turn: availableColors[0],
+    dice: 0,
+    hasRolled: false,
+    finishOrder: [],
+    awaitingMove: false,
+    movableTokens: []
+  };
+
+  availableColors.forEach(c=>{
+    state.players[c] = {
+      isBot: mode === 'bots' && c !== color,
+      tokens: [ {pos:-1}, {pos:-1}, {pos:-1}, {pos:-1} ]
+    };
+  });
+
+  return state;
+}
+
+function startGame(opts){
+  GAME = createGameState(opts);
+
+  document.getElementById('gameMeta').textContent =
+    opts.mode === 'bots'
+      ? `vs ${opts.count - 1} bot${opts.count - 1 === 1 ? '' : 's'} · ${opts.difficulty}`
+      : `${opts.count} players · pass & play`;
+
+  updateTurnUI();
+  renderDice(1);
+  renderBoard();
+  positionDice();
+
+  document.getElementById('rollInfo').textContent = "Tap the dice to roll";
+  document.getElementById('tokenPicker').classList.remove('show');
+
+  // if first player is bot
+  if (GAME.players[GAME.turn].isBot){
+    setTimeout(botTurn, 800);
+  }
+}
+
+/* ---------- DICE SVG ---------- */
+const DICE_DOTS = {
+  1: [[50,50]],
+  2: [[32,32],[68,68]],
+  3: [[32,32],[50,50],[68,68]],
+  4: [[32,32],[32,68],[68,32],[68,68]],
+  5: [[32,32],[32,68],[50,50],[68,32],[68,68]],
+  6: [[32,32],[32,50],[32,68],[68,32],[68,50],[68,68]]
+};
+const diceFace = document.getElementById('diceFace');
+function renderDice(value){
+  diceFace.innerHTML = "";
+  const rect = document.createElementNS("http://www.w3.org/2000/svg","rect");
+  rect.setAttribute("x", "6"); rect.setAttribute("y", "6");
+  rect.setAttribute("width", "88"); rect.setAttribute("height", "88");
+  rect.setAttribute("rx", "16");
+  rect.setAttribute("fill", "#FFFCF4");
+  rect.setAttribute("stroke", "#1B3A6B");
+  rect.setAttribute("stroke-width", "3");
+  diceFace.appendChild(rect);
+  (DICE_DOTS[value] || []).forEach(([x,y])=>{
+    const c = document.createElementNS("http://www.w3.org/2000/svg","circle");
+    c.setAttribute("cx", x); c.setAttribute("cy", y);
+    c.setAttribute("r", "9");
+    c.setAttribute("fill", "#1B3A6B");
+    diceFace.appendChild(c);
+  });
+}
+
+/* ---------- DICE POSITION (next to active colour) ---------- */
+function positionDice(){
+  if (!GAME) return;
+  const dice = document.getElementById('dice');
+  const boardArea = document.getElementById('boardArea');
+  const areaRect = boardArea.getBoundingClientRect();
+  const w = areaRect.width;
+  const h = areaRect.height;
+  const size = 60;
+  const margin = 8;
+
+  // Position: place dice near the active colour's home quadrant
+  // Red → top-left, Green → top-right, Yellow → bottom-right, Blue → bottom-left
+  let x, y;
+  switch(GAME.turn){
+    case 'red':    x = margin; y = margin; break;
+    case 'green':  x = w - size - margin; y = margin; break;
+    case 'yellow': x = w - size - margin; y = h - size - margin; break;
+    case 'blue':   x = margin; y = h - size - margin; break;
+  }
+  dice.style.left = x + "px";
+  dice.style.top = y + "px";
+}
+
+/* ---------- BOARD RENDER ---------- */
+const canvas = document.getElementById('board');
+const ctx = canvas.getContext('2d');
+const CELL = canvas.width / BOARD_SIZE;
+
+function renderBoard(){
+  // background
+  ctx.fillStyle = "#FFFCF4";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // outer border
+  ctx.strokeStyle = "#1A1A2E";
+  ctx.lineWidth = 6;
+  ctx.strokeRect(3, 3, canvas.width - 6, canvas.height - 6);
+
+  // 4 coloured quadrants
+  drawQuadrant(0, 0, "red");
+  drawQuadrant(9, 0, "blue");
+  drawQuadrant(0, 9, "green");
+  drawQuadrant(9, 9, "yellow");
+
+  // white cross
+  ctx.fillStyle = "#FFFCF4";
+  ctx.fillRect(6*CELL, 0, 3*CELL, 15*CELL);
+  ctx.fillRect(0, 6*CELL, 15*CELL, 3*CELL);
+
+  // grid lines
+  ctx.strokeStyle = "#1A1A2E";
+  ctx.lineWidth = 1.5;
+  for (let r = 0; r < 15; r++){
+    for (let c = 0; c < 15; c++){
+      const inVert = c >= 6 && c <= 8;
+      const inHorz = r >= 6 && r <= 8;
+      if (!inVert && !inHorz) continue;
+      if (inVert && inHorz) continue;
+      ctx.strokeRect(c*CELL, r*CELL, CELL, CELL);
+    }
+  }
+
+  // home stretch colours
+  HOME_PATH.red.forEach(([r,c])=>{ ctx.fillStyle = colorHex.red; ctx.fillRect(c*CELL, r*CELL, CELL, CELL); });
+  HOME_PATH.green.forEach(([r,c])=>{ ctx.fillStyle = colorHex.green; ctx.fillRect(c*CELL, r*CELL, CELL, CELL); });
+  HOME_PATH.yellow.forEach(([r,c])=>{ ctx.fillStyle = colorHex.yellow; ctx.fillRect(c*CELL, r*CELL, CELL, CELL); });
+  HOME_PATH.blue.forEach(([r,c])=>{ ctx.fillStyle = colorHex.blue; ctx.fillRect(c*CELL, r*CELL, CELL, CELL); });
+
+  // redraw grid on home stretch
+  ctx.strokeStyle = "#1A1A2E";
+  ctx.lineWidth = 1.5;
+  HOME_PATH.red.forEach(([r,c])=> ctx.strokeRect(c*CELL, r*CELL, CELL, CELL));
+  HOME_PATH.green.forEach(([r,c])=> ctx.strokeRect(c*CELL, r*CELL, CELL, CELL));
+  HOME_PATH.yellow.forEach(([r,c])=> ctx.strokeRect(c*CELL, r*CELL, CELL, CELL));
+  HOME_PATH.blue.forEach(([r,c])=> ctx.strokeRect(c*CELL, r*CELL, CELL, CELL));
+
+  // start cells
+  const startCells = {
+    red:    [6,1],
+    green:  [1,8],
+    yellow: [8,13],
+    blue:   [13,6]
+  };
+  Object.entries(startCells).forEach(([c, [r, cc]])=>{
+    ctx.fillStyle = colorHex[c];
+    ctx.fillRect(cc*CELL, r*CELL, CELL, CELL);
+    ctx.strokeStyle = "#1A1A2E";
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(cc*CELL, r*CELL, CELL, CELL);
+  });
+
+  // safe stars
+  SAFE_INDICES.forEach(idx=>{
+    const [r,c] = MAIN_PATH[idx];
+    drawStar(c*CELL + CELL/2, r*CELL + CELL/2, CELL*0.32, "#1A1A2E");
+  });
+
+  // centre home
+  drawCenter();
+
+  // tokens
+  if (GAME){
+    GAME.activeColors.forEach(color=>{
+      const p = GAME.players[color];
+      p.tokens.forEach((t, i)=>{
+        const [cx, cy] = tokenScreenPos(color, t, i);
+        drawToken(cx, cy, colorHex[color]);
+      });
+    });
+  } else {
+    ALL_COLORS.forEach(color=>{
+      YARD[color].forEach(([r,c])=>{
+        drawToken(c*CELL + CELL/2, r*CELL + CELL/2, colorHex[color]);
+      });
+    });
+  }
+}
+
+function drawQuadrant(row, col, color){
+  const x = col * CELL;
+  const y = row * CELL;
+  const size = 6 * CELL;
+  ctx.fillStyle = colorHex[color];
+  ctx.fillRect(x, y, size, size);
+  ctx.fillStyle = "#FFFCF4";
+  ctx.fillRect(x + CELL*0.8, y + CELL*0.8, size - CELL*1.6, size - CELL*1.6);
+  YARD[color].forEach(([r,c])=>{
+    ctx.beginPath();
+    ctx.arc(c*CELL + CELL/2, r*CELL + CELL/2, CELL*0.38, 0, Math.PI*2);
+    ctx.fillStyle = "#FFFCF4";
+    ctx.fill();
+    ctx.strokeStyle = colorHex[color];
+    ctx.lineWidth = 3;
+    ctx.stroke();
+  });
+}
+
+function drawCenter(){
+  const x = 6 * CELL, y = 6 * CELL, size = 3 * CELL;
+  const tri = (x1,y1,x2,y2,color)=>{
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.lineTo(x+size/2, y+size/2);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.strokeStyle = "#1A1A2E";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  };
+  tri(x, y, x+size, y, colorHex.green);
+  tri(x+size, y, x+size, y+size, colorHex.yellow);
+  tri(x, y+size, x+size, y+size, colorHex.blue);
+  tri(x, y, x, y+size, colorHex.red);
+}
+
+function drawStar(cx, cy, r, color){
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.beginPath();
+  for (let i = 0; i < 10; i++){
+    const rad = i % 2 === 0 ? r : r * 0.45;
+    const ang = -Math.PI/2 + i * Math.PI / 5;
+    const x = Math.cos(ang) * rad;
+    const y = Math.sin(ang) * rad;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = "rgba(26,26,46,.15)";
+  ctx.fill();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawToken(cx, cy, color){
+  ctx.beginPath();
+  ctx.ellipse(cx, cy + CELL*0.18, CELL*0.28, CELL*0.12, 0, 0, Math.PI*2);
+  ctx.fillStyle = "rgba(0,0,0,.25)";
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(cx, cy, CELL*0.28, 0, Math.PI*2);
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.strokeStyle = "#FFF";
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(cx - CELL*0.08, cy - CELL*0.10, CELL*0.10, 0, Math.PI*2);
+  ctx.fillStyle = "rgba(255,255,255,.6)";
+  ctx.fill();
+}
+
+function tokenScreenPos(color, token, idx){
+  if (token.pos === -1){
+    const [r, c] = YARD[color][idx];
+    return [c*CELL + CELL/2, r*CELL + CELL/2];
+  } else if (token.pos >= 0 && token.pos < 52){
+    const startIdx = START_INDEX[color];
+    const mainIdx = (startIdx + token.pos) % 52;
+    const [r, c] = MAIN_PATH[mainIdx];
+    return [c*CELL + CELL/2, r*CELL + CELL/2];
+  } else if (token.pos >= 52 && token.pos < 57){
+    const hp = HOME_PATH[color][token.pos - 52];
+    return [hp[1]*CELL + CELL/2, hp[0]*CELL + CELL/2];
+  } else {
+    // home / won
+    return [7.5*CELL, 7.5*CELL];
+  }
+}
+
+/* ---------- TURN UI ---------- */
+function updateTurnUI(){
+  if (!GAME) return;
+  const dot = document.getElementById('turnDot');
+  const txt = document.getElementById('turnText');
+  dot.className = "turn-dot " + GAME.turn;
+  const nm = colorName[GAME.turn];
+  const isBot = GAME.players[GAME.turn].isBot;
+  txt.textContent = isBot ? `${nm} (Bot)'s turn` : `${nm}'s turn`;
+}
+
+/* ---------- MOVEMENT RULES ---------- */
+function canTokenMove(color, idx, value){
+  const t = GAME.players[color].tokens[idx];
+  if (t.pos === -1) return value === 6;
+  if (t.pos === 57) return false;
+  return t.pos + value <= 57;
+}
+
+function applyMove(color, idx, value){
+  const t = GAME.players[color].tokens[idx];
+  if (t.pos === -1){
+    t.pos = 0;
+  } else {
+    t.pos += value;
+    if (t.pos > 57) t.pos = 57;
+  }
+}
+
+/* ---------- PLAYER ROLL ---------- */
+const diceEl = document.getElementById('dice');
+diceEl.addEventListener('click', ()=>{
+  if (!GAME) return;
+  if (GAME.turn !== GAME.myColor && GAME.mode === 'bots') return;
+  if (GAME.players[GAME.turn].isBot) return;
+  if (GAME.hasRolled) return;
+  if (GAME.awaitingMove) return;
+  playerRoll();
+});
+
+function playerRoll(){
+  GAME.hasRolled = true;
+  diceEl.classList.add('rolling');
+  let rc = 0;
+  const iv = setInterval(()=>{
+    renderDice(Math.floor(Math.random()*6) + 1);
+    rc++;
+    if (rc >= 10){
+      clearInterval(iv);
+      const val = Math.floor(Math.random()*6) + 1;
+      renderDice(val);
+      diceEl.classList.remove('rolling');
+      GAME.dice = val;
+      document.getElementById('rollInfo').innerHTML = `Rolled <strong>${val}</strong>`;
+      afterRoll(GAME.turn, val);
+    }
+  }, 65);
+}
+
+function afterRoll(color, val){
+  const movable = [];
+  for (let i = 0; i < 4; i++) if (canTokenMove(color, i, val)) movable.push(i);
+
+  if (movable.length === 0){
+    document.getElementById('rollInfo').innerHTML = `No moves possible.`;
+    setTimeout(()=>{
+      nextTurn();
+    }, 900);
+    return;
+  }
+
+  if (movable.length === 1){
+    setTimeout(()=>{
+      applyMove(color, movable[0], val);
+      renderBoard();
+      checkWin(color);
+      afterMove(color, val);
+    }, 400);
+    return;
+  }
+
+  // multiple — show picker (for non-bot)
+  if (!GAME.players[color].isBot){
+    GAME.awaitingMove = true;
+    GAME.movableTokens = movable;
+    showTokenPicker(color, movable);
+  } else {
+    // bot picks
+    const pick = botChoose(color, movable);
+    setTimeout(()=>{
+      applyMove(color, pick, val);
+      renderBoard();
+      checkWin(color);
+      afterMove(color, val);
+    }, 450);
+  }
+}
+
+function showTokenPicker(color, movable){
+  const picker = document.getElementById('tokenPicker');
+  const title = document.getElementById('tokenPickerTitle');
+  const btns = document.getElementById('tokenButtons');
+  title.textContent = "Pick a token to move";
+  btns.innerHTML = "";
+  movable.forEach(i=>{
+    const b = document.createElement('button');
+    b.className = `token-btn t-${color}`;
+    b.textContent = `Token ${i+1}`;
+    b.addEventListener('click', ()=>{
+      picker.classList.remove('show');
+      GAME.awaitingMove = false;
+      applyMove(color, i, GAME.dice);
+      renderBoard();
+      checkWin(color);
+      afterMove(color, GAME.dice);
+    });
+    btns.appendChild(b);
+  });
+  picker.classList.add('show');
+}
+
+function afterMove(color, val){
+  if (GAME.finishOrder.length === GAME.activeColors.length - 1) {
+    // someone won — already handled in checkWin
+  }
+  if (val === 6 && !GAME.finishOrder.includes(color)){
+    // roll again
+    GAME.hasRolled = false;
+    document.getElementById('rollInfo').innerHTML = `Six! Roll again`;
+    positionDice();
+    if (GAME.players[color].isBot) setTimeout(botTurn, 500);
+  } else {
+    nextTurn();
+  }
+}
+
+/* ---------- NEXT TURN ---------- */
+function nextTurn(){
+  const idx = GAME.activeColors.indexOf(GAME.turn);
+  GAME.turn = GAME.activeColors[(idx + 1) % GAME.activeColors.length];
+  GAME.hasRolled = false;
+  GAME.dice = 0;
+  GAME.awaitingMove = false;
+  renderDice(1);
+  updateTurnUI();
+  renderBoard();
+  positionDice();
+  document.getElementById('rollInfo').textContent = "Tap the dice to roll";
+
+  if (GAME.players[GAME.turn].isBot){
+    setTimeout(botTurn, 700);
+  }
+}
+
+/* ---------- BOT ---------- */
+function botChoose(color, movable){
+  if (GAME.difficulty === 'easy'){
+    return movable[Math.floor(Math.random() * movable.length)];
+  }
+  // medium: furthest token
+  if (GAME.difficulty === 'medium'){
+    let best = movable[0], bestScore = -1;
+    movable.forEach(i=>{
+      const s = GAME.players[color].tokens[i].pos;
+      if (s > bestScore){ bestScore = s; best = i; }
+    });
+    return best;
+  }
+  // hard: prefer home stretch first, then yard exit
+  let best = movable[0], bestScore = -999;
+  movable.forEach(i=>{
+    const t = GAME.players[color].tokens[i];
+    let s = t.pos;
+    if (t.pos === -1) s -= 30;
+    if (t.pos >= 52) s += 50;
+    if (s > bestScore){ bestScore = s; best = i; }
+  });
+  return best;
+}
+
+function botTurn(){
+  if (!GAME) return;
+  if (!GAME.players[GAME.turn].isBot) return;
+  GAME.hasRolled = true;
+  diceEl.classList.add('rolling');
+  let rc = 0;
+  const iv = setInterval(()=>{
+    renderDice(Math.floor(Math.random()*6) + 1);
+    rc++;
+    if (rc >= 8){
+      clearInterval(iv);
+      const val = Math.floor(Math.random()*6) + 1;
+      renderDice(val);
+      diceEl.classList.remove('rolling');
+      GAME.dice = val;
+      document.getElementById('rollInfo').innerHTML = `Bot rolled <strong>${val}</strong>`;
+      afterRoll(GAME.turn, val);
+    }
+  }, 65);
+}
+
+/* ---------- WIN CHECK ---------- */
+function checkWin(color){
+  const p = GAME.players[color];
+  const allHome = p.tokens.every(t=> t.pos === 57);
+  if (allHome && !GAME.finishOrder.includes(color)){
+    GAME.finishOrder.push(color);
+    showWin(color === GAME.myColor ? "win" : "lose", colorName[color]);
+  }
+}
+
+function showWin(result, who){
+  const isWin = result === "win";
+  showModal(
+    isWin ? "🏆" : "😔",
+    isWin ? "You Won!" : `${who} Won!`,
+    isWin
+      ? "Great game! Show this screen at the counter to claim your reward."
+      : "Tough luck — try again!"
+  );
+  // mark game done
+  GAME = null;
+}
+
+/* ---------- QUIT / RESTART ---------- */
+document.getElementById('btnQuit').addEventListener('click', ()=>{
+  if (confirm("Quit current game?")){
+    GAME = null;
+    showScreen('screenHome');
+  }
+});
+document.getElementById('btnRestart').addEventListener('click', ()=>{
+  if (!GAME) return;
+  startGame({
+    mode: GAME.mode,
+    count: GAME.count,
+    color: GAME.myColor,
+    difficulty: GAME.difficulty
+  });
+});
+
+/* ---------- THREE.JS BACKGROUND ---------- */
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (typeof THREE !== 'undefined' && !reduceMotion) initThreeBG();
+else document.getElementById('three-bg').style.display = 'none';
+
+function initThreeBG(){
+  const canvas = document.getElementById('three-bg');
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:window.devicePixelRatio < 2 });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 0.1, 100);
+  camera.position.set(0, 0, 14);
+
+  scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+  const k = new THREE.PointLight(0xFFD95A, 1.2, 40); k.position.set(6, 6, 8); scene.add(k);
+  const f = new THREE.PointLight(0x1B3A6B, 1.0, 40); f.position.set(-8, -4, 6); scene.add(f);
+
+  const group = new THREE.Group(); scene.add(group);
+  const rings = [];
+  function addRing(r, t, c, p){
+    const m = new THREE.Mesh(new THREE.TorusGeometry(r, t, 20, 60),
+      new THREE.MeshStandardMaterial({ color:c, metalness:0.7, roughness:0.25, transparent:true, opacity:0.85 }));
+    m.position.set(p.x, p.y, p.z);
+    group.add(m);
+    rings.push({ mesh:m, sp:(Math.random()-0.5)*0.01, bp:Math.random()*Math.PI*2, by:p.y });
+  }
+  addRing(2.2, 0.08, 0xF2C200, {x:-4.5, y:1.5, z:-2});
+  addRing(1.6, 0.06, 0x1B3A6B, {x: 4.8, y:-1.2, z:-1});
+  addRing(1.9, 0.07, 0xD62828, {x: 3.2, y: 2.8, z:-3});
+  addRing(1.4, 0.05, 0x5B2A86, {x:-3.8, y:-2.5, z:-2});
+
+  const icosas = [];
+  function addIcosa(s, c, p){
+    const m = new THREE.Mesh(new THREE.IcosahedronGeometry(s, 0),
+      new THREE.MeshStandardMaterial({ color:c, metalness:0.85, roughness:0.15, flatShading:true, transparent:true, opacity:0.9 }));
+    m.position.set(p.x, p.y, p.z);
+    group.add(m);
+    icosas.push({ mesh:m, sp:(Math.random()-0.5)*0.008, bp:Math.random()*Math.PI*2, by:p.y });
+  }
+  addIcosa(0.55, 0xF2C200, {x:-2.5, y:2.5, z:1});
+  addIcosa(0.4,  0x1B3A6B, {x: 3.6, y:0.5, z:2});
+  addIcosa(0.7,  0x5B2A86, {x:-5.2, y:-0.8, z:0});
+
+  const starCount = 180;
+  const sg = new THREE.BufferGeometry();
+  const sp = new Float32Array(starCount*3);
+  const sc = new Float32Array(starCount*3);
+  const pal = [new THREE.Color(0xF2C200), new THREE.Color(0xD62828), new THREE.Color(0x1B3A6B), new THREE.Color(0x5B2A86), new THREE.Color(0xFFFFFF)];
+  for (let i = 0; i < starCount; i++){
+    sp[i*3] = (Math.random()-0.5)*30;
+    sp[i*3+1] = (Math.random()-0.5)*22;
+    sp[i*3+2] = (Math.random()-0.5)*20 - 4;
+    const c = pal[Math.floor(Math.random()*pal.length)];
+    sc[i*3]=c.r; sc[i*3+1]=c.g; sc[i*3+2]=c.b;
+  }
+  sg.setAttribute('position', new THREE.BufferAttribute(sp, 3));
+  sg.setAttribute('color', new THREE.BufferAttribute(sc, 3));
+  const stars = new THREE.Points(sg, new THREE.PointsMaterial({ size:0.06, vertexColors:true, transparent:true, opacity:0.85 }));
+  scene.add(stars);
+
+  let tx=0, ty=0, cx=0, cy=0;
+  window.addEventListener('mousemove', (e)=>{
+    tx = (e.clientX / window.innerWidth - 0.5) * 2;
+    ty = (e.clientY / window.innerHeight - 0.5) * 2;
+  }, { passive:true });
+  window.addEventListener('deviceorientation', (e)=>{
+    tx = Math.max(-1, Math.min(1, (e.gamma || 0) / 45));
+    ty = Math.max(-1, Math.min(1, ((e.beta || 0) - 45) / 45));
+  }, { passive:true });
+
+  window.addEventListener('resize', ()=>{
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  const clk = new THREE.Clock();
+  function animate(){
+    requestAnimationFrame(animate);
+    const t = clk.getElapsedTime();
+    cx += (tx - cx) * 0.05;
+    cy += (ty - cy) * 0.05;
+    group.rotation.y = cx * 0.25 + t * 0.02;
+    group.rotation.x = cy * 0.15 + Math.sin(t * 0.15) * 0.05;
+    rings.forEach(r=>{ r.mesh.rotation.z += r.sp; r.mesh.rotation.x += r.sp*0.6; r.mesh.position.y = r.by + Math.sin(t + r.bp)*0.35; });
+    icosas.forEach(o=>{ o.mesh.rotation.x += o.sp; o.mesh.rotation.y += o.sp*1.4; o.mesh.position.y = o.by + Math.sin(t*1.2 + o.bp)*0.4; });
+    stars.rotation.y = t * 0.015;
+    renderer.render(scene, camera);
+  }
+  animate();
+}
+
+/* ---------- INITIAL RENDER ---------- */
+renderBoard();
+</script>
+
+</body>
+</html>
