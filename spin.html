@@ -208,6 +208,7 @@ body{
   font-size:12.5px; color:var(--ink-soft);
   margin-top:6px; line-height:1.5;
 }
+.gate p strong{ color:var(--navy); }
 .gate .status{
   margin-top:12px;
   font-size:12px; font-weight:600;
@@ -621,11 +622,11 @@ canvas#wheel{
   <p class="sub">Spin the wheel · Win exciting prizes</p>
 </section>
 
-<!-- LOCATION GATE — same rules as menu -->
+<!-- LOCATION GATE -->
 <div class="gate" id="gate">
   <div class="g-icon" id="gateIcon">📍</div>
-  <h3 id="gateTitle">Verifying your location</h3>
-  <p id="gateDesc">Please allow location access. This spin is only available from inside Neelkanth Star or within <strong>500 meters</strong> of the restaurant.</p>
+  <h3 id="gateTitle">Verify your location</h3>
+  <p id="gateDesc">This lucky spin is only available from inside Neelkanth Star or within <strong>500 meters</strong> of the restaurant.</p>
   <div class="status" id="gateStatus"></div>
   <div class="gate-actions" id="gateActions">
     <button class="primary" id="gateBtn">Check Location</button>
@@ -743,9 +744,10 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 })();
 
 /* ---------- config ---------- */
-const RESTAURANT_LAT = 29.6785115;
-const RESTAURANT_LNG = 76.9917663;
-const NEAR_RADIUS_M  = 500;  /* same as menu */
+/* REAL Neelkanth Star coords — from Google Maps */
+const RESTAURANT_LAT = 29.6493081;
+const RESTAURANT_LNG = 76.9853392;
+const NEAR_RADIUS_M  = 500;
 const SPIN_STORAGE_KEY = "neelkanth_spin_data";
 const MAX_SPINS_PER_DAY = 1;
 
@@ -800,7 +802,7 @@ function saveSpinHistory(){
 }
 
 /* ============================================================
-   LOCATION GATE — same rules & design as menu
+   LOCATION GATE — same rules as menu
    ============================================================ */
 function haversineMeters(lat1, lon1, lat2, lon2){
   const R = 6371000;
@@ -826,8 +828,8 @@ function setGateStatus(msg, cls){
 }
 function resetGateUI(){
   gateIcon.textContent = "📍";
-  gateTitle.textContent = "Verifying your location";
-  gateDesc.innerHTML = 'Please allow location access. This spin is only available from inside Neelkanth Star or within <strong>500 meters</strong> of the restaurant.';
+  gateTitle.textContent = "Verify your location";
+  gateDesc.innerHTML = 'This lucky spin is only available from inside Neelkanth Star or within <strong>500 meters</strong> of the restaurant.';
   gateStatus.className = "status";
   gateStatus.textContent = "";
   gateBtn.style.display = "block";
@@ -870,9 +872,9 @@ function checkLocation(){
         setTimeout(()=> revealWheel(), 700);
       } else {
         gateIcon.textContent = "🚫";
-        gateTitle.textContent = "You are away from the restaurant";
-        gateDesc.innerHTML = `You're about <strong>${Math.round(dist)}m</strong> away. This spin is only available from inside Neelkanth Star or within <strong>500 meters</strong>.`;
-        setGateStatus("Please come closer to spin", "err");
+        gateTitle.textContent = "Oops! You are out of range";
+        gateDesc.innerHTML = `You're about <strong>${Math.round(dist)}m</strong> away from Neelkanth Star. This spin is only available from within <strong>500 meters</strong> of the restaurant.`;
+        setGateStatus(`Distance: ${Math.round(dist)}m (max 500m allowed)`, "err");
         gateBtn.textContent = "Try Again";
         gateBtn.style.display = "block";
         gateBack.style.display = "block";
@@ -897,10 +899,7 @@ function checkLocation(){
 }
 gateBtn.addEventListener("click", checkLocation);
 gateBack.addEventListener("click", ()=>{
-  // go back to menu
-  const url = new URL(window.location.href);
-  url.pathname = url.pathname.replace(/spin\.html$/, 'menu.html');
-  window.location.href = url.toString();
+  window.location.href = "menu.html";
 });
 
 /* ---------- WHEEL ---------- */
