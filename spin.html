@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
 <meta name="theme-color" content="#3B1414" />
 <title>Lucky Spin — Neelkanth Star Dhaba</title>
-<meta name="description" content="Spin the Neelkanth Lucky Wheel and win discounts on your next order." />
+<meta name="description" content="Spin the Neelkanth Lucky Wheel and win exciting prizes on your next order." />
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,8 +40,12 @@ body{
   overflow-x:hidden;
   position:relative;
   line-height:1.5;
+  perspective:1200px;
 }
 
+/* ============================================================
+   BACKGROUND LAYER — animated logo + floating 3D dishes
+   ============================================================ */
 .bg-stage{
   position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none;
   background:
@@ -49,9 +53,33 @@ body{
     radial-gradient(800px 500px at 100% 5%, #F2C20018, transparent 55%),
     radial-gradient(700px 700px at 50% 110%, #5B2A8614, transparent 60%),
     linear-gradient(180deg,#FBF6EC 0%,#F5EDDC 100%);
+  transform-style:preserve-3d;
 }
+
+/* big animated logo behind everything */
+.bg-logo{
+  position:absolute;
+  top:50%; left:50%;
+  width:min(85vw, 620px);
+  height:min(85vw, 620px);
+  transform:translate(-50%, -50%);
+  opacity:.06;
+  filter:blur(2px);
+  animation:logoSpin 40s linear infinite, logoPulse 8s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes logoSpin{
+  from{ transform:translate(-50%,-50%) rotate(0deg) scale(1); }
+  to{ transform:translate(-50%,-50%) rotate(360deg) scale(1); }
+}
+@keyframes logoPulse{
+  0%,100%{ opacity:.05; }
+  50%{ opacity:.10; }
+}
+
+/* floating gradient orbs */
 .orb{
-  position:absolute; border-radius:50%; filter:blur(70px); opacity:.35;
+  position:absolute; border-radius:50%; filter:blur(70px); opacity:.32;
   animation:float 22s ease-in-out infinite;
 }
 .orb.a{ width:300px; height:300px; left:-90px; top:-40px;
@@ -65,7 +93,127 @@ body{
   50%{ transform:translate(25px,-30px) scale(1.08); }
 }
 
-/* ============ TOPBAR ============ */
+/* drifting starfield */
+.starfield{
+  position:absolute; inset:0;
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, #F2C20066, transparent),
+    radial-gradient(2px 2px at 120px 90px, #D6282844, transparent),
+    radial-gradient(1.5px 1.5px at 220px 40px, #5B2A8644, transparent),
+    radial-gradient(2px 2px at 320px 150px, #F2C20055, transparent),
+    radial-gradient(1.5px 1.5px at 420px 80px, #8A2E2E44, transparent);
+  background-size:600px 300px;
+  background-repeat:repeat;
+  opacity:.5;
+  animation:starDrift 60s linear infinite;
+}
+@keyframes starDrift{
+  from{ background-position:0 0; }
+  to{ background-position:600px 300px; }
+}
+
+/* ============================================================
+   3D FLOATING DISHES
+   CSS-built until real photos are added.
+   Swap .dish-visual with <img src="assets/img/dish-X.png"> later.
+   ============================================================ */
+.dish-stage{
+  position:absolute; inset:0;
+  transform-style:preserve-3d;
+  pointer-events:none;
+}
+.dish{
+  position:absolute;
+  width:150px; height:150px;
+  transform-style:preserve-3d;
+  animation:dishFloat 9s ease-in-out infinite;
+  will-change:transform;
+}
+.dish .dish-visual{
+  width:100%; height:100%;
+  border-radius:50%;
+  position:relative;
+  box-shadow:
+    0 26px 40px -20px rgba(59,20,20,.55),
+    inset 0 -10px 24px rgba(0,0,0,.18),
+    inset 0 8px 20px rgba(255,255,255,.25);
+}
+/* plate look */
+.dish.plate .dish-visual{
+  background:
+    radial-gradient(circle at 35% 30%, #ffffff 0%, #f4ead6 55%, #d8c8a6 100%);
+  border:4px solid #e8dcc0;
+}
+.dish.plate .dish-visual::after{
+  content:"";
+  position:absolute; inset:22%;
+  border-radius:50%;
+  background:radial-gradient(circle at 40% 35%, #b8341a, #6b1f1f 70%);
+  box-shadow:inset 0 6px 14px rgba(0,0,0,.35);
+}
+/* bowl look */
+.dish.bowl .dish-visual{
+  background:
+    radial-gradient(circle at 35% 30%, #fef3d6 0%, #f2c200 55%, #b88700 100%);
+  border:4px solid #d9a800;
+}
+.dish.bowl .dish-visual::after{
+  content:"";
+  position:absolute; inset:26%;
+  border-radius:50%;
+  background:radial-gradient(circle at 40% 35%, #7a2a0a, #3b1414 75%);
+  box-shadow:inset 0 6px 14px rgba(0,0,0,.4);
+}
+/* glass/cup look */
+.dish.cup .dish-visual{
+  border-radius:22% 22% 40% 40% / 18% 18% 55% 55%;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.95) 0%, rgba(255,244,214,.9) 45%, rgba(242,194,0,.85) 100%);
+  border:3px solid #e8dcc0;
+}
+.dish.cup .dish-visual::after{
+  content:"";
+  position:absolute; inset:18% 24% 32% 24%;
+  border-radius:50%;
+  background:radial-gradient(circle at 40% 35%, #a05a1a, #3b1414 80%);
+  box-shadow:inset 0 4px 10px rgba(0,0,0,.45);
+}
+/* shadow under dish */
+.dish::after{
+  content:"";
+  position:absolute;
+  left:50%; bottom:-22px;
+  width:70%; height:12px;
+  transform:translateX(-50%);
+  background:radial-gradient(ellipse at center, rgba(59,20,20,.35), transparent 70%);
+  filter:blur(4px);
+  animation:dishShadow 9s ease-in-out infinite;
+}
+@keyframes dishShadow{
+  0%,100%{ transform:translateX(-50%) scale(1); opacity:.5; }
+  50%{ transform:translateX(-50%) scale(.85); opacity:.3; }
+}
+
+/* individual dish positions + timing */
+.dish.d1{ top:8%;  left:6%;  animation-delay:0s;   animation-duration:10s; }
+.dish.d2{ top:22%; right:4%; animation-delay:-2s;  animation-duration:11s; }
+.dish.d3{ bottom:14%; left:4%;  animation-delay:-4s; animation-duration:12s; }
+.dish.d4{ bottom:6%;  right:8%; animation-delay:-6s; animation-duration:9.5s; }
+
+@keyframes dishFloat{
+  0%,100%{ transform:translateY(0) rotate(-6deg) rotateX(0deg) rotateY(0deg) scale(1); }
+  33%{ transform:translateY(-22px) rotate(6deg) rotateX(8deg) rotateY(-10deg) scale(1.04); }
+  66%{ transform:translateY(12px) rotate(-4deg) rotateX(-6deg) rotateY(8deg) scale(.98); }
+}
+
+/* hide dishes on very small screens so they don't crowd */
+@media (max-width:420px){
+  .dish{ width:110px; height:110px; opacity:.7; }
+}
+
+/* ============================================================
+   TOPBAR
+   ============================================================ */
 .topbar{
   position:sticky; top:0; z-index:40;
   background:rgba(251,246,236,.94);
@@ -97,7 +245,9 @@ body{
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 
-/* ============ HERO ============ */
+/* ============================================================
+   HERO
+   ============================================================ */
 .hero{
   position:relative; z-index:1;
   text-align:center;
@@ -123,12 +273,15 @@ body{
   to{ opacity:1; transform:translateY(0); }
 }
 
-/* ============ LOCATION GATE ============ */
+/* ============================================================
+   LOCATION GATE
+   ============================================================ */
 .gate{
   position:relative; z-index:1;
   max-width:460px; margin:16px auto;
   padding:18px;
-  background:#fff;
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(10px);
   border:1.5px solid rgba(107,31,31,.12);
   border-radius:18px;
   box-shadow:var(--shadow-sm);
@@ -167,7 +320,9 @@ body{
 .gate button:active{ transform:scale(.96); }
 .gate button:disabled{ opacity:.5; cursor:not-allowed; }
 
-/* ============ WHEEL ============ */
+/* ============================================================
+   WHEEL
+   ============================================================ */
 .wheel-stage{
   position:relative; z-index:1;
   display:flex; flex-direction:column; align-items:center;
@@ -181,6 +336,7 @@ body{
   width:min(86vw, 380px);
   aspect-ratio:1/1;
   margin:6px 0 22px;
+  filter:drop-shadow(0 26px 40px rgba(59,20,20,.35));
 }
 .wheel-pointer{
   position:absolute;
@@ -202,6 +358,11 @@ body{
   border-radius:50%;
   background:linear-gradient(135deg,var(--gold),var(--red));
   box-shadow:0 0 12px rgba(242,194,0,.7);
+  animation:pulseDot 2s ease-in-out infinite;
+}
+@keyframes pulseDot{
+  0%,100%{ transform:translateX(-50%) scale(1); }
+  50%{ transform:translateX(-50%) scale(1.18); }
 }
 canvas#wheel{
   width:100%; height:100%;
@@ -210,8 +371,7 @@ canvas#wheel{
   box-shadow:
     0 0 0 8px #fff,
     0 0 0 11px var(--gold),
-    0 0 0 14px var(--maroon),
-    0 22px 50px -18px rgba(59,20,20,.55);
+    0 0 0 14px var(--maroon);
   transition:transform 0s;
   transform:rotate(0deg);
 }
@@ -244,12 +404,15 @@ canvas#wheel{
 }
 .spins-left strong{ color:var(--maroon); }
 
-/* ============ RULES ============ */
+/* ============================================================
+   RULES (no odds revealed)
+   ============================================================ */
 .rules{
   position:relative; z-index:1;
   max-width:520px; margin:8px auto 40px;
   padding:18px 20px;
-  background:linear-gradient(155deg,#fff,var(--cream));
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(10px);
   border:1.5px solid rgba(107,31,31,.12);
   border-radius:18px;
   box-shadow:var(--shadow-sm);
@@ -263,9 +426,7 @@ canvas#wheel{
   text-align:center;
   margin-bottom:12px;
 }
-.rules ul{
-  list-style:none;
-}
+.rules ul{ list-style:none; }
 .rules li{
   display:flex; gap:10px; align-items:flex-start;
   padding:7px 0;
@@ -278,7 +439,9 @@ canvas#wheel{
 .rules li .ico{ flex:0 0 auto; font-size:14px; }
 .rules li strong{ color:var(--maroon); }
 
-/* ============ RESULT MODAL ============ */
+/* ============================================================
+   RESULT MODAL
+   ============================================================ */
 .modal-overlay{
   position:fixed; inset:0; z-index:80;
   background:rgba(42,20,20,.65);
@@ -304,8 +467,7 @@ canvas#wheel{
 .modal-overlay.show .modal{ transform:scale(1) translateY(0); }
 
 .result-emoji{
-  font-size:60px;
-  line-height:1;
+  font-size:60px; line-height:1;
   margin-bottom:12px;
   animation:pop .5s cubic-bezier(.2,1.4,.4,1);
 }
@@ -325,19 +487,8 @@ canvas#wheel{
   color:var(--ink-soft);
   line-height:1.55;
 }
-.result-code{
-  margin:16px 0 6px;
-  padding:12px 16px;
-  background:linear-gradient(135deg,rgba(242,194,0,.2),rgba(214,40,40,.1));
-  border:1.5px dashed rgba(107,31,31,.35);
-  border-radius:12px;
-  font-family:'Cinzel',serif;
-  font-size:20px; font-weight:800;
-  color:var(--maroon);
-  letter-spacing:.15em;
-}
 
-/* number input inside modal */
+/* number input */
 .num-input{
   margin-top:16px;
   text-align:left;
@@ -401,7 +552,7 @@ canvas#wheel{
 }
 .btn-ghost:active{ transform:scale(.97); }
 
-/* coupon preview card */
+/* coupon card */
 .coupon-card{
   margin-top:16px;
   padding:18px 16px;
@@ -482,7 +633,7 @@ canvas#wheel{
 }
 .toast.show{ opacity:1; transform:translate(-50%,0); }
 
-/* confetti canvas */
+/* confetti */
 #confetti{
   position:fixed; inset:0;
   pointer-events:none;
@@ -503,10 +654,29 @@ canvas#wheel{
 </head>
 <body>
 
+<!-- ============ ANIMATED BACKGROUND ============ -->
 <div class="bg-stage" aria-hidden="true">
+
+  <!-- rotating logo behind everything -->
+  <img class="bg-logo" src="neelkanthlogo.png" alt=""
+       onerror="this.style.display='none'"/>
+
+  <!-- drifting stars -->
+  <div class="starfield"></div>
+
+  <!-- gradient orbs -->
   <div class="orb a"></div>
   <div class="orb b"></div>
   <div class="orb c"></div>
+
+  <!-- 3D floating dishes (CSS-built until real photos arrive) -->
+  <div class="dish-stage">
+    <div class="dish plate d1"><div class="dish-visual"></div></div>
+    <div class="dish bowl  d2"><div class="dish-visual"></div></div>
+    <div class="dish cup   d3"><div class="dish-visual"></div></div>
+    <div class="dish plate d4"><div class="dish-visual"></div></div>
+  </div>
+
 </div>
 
 <canvas id="confetti"></canvas>
@@ -523,7 +693,7 @@ canvas#wheel{
 <!-- HERO -->
 <section class="hero">
   <h1>Lucky Spin</h1>
-  <p class="sub">Spin the wheel · Win on your next visit</p>
+  <p class="sub">Spin the wheel · Win exciting prizes</p>
 </section>
 
 <!-- LOCATION GATE -->
@@ -549,13 +719,12 @@ canvas#wheel{
 <section class="rules">
   <h4>How it works</h4>
   <ul>
-    <li><span class="ico">🎯</span><span><strong>1 in 50</strong> wins a <strong>50% discount</strong> on the next order</span></li>
-    <li><span class="ico">🎁</span><span><strong>5 in 100</strong> win <strong>25% off</strong> the next order</span></li>
-    <li><span class="ico">✨</span><span><strong>5 in 100</strong> win <strong>10% off</strong> the next order</span></li>
-    <li><span class="ico">🍰</span><span><strong>10 in 100</strong> win a <strong>free low-rate item</strong> (dessert, drink or papad)</span></li>
-    <li><span class="ico">🙏</span><span>The rest get <strong>Better Luck Next Time</strong> — try again on your next visit</span></li>
+    <li><span class="ico">🎯</span><span>Spin the wheel and win exciting prizes — discounts, free items and more</span></li>
     <li><span class="ico">📱</span><span>To claim, enter the <strong>mobile number you ordered from</strong> and save your coupon</span></li>
+    <li><span class="ico">🎟️</span><span>Show the saved coupon at the counter on your <strong>next order</strong></span></li>
+    <li><span class="ico">🕒</span><span>Valid for <strong>30 days</strong> from issue · One use only · Non-transferable</span></li>
     <li><span class="ico">🔒</span><span>Only guests <strong>inside the restaurant</strong> can spin — location verified</span></li>
+    <li><span class="ico">🙏</span><span>No luck this time? Come back and try again on your next visit</span></li>
   </ul>
 </section>
 
@@ -563,10 +732,10 @@ canvas#wheel{
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal" id="modal">
 
-    <!-- Step 1: result reveal -->
+    <!-- step 1: result reveal -->
     <div id="step1">
       <div class="result-emoji" id="rEmoji">🎉</div>
-      <div class="result-title" id="rTitle">You Won!</div>
+      <div class="result-title" id="rTitle">Result</div>
       <div class="result-desc" id="rDesc"></div>
 
       <div class="num-input" id="numWrap">
@@ -581,7 +750,7 @@ canvas#wheel{
       </div>
     </div>
 
-    <!-- Step 2: coupon -->
+    <!-- step 2: coupon -->
     <div id="step2" style="display:none;">
       <div class="result-emoji" id="cEmoji">🎟️</div>
       <div class="result-title" id="cTitle">Coupon Saved</div>
@@ -590,7 +759,7 @@ canvas#wheel{
       <div class="coupon-card" id="couponCard">
         <div class="cc-brand">Neelkanth Star Dhaba</div>
         <img class="cc-star" src="neelkanthlogo.png" alt="" onerror="this.outerHTML='★'"/>
-        <div class="cc-title" id="ccTitle">25% OFF</div>
+        <div class="cc-title" id="ccTitle">PRIZE</div>
         <div class="cc-prize" id="ccPrize">On your next order</div>
         <div class="cc-code" id="ccCode">NEEL-XXXX</div>
         <div class="cc-meta">
@@ -620,21 +789,22 @@ canvas#wheel{
    ============================================================ */
 
 /* ---------- CONFIG ---------- */
-// TODO: Replace with real Neelkanth coords (Google Maps → right-click Neelkanth → copy coords)
-const RESTAURANT_LAT = 29.0588;  // TODO: real latitude
-const RESTAURANT_LNG = 76.0856;  // TODO: real longitude
-const NEAR_RADIUS_M  = 300;      // allowed radius in meters
-const WA_NUMBER      = "919812400009";
+/* TODO: Vikas to fill real Neelkanth coords before going live.
+   If both are null, the location gate is skipped (demo mode). */
+const RESTAURANT_LAT = null;   // e.g. 29.0588
+const RESTAURANT_LNG = null;   // e.g. 76.0856
+const NEAR_RADIUS_M  = 300;    // allowed radius in meters
 
 const SPIN_STORAGE_KEY = "neelkanth_spin_data";
+const MAX_SPINS_PER_DAY = 3;
 
-/* ---------- PRIZE LOGIC (weighted) ----------
-   Distribution per 100 spins:
-   1 × 50% off
-   5 × 25% off
-   5 × 10% off
+/* ---------- PRIZE ODDS (hidden from UI) ----------
+   Per 100 spins:
+   1  × jackpot        (50% off next order)
+   5  × 25% off
+   5  × 10% off
    10 × free low-rate item
-   79 × Better luck next time
+   79 × better luck next time
 */
 const PRIZE_POOL = [
   { key:"JACKPOT", weight:1,  title:"50% OFF", desc:"Jackpot! Half price on your next order.", emoji:"🏆", color:"#D62828" },
@@ -644,7 +814,7 @@ const PRIZE_POOL = [
   { key:"LOSE",    weight:79, title:"Better Luck Next Time", desc:"No win this time. Try again on your next visit!", emoji:"🙏", color:"#8A2E2E" }
 ];
 
-/* wheel visual segments (mix so it looks fair) */
+/* wheel visual segments — deliberately mixed so winners aren't obvious */
 const WHEEL_SEGMENTS = [
   { label:"50% OFF",   type:"JACKPOT", color:"#D62828" },
   { label:"10% OFF",   type:"P10",     color:"#F2C200" },
@@ -662,12 +832,9 @@ const WHEEL_SEGMENTS = [
 
 /* ---------- STATE ---------- */
 let spinHistory = JSON.parse(localStorage.getItem(SPIN_STORAGE_KEY) || "{}");
-// spinHistory = { "2026-10-16": { spins: 2, lastWin: {...} } }
 let rotation = 0;
 let spinning = false;
 let currentPrize = null;
-let lastGeoOk = false;
-let lastGeoDistance = null;
 
 /* ---------- HELPERS ---------- */
 const $  = (s)=>document.querySelector(s);
@@ -682,24 +849,19 @@ function toast(msg){
 }
 
 function todayKey(){
-  const d = new Date();
-  return d.toISOString().slice(0,10);
+  return new Date().toISOString().slice(0,10);
 }
-
 function getTodayRecord(){
   const k = todayKey();
   if (!spinHistory[k]) spinHistory[k] = { spins:0, lastWin:null };
   return spinHistory[k];
 }
-
 function saveSpinHistory(){
   localStorage.setItem(SPIN_STORAGE_KEY, JSON.stringify(spinHistory));
 }
 
-const MAX_SPINS_PER_DAY = 3;
-
 /* ============================================================
-   GEOLOCATION GATE
+   LOCATION GATE
    ============================================================ */
 function haversineMeters(lat1, lon1, lat2, lon2){
   const R = 6371000;
@@ -719,6 +881,14 @@ function updateGateStatus(msg, cls){
 }
 
 function checkLocation(){
+  // demo mode: no coords set → skip check
+  if (RESTAURANT_LAT === null || RESTAURANT_LNG === null){
+    updateGateStatus("✅ Location check skipped (demo mode). You can spin!", "ok");
+    $("#gateBtn").style.display = "none";
+    revealWheel();
+    return;
+  }
+
   if (!("geolocation" in navigator)){
     updateGateStatus("Your browser doesn't support location. Please ask staff for help.", "err");
     return;
@@ -730,18 +900,13 @@ function checkLocation(){
     (pos)=>{
       const { latitude, longitude, accuracy } = pos.coords;
       const dist = haversineMeters(latitude, longitude, RESTAURANT_LAT, RESTAURANT_LNG);
-      lastGeoDistance = dist;
-
-      // Allow a generous buffer for GPS inaccuracy (indoor accuracy can be 50-150m)
       const effectiveDist = Math.max(0, dist - Math.min(accuracy || 0, 200));
 
       if (effectiveDist <= NEAR_RADIUS_M){
-        lastGeoOk = true;
         updateGateStatus(`✅ You're at Neelkanth (~${Math.round(dist)}m away). You can spin!`, "ok");
         $("#gateBtn").style.display = "none";
         revealWheel();
       } else {
-        lastGeoOk = false;
         updateGateStatus(`❌ You're about ${Math.round(dist)}m away. This spin is only available inside Neelkanth.`, "err");
         $("#gateBtn").disabled = false;
         $("#gateBtn").textContent = "Retry";
@@ -795,12 +960,10 @@ function drawWheel(){
     ctx.fillStyle = seg.color;
     ctx.fill();
 
-    // thin gold separator
     ctx.strokeStyle = "rgba(242,194,0,.55)";
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    // label
     ctx.save();
     ctx.translate(CX, CY);
     ctx.rotate(start + arc / 2);
@@ -813,7 +976,7 @@ function drawWheel(){
     ctx.restore();
   });
 
-  // center hub
+  // hub
   ctx.beginPath();
   ctx.arc(CX, CY, 54, 0, Math.PI * 2);
   const grad = ctx.createRadialGradient(CX-14, CY-14, 6, CX, CY, 54);
@@ -825,7 +988,6 @@ function drawWheel(){
   ctx.lineWidth = 3;
   ctx.stroke();
 
-  // center text
   ctx.fillStyle = "#3B1414";
   ctx.font = "800 20px Cinzel, serif";
   ctx.textAlign = "center";
@@ -836,7 +998,7 @@ function drawWheel(){
 drawWheel();
 
 /* ============================================================
-   PRIZE PICK (weighted random)
+   PRIZE PICK (weighted random — hidden from UI)
    ============================================================ */
 function pickPrize(){
   const totalWeight = PRIZE_POOL.reduce((a, p)=> a + p.weight, 0);
@@ -848,14 +1010,11 @@ function pickPrize(){
   return PRIZE_POOL[PRIZE_POOL.length - 1];
 }
 
-/* find a wheel segment index matching the prize type */
 function findSegmentIndexForPrize(prizeType){
-  // for LOSE, any LOSE segment is fine
   const candidates = WHEEL_SEGMENTS
     .map((s, i)=> ({ s, i }))
     .filter(o=> o.s.type === prizeType);
   if (candidates.length === 0){
-    // fallback: any segment
     return Math.floor(Math.random() * WHEEL_SEGMENTS.length);
   }
   return candidates[Math.floor(Math.random() * candidates.length)].i;
@@ -894,17 +1053,12 @@ function spin(){
   spinning = true;
   $("#spinBtn").disabled = true;
 
-  // decide prize first
   const prize = pickPrize();
   currentPrize = prize;
 
-  // choose segment index matching this prize
   const segIndex = findSegmentIndexForPrize(prize.key);
   const segAngle = 360 / WHEEL_SEGMENTS.length;
-  // wheel pointer is at top (12 o'clock). Segment i is centered at
-  // (i + 0.5) * segAngle measured from top, clockwise.
   const targetCenter = (segIndex + 0.5) * segAngle;
-  // final rotation = current + (many turns) + offset to land pointer on targetCenter
   const turns = 6 + Math.floor(Math.random() * 3);
   const jitter = (Math.random() - 0.5) * (segAngle * 0.7);
   const finalRotation = rotation + (turns * 360) + (360 - targetCenter) + jitter;
@@ -927,12 +1081,7 @@ function spin(){
       spinning = false;
       rec.spins += 1;
       if (prize.key !== "LOSE"){
-        rec.lastWin = {
-          key: prize.key,
-          title: prize.title,
-          desc: prize.desc,
-          ts: Date.now()
-        };
+        rec.lastWin = { key: prize.key, title: prize.title, desc: prize.desc, ts: Date.now() };
       }
       saveSpinHistory();
       updateSpinsLeft();
@@ -948,7 +1097,6 @@ $("#spinBtn").addEventListener("click", spin);
    RESULT MODAL
    ============================================================ */
 function showResult(prize){
-  // reset to step 1
   $("#step1").style.display = "block";
   $("#step2").style.display = "none";
   $("#numWrap").classList.remove("err");
@@ -959,7 +1107,6 @@ function showResult(prize){
   $("#rTitle").textContent = prize.key === "LOSE" ? "Better Luck Next Time" : "You Won!";
   $("#rDesc").textContent = prize.desc;
 
-  // no number needed for LOSE
   if (prize.key === "LOSE"){
     $("#numWrap").style.display = "none";
     $("#claimBtn").textContent = "Try Again Tomorrow";
@@ -979,14 +1126,9 @@ $("#modalOverlay").addEventListener("click", (e)=>{
   if (e.target === $("#modalOverlay")) closeModal();
 });
 
-/* ---------- claim ---------- */
 $("#claimBtn").addEventListener("click", ()=>{
   if (!currentPrize) return;
-
-  if (currentPrize.key === "LOSE"){
-    closeModal();
-    return;
-  }
+  if (currentPrize.key === "LOSE"){ closeModal(); return; }
 
   const num = $("#numInput").value.trim();
   if (!/^[6-9]\d{9}$/.test(num)){
@@ -995,7 +1137,6 @@ $("#claimBtn").addEventListener("click", ()=>{
   }
   $("#numWrap").classList.remove("err");
 
-  // generate coupon code
   const code = "NEEL-" + randCode(6);
   currentPrize.coupon = code;
   currentPrize.mobile = num;
@@ -1030,7 +1171,6 @@ function showCoupon(){
     day:"numeric", month:"short", year:"numeric"
   });
 
-  // confetti
   startConfetti();
 }
 
@@ -1046,11 +1186,9 @@ $("#saveBtn").addEventListener("click", ()=>{
   const c = canvas.getContext("2d");
   const W = canvas.width, H = canvas.height;
 
-  // background
   c.fillStyle = "#FBF6EC";
   c.fillRect(0, 0, W, H);
 
-  // border
   c.strokeStyle = "#F2C200";
   c.lineWidth = 10;
   c.strokeRect(15, 15, W - 30, H - 30);
@@ -1059,7 +1197,6 @@ $("#saveBtn").addEventListener("click", ()=>{
   c.lineWidth = 2;
   c.strokeRect(30, 30, W - 60, H - 60);
 
-  // brand
   c.fillStyle = "#6B1F1F";
   c.font = "700 20px Cinzel, serif";
   c.textAlign = "center";
@@ -1069,21 +1206,17 @@ $("#saveBtn").addEventListener("click", ()=>{
   c.font = "italic 15px 'Cormorant Garamond', serif";
   c.fillText("Official Coupon", W/2, 106);
 
-  // star
   drawStar(c, W/2, 150, 26, "#F2C200", "#5B2A86");
 
-  // prize title
   c.fillStyle = "#3B1414";
   c.font = "800 44px Cinzel, serif";
   const title = currentPrize.key === "FREE" ? "FREE ITEM" : currentPrize.title;
   c.fillText(title, W/2, 230);
 
-  // prize desc
   c.fillStyle = "#D62828";
   c.font = "italic 20px 'Cormorant Garamond', serif";
   c.fillText(currentPrize.desc, W/2, 268);
 
-  // coupon code box
   c.fillStyle = "#3B1414";
   roundRect(c, W/2 - 200, 300, 400, 70, 14);
   c.fill();
@@ -1091,7 +1224,6 @@ $("#saveBtn").addEventListener("click", ()=>{
   c.font = "800 30px Cinzel, serif";
   c.fillText(currentPrize.coupon, W/2, 345);
 
-  // meta
   c.fillStyle = "#5A3A3A";
   c.font = "600 15px Inter, sans-serif";
   c.textAlign = "left";
@@ -1104,7 +1236,6 @@ $("#saveBtn").addEventListener("click", ()=>{
   c.font = "13px Inter, sans-serif";
   c.fillText("Valid 30 days · One use only · Non-transferable · Show at counter", W/2, 445);
 
-  // download
   const link = document.createElement("a");
   link.download = `Neelkanth-Coupon-${currentPrize.coupon}.png`;
   link.href = canvas.toDataURL("image/png");
@@ -1204,6 +1335,23 @@ function startConfetti(){
     }
   }
   confAnim = requestAnimationFrame(loop);
+}
+
+/* ============================================================
+   PARALLAX for dishes on pointer move (desktop)
+   ============================================================ */
+const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+if (!reduce && window.matchMedia("(pointer:fine)").matches){
+  const dishes = document.querySelectorAll(".dish");
+  window.addEventListener("mousemove", (e)=>{
+    const x = (e.clientX / window.innerWidth - .5);
+    const y = (e.clientY / window.innerHeight - .5);
+    dishes.forEach((d, i)=>{
+      const depth = 10 + i * 6;
+      d.style.marginLeft = (x * depth) + "px";
+      d.style.marginTop  = (y * depth) + "px";
+    });
+  }, { passive:true });
 }
 
 /* ============================================================
