@@ -9,23 +9,11 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-/* ============================================================
-   NEELKANTH STAR DHABA — LANDING PAGE
-   Brand palette pulled from the menu card:
-   - Deep Maroon  #3B1414
-   - Wine Red     #6B1F1F
-   - Star Gold    #F2C200
-   - Star Red     #D62828
-   - Star Purple  #5B2A86
-   - Cream        #FBF6EC
-   ============================================================ */
-
 :root{
   --maroon:#3B1414;
-  --maroon-2:#4A1A1A;
   --wine:#6B1F1F;
   --wine-soft:#8A2E2E;
   --gold:#F2C200;
@@ -39,8 +27,6 @@
   --shadow-lg:0 24px 60px -20px rgba(59,20,20,.45);
   --shadow-md:0 12px 32px -14px rgba(59,20,20,.35);
   --shadow-sm:0 6px 18px -10px rgba(59,20,20,.30);
-  --radius:18px;
-  --radius-lg:26px;
 }
 
 *{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -53,63 +39,172 @@ body{
   overflow-x:hidden;
   position:relative;
   line-height:1.5;
+  perspective:1400px;
 }
 
 /* ============================================================
-   ANIMATED BACKGROUND — floating gradient orbs + drifting stars
+   BACKGROUND — animated logo + 3D floating dishes + stars
    ============================================================ */
 .bg-stage{
-  position:fixed; inset:0; z-index:0; overflow:hidden;
+  position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none;
   background:
-    radial-gradient(1200px 700px at 15% -10%, #6B1F1F22, transparent 60%),
-    radial-gradient(1000px 600px at 100% 0%, #F2C2001f, transparent 55%),
-    radial-gradient(900px 700px at 50% 120%, #5B2A8614, transparent 60%),
-    linear-gradient(180deg, #FBF6EC 0%, #F5EDDC 100%);
+    radial-gradient(1000px 600px at 12% -8%, #6B1F1F1c, transparent 62%),
+    radial-gradient(900px 600px at 100% 4%, #F2C2001c, transparent 58%),
+    radial-gradient(800px 800px at 50% 115%, #5B2A8616, transparent 62%),
+    linear-gradient(180deg,#FBF6EC 0%,#F5EDDC 100%);
+  transform-style:preserve-3d;
 }
-.orb{
-  position:absolute; border-radius:50%;
-  filter:blur(60px); opacity:.55;
-  will-change:transform;
-  animation:float 18s ease-in-out infinite;
-}
-.orb.a{ width:340px; height:340px; left:-90px; top:-60px;
-  background:radial-gradient(circle at 30% 30%, #F2C200, #D62828 70%); animation-duration:20s; }
-.orb.b{ width:300px; height:300px; right:-80px; top:20%;
-  background:radial-gradient(circle at 30% 30%, #5B2A86, #6B1F1F 70%); animation-duration:24s; animation-delay:-6s; }
-.orb.c{ width:260px; height:260px; left:10%; bottom:-80px;
-  background:radial-gradient(circle at 30% 30%, #D62828, #F2C200 70%); animation-duration:22s; animation-delay:-12s; opacity:.4; }
-.orb.d{ width:220px; height:220px; right:12%; bottom:8%;
-  background:radial-gradient(circle at 30% 30%, #8A2E2E, #5B2A86 70%); animation-duration:26s; animation-delay:-4s; opacity:.4; }
 
+/* ---------- big animated logo behind everything ---------- */
+.bg-logo{
+  position:absolute;
+  top:50%; left:50%;
+  width:min(92vw, 680px);
+  height:min(92vw, 680px);
+  transform:translate(-50%, -50%);
+  opacity:.07;
+  filter:blur(1.5px) saturate(1.1);
+  animation:logoSpin 48s linear infinite, logoPulse 7s ease-in-out infinite;
+  will-change:transform, opacity;
+  pointer-events:none;
+}
+@keyframes logoSpin{
+  from{ transform:translate(-50%,-50%) rotate(0deg) scale(1); }
+  50%{ transform:translate(-50%,-50%) rotate(180deg) scale(1.06); }
+  to{ transform:translate(-50%,-50%) rotate(360deg) scale(1); }
+}
+@keyframes logoPulse{
+  0%,100%{ opacity:.06; }
+  50%{ opacity:.11; }
+}
+
+/* ---------- 3D floating dishes ---------- */
+.dish-stage{
+  position:absolute; inset:0;
+  transform-style:preserve-3d;
+  pointer-events:none;
+}
+.dish{
+  position:absolute;
+  width:130px; height:130px;
+  transform-style:preserve-3d;
+  animation:dishFloat 9s ease-in-out infinite;
+  will-change:transform;
+}
+.dish .dish-visual{
+  width:100%; height:100%;
+  border-radius:50%;
+  position:relative;
+  box-shadow:
+    0 26px 40px -20px rgba(59,20,20,.55),
+    inset 0 -10px 24px rgba(0,0,0,.18),
+    inset 0 8px 20px rgba(255,255,255,.25);
+}
+/* plate */
+.dish.plate .dish-visual{
+  background:radial-gradient(circle at 35% 30%, #ffffff 0%, #f4ead6 55%, #d8c8a6 100%);
+  border:4px solid #e8dcc0;
+}
+.dish.plate .dish-visual::after{
+  content:"";
+  position:absolute; inset:22%;
+  border-radius:50%;
+  background:radial-gradient(circle at 40% 35%, #b8341a, #6b1f1f 70%);
+  box-shadow:inset 0 6px 14px rgba(0,0,0,.35);
+}
+/* bowl */
+.dish.bowl .dish-visual{
+  background:radial-gradient(circle at 35% 30%, #fef3d6 0%, #f2c200 55%, #b88700 100%);
+  border:4px solid #d9a800;
+}
+.dish.bowl .dish-visual::after{
+  content:"";
+  position:absolute; inset:26%;
+  border-radius:50%;
+  background:radial-gradient(circle at 40% 35%, #7a2a0a, #3b1414 75%);
+  box-shadow:inset 0 6px 14px rgba(0,0,0,.4);
+}
+/* cup */
+.dish.cup .dish-visual{
+  border-radius:22% 22% 40% 40% / 18% 18% 55% 55%;
+  background:linear-gradient(180deg, rgba(255,255,255,.95) 0%, rgba(255,244,214,.9) 45%, rgba(242,194,0,.85) 100%);
+  border:3px solid #e8dcc0;
+}
+.dish.cup .dish-visual::after{
+  content:"";
+  position:absolute; inset:18% 24% 32% 24%;
+  border-radius:50%;
+  background:radial-gradient(circle at 40% 35%, #a05a1a, #3b1414 80%);
+  box-shadow:inset 0 4px 10px rgba(0,0,0,.45);
+}
+.dish::after{
+  content:"";
+  position:absolute;
+  left:50%; bottom:-22px;
+  width:70%; height:12px;
+  transform:translateX(-50%);
+  background:radial-gradient(ellipse at center, rgba(59,20,20,.35), transparent 70%);
+  filter:blur(4px);
+  animation:dishShadow 9s ease-in-out infinite;
+}
+@keyframes dishShadow{
+  0%,100%{ transform:translateX(-50%) scale(1); opacity:.5; }
+  50%{ transform:translateX(-50%) scale(.85); opacity:.3; }
+}
+
+.dish.d1{ top:6%;  left:5%;  animation-delay:0s;    animation-duration:10s; }
+.dish.d2{ top:20%; right:4%; animation-delay:-2s;   animation-duration:11s; }
+.dish.d3{ bottom:16%; left:4%;  animation-delay:-4s; animation-duration:12s; }
+.dish.d4{ bottom:8%;  right:7%; animation-delay:-6s; animation-duration:9.5s; }
+
+@keyframes dishFloat{
+  0%,100%{ transform:translateY(0) rotate(-6deg) rotateX(0deg) rotateY(0deg) scale(1); }
+  33%{ transform:translateY(-22px) rotate(6deg) rotateX(8deg) rotateY(-10deg) scale(1.04); }
+  66%{ transform:translateY(12px) rotate(-4deg) rotateX(-6deg) rotateY(8deg) scale(.98); }
+}
+@media (max-width:420px){
+  .dish{ width:96px; height:96px; opacity:.75; }
+}
+
+/* ---------- orbs ---------- */
+.orb{
+  position:absolute; border-radius:50%; filter:blur(70px); opacity:.32;
+  animation:float 22s ease-in-out infinite;
+}
+.orb.a{ width:320px; height:320px; left:-100px; top:-50px;
+  background:radial-gradient(circle at 30% 30%,#F2C200,#D62828 70%); }
+.orb.b{ width:280px; height:280px; right:-90px; top:32%;
+  background:radial-gradient(circle at 30% 30%,#5B2A86,#6B1F1F 70%); animation-delay:-8s; }
+.orb.c{ width:240px; height:240px; left:18%; bottom:-70px;
+  background:radial-gradient(circle at 30% 30%,#D62828,#F2C200 70%); animation-delay:-14s; opacity:.28; }
 @keyframes float{
   0%,100%{ transform:translate(0,0) scale(1); }
-  33%{ transform:translate(30px,-40px) scale(1.08); }
-  66%{ transform:translate(-25px,30px) scale(.95); }
+  50%{ transform:translate(25px,-30px) scale(1.08); }
 }
 
-/* drifting star field */
+/* ---------- starfield ---------- */
 .starfield{
-  position:absolute; inset:0; pointer-events:none;
+  position:absolute; inset:0;
   background-image:
-    radial-gradient(2px 2px at 20px 30px, #F2C20088, transparent),
-    radial-gradient(2px 2px at 120px 90px, #D6282866, transparent),
-    radial-gradient(1.5px 1.5px at 220px 40px, #5B2A8666, transparent),
-    radial-gradient(2px 2px at 320px 150px, #F2C20077, transparent),
-    radial-gradient(1.5px 1.5px at 420px 80px, #8A2E2E66, transparent),
-    radial-gradient(2px 2px at 520px 200px, #F2C20066, transparent);
+    radial-gradient(2px 2px at 20px 30px, #F2C20066, transparent),
+    radial-gradient(2px 2px at 120px 90px, #D6282844, transparent),
+    radial-gradient(1.5px 1.5px at 220px 40px, #5B2A8644, transparent),
+    radial-gradient(2px 2px at 320px 150px, #F2C20055, transparent),
+    radial-gradient(1.5px 1.5px at 420px 80px, #8A2E2E44, transparent),
+    radial-gradient(2px 2px at 520px 200px, #F2C20055, transparent);
   background-size:600px 300px;
   background-repeat:repeat;
-  opacity:.6;
-  animation:drift 60s linear infinite;
+  opacity:.55;
+  animation:starDrift 70s linear infinite;
 }
-@keyframes drift{
+@keyframes starDrift{
   from{ background-position:0 0; }
   to{ background-position:600px 300px; }
 }
 
-/* subtle grain */
+/* ---------- grain ---------- */
 .grain{
-  position:absolute; inset:0; pointer-events:none; opacity:.05; mix-blend-mode:multiply;
+  position:absolute; inset:0; opacity:.05; mix-blend-mode:multiply;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
 }
 
@@ -127,7 +222,7 @@ body{
 }
 
 /* ============================================================
-   TOP — LOGO + WORDMARK
+   BRAND
    ============================================================ */
 .brand{
   text-align:center;
@@ -139,7 +234,7 @@ body{
 }
 
 .brand-star{
-  width:78px; height:78px;
+  width:80px; height:80px;
   margin:0 auto 14px;
   display:block;
   filter:drop-shadow(0 8px 18px rgba(59,20,20,.35));
@@ -198,7 +293,6 @@ body{
   from{ opacity:0; transform:translateY(10px); }
   to{ opacity:1; transform:translateY(0); }
 }
-
 .divider{
   margin:22px auto 0;
   width:min(260px, 60%);
@@ -209,7 +303,7 @@ body{
 }
 
 /* ============================================================
-   WELCOME LINE
+   WELCOME
    ============================================================ */
 .welcome{
   text-align:center;
@@ -248,8 +342,9 @@ body{
   align-items:center;
   gap:16px;
   padding:18px 18px;
-  border-radius:var(--radius-lg);
-  background:linear-gradient(155deg, #ffffff 0%, var(--cream) 100%);
+  border-radius:22px;
+  background:linear-gradient(155deg, rgba(255,255,255,.95) 0%, var(--cream) 100%);
+  backdrop-filter:blur(8px);
   border:1.5px solid rgba(107,31,31,.12);
   box-shadow:var(--shadow-md);
   text-decoration:none;
@@ -260,6 +355,8 @@ body{
   opacity:0;
   transform:translateY(22px);
   animation:cardIn .8s cubic-bezier(.2,.8,.25,1) forwards;
+  transform-style:preserve-3d;
+  will-change:transform;
 }
 .card:nth-child(1){ animation-delay:.45s; }
 .card:nth-child(2){ animation-delay:.58s; }
@@ -273,19 +370,18 @@ body{
   content:"";
   position:absolute;
   inset:0;
-  background:linear-gradient(120deg, transparent 30%, rgba(242,194,0,.14) 50%, transparent 70%);
+  background:linear-gradient(120deg, transparent 30%, rgba(242,194,0,.16) 50%, transparent 70%);
   transform:translateX(-120%);
   transition:transform .8s ease;
+  pointer-events:none;
 }
 .card:hover::before, .card:focus-visible::before{ transform:translateX(120%); }
 
 .card:hover, .card:focus-visible{
-  transform:translateY(-5px);
   box-shadow:var(--shadow-lg);
   border-color:rgba(242,194,0,.55);
   outline:none;
 }
-
 .card:active{ transform:translateY(-1px) scale(.99); }
 
 .card-icon{
@@ -299,6 +395,7 @@ body{
   box-shadow:inset 0 -3px 0 rgba(0,0,0,.18), 0 8px 18px -10px rgba(59,20,20,.5);
   position:relative;
   z-index:1;
+  transform:translateZ(30px);
 }
 .card-icon::after{
   content:"";
@@ -337,17 +434,15 @@ body{
   font-size:16px;
   transition:transform .35s, background .35s;
   position:relative; z-index:1;
+  transform:translateZ(30px);
 }
-.card:hover .card-arrow{ transform:translateX(4px); background:var(--gold); color:var(--maroon); }
+.card:hover .card-arrow{ transform:translateZ(30px) translateX(4px); background:var(--gold); color:var(--maroon); }
 
-/* coming soon */
-.card.locked{
-  cursor:not-allowed;
-  filter:saturate(.75);
-}
+/* locked */
+.card.locked{ cursor:not-allowed; filter:saturate(.75); }
 .card.locked .card-icon{ background:linear-gradient(145deg,#5A3A3A,#3B1414); }
 .card.locked .card-arrow{ background:rgba(90,58,58,.15); color:#7a5a5a; }
-.card.locked:hover{ transform:none; box-shadow:var(--shadow-md); border-color:rgba(107,31,31,.12); }
+.card.locked:hover{ box-shadow:var(--shadow-md); border-color:rgba(107,31,31,.12); }
 .card.locked:hover::before{ transform:translateX(-120%); }
 
 .badge{
@@ -389,31 +484,18 @@ body{
   color:var(--ink-soft);
   letter-spacing:.03em;
 }
-.footer .powered strong{
+.footer .powered a{
   font-family:'Cinzel', serif;
   color:var(--wine);
   font-weight:700;
   letter-spacing:.05em;
-}
-.footer .vaan{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  margin-top:8px;
-  font-family:'Great Vibes', cursive;
-  font-size:22px;
-  color:var(--maroon);
   text-decoration:none;
+  border-bottom:1px dashed rgba(107,31,31,.35);
+  transition:color .25s, border-color .25s;
 }
-.footer .vaan .dot{
-  width:7px; height:7px; border-radius:50%;
-  background:linear-gradient(135deg,var(--gold),var(--red));
-  box-shadow:0 0 8px rgba(242,194,0,.7);
-  animation:pulseDot 1.8s ease-in-out infinite;
-}
-@keyframes pulseDot{
-  0%,100%{ transform:scale(1); opacity:1; }
-  50%{ transform:scale(1.5); opacity:.7; }
+.footer .powered a:hover{
+  color:var(--red);
+  border-color:var(--red);
 }
 .footer .copy{
   margin-top:10px;
@@ -422,7 +504,7 @@ body{
   letter-spacing:.04em;
 }
 
-/* toast for locked */
+/* toast */
 .toast{
   position:fixed;
   left:50%; bottom:26px;
@@ -442,7 +524,6 @@ body{
 }
 .toast.show{ opacity:1; transform:translate(-50%,0); }
 
-/* reduced motion */
 @media (prefers-reduced-motion: reduce){
   *, *::before, *::after{
     animation-duration:.001ms !important;
@@ -458,18 +539,32 @@ body{
 
 <!-- ============ ANIMATED BACKGROUND ============ -->
 <div class="bg-stage" aria-hidden="true">
+
+  <!-- big rotating logo -->
+  <img class="bg-logo" src="neelkanthlogo.png" alt="" onerror="this.style.display='none'"/>
+
+  <!-- drifting stars -->
   <div class="starfield"></div>
+
+  <!-- orbs -->
   <div class="orb a"></div>
   <div class="orb b"></div>
   <div class="orb c"></div>
-  <div class="orb d"></div>
+
+  <!-- 3D floating dishes -->
+  <div class="dish-stage">
+    <div class="dish plate d1"><div class="dish-visual"></div></div>
+    <div class="dish bowl  d2"><div class="dish-visual"></div></div>
+    <div class="dish cup   d3"><div class="dish-visual"></div></div>
+    <div class="dish plate d4"><div class="dish-visual"></div></div>
+  </div>
+
   <div class="grain"></div>
 </div>
 
 <!-- ============ PAGE ============ -->
 <main class="page">
 
-  <!-- BRAND -->
   <header class="brand">
     <img src="neelkanthlogo.png" alt="Neelkanth" class="brand-star" onerror="this.style.display='none'"/>
     <div class="wordmark">
@@ -484,16 +579,13 @@ body{
     <div class="divider"></div>
   </header>
 
-  <!-- WELCOME -->
   <section class="welcome">
     <h1>Welcome to Neelkanth</h1>
     <p>Scan · Browse · Order — everything at your table</p>
   </section>
 
-  <!-- CHOICE CARDS -->
   <nav class="cards" aria-label="Main options">
 
-    <!-- 1. MENU -->
     <a class="card" href="menu.html">
       <div class="card-icon">🍽️</div>
       <div class="card-body">
@@ -503,17 +595,15 @@ body{
       <div class="card-arrow">→</div>
     </a>
 
-    <!-- 2. INFO -->
     <a class="card" href="info.html">
-      <div class="card-icon">🏨</div>
+      <div class="card-icon">🛎️</div>
       <div class="card-body">
-        <div class="card-title">Hotel Info</div>
+        <div class="card-title">Guest Services</div>
         <div class="card-sub">Rooms, party hall, WiFi, contact &amp; more</div>
       </div>
       <div class="card-arrow">→</div>
     </a>
 
-    <!-- 3. LUCKY SPIN -->
     <a class="card" href="spin.html">
       <div class="card-icon">🎡</div>
       <div class="card-body">
@@ -523,7 +613,6 @@ body{
       <div class="card-arrow">→</div>
     </a>
 
-    <!-- 4. GAMES (LOCKED) -->
     <div class="card locked" role="button" tabindex="0" aria-disabled="true" data-locked="true">
       <div class="card-icon">🎮</div>
       <div class="card-body">
@@ -535,42 +624,31 @@ body{
 
   </nav>
 
-  <!-- FOOTER -->
   <footer class="footer">
     <div class="footer-line"></div>
-    <p class="powered">Powered by <strong>VAAN</strong> Consultancy</p>
-    <a class="vaan" href="#" aria-label="VAAN Consultancy">
-      <span class="dot"></span>
-      VAAN Consultancy
-    </a>
+    <p class="powered">
+      Powered by <a href="https://vaanconsultancy.in" target="_blank" rel="noopener">VAAN Consultancy</a>
+    </p>
     <p class="copy">© <span id="yr"></span> Neelkanth Star Dhaba · All rights reserved</p>
   </footer>
 
 </main>
 
-<!-- TOAST -->
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-/* ============================================================
-   NEELKANTH LANDING — interactions
-   ============================================================ */
-
-// Year
 document.getElementById('yr').textContent = new Date().getFullYear();
 
-// Locked card toast
+/* locked card toast */
 const lockedCard = document.querySelector('.card.locked');
 const toast = document.getElementById('toast');
 let toastTimer;
-
 function showToast(msg){
   toast.textContent = msg;
   toast.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(()=> toast.classList.remove('show'), 2200);
 }
-
 if (lockedCard){
   const openLocked = (e)=>{
     e.preventDefault();
@@ -583,33 +661,61 @@ if (lockedCard){
   });
 }
 
-// Soft parallax on orbs with pointer (desktop only, respects reduced motion)
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-if (!reduce && window.matchMedia('(pointer:fine)').matches){
-  const orbs = document.querySelectorAll('.orb');
-  window.addEventListener('mousemove', (e)=>{
-    const x = (e.clientX / window.innerWidth - .5);
-    const y = (e.clientY / window.innerHeight - .5);
-    orbs.forEach((orb, i)=>{
-      const depth = (i + 1) * 6;
-      orb.style.transform = `translate(${x * depth}px, ${y * depth}px)`;
-    });
-  }, { passive:true });
-}
 
-// Card tilt on hover (desktop only)
+/* 3D card tilt */
 if (!reduce && window.matchMedia('(pointer:fine)').matches){
   document.querySelectorAll('.card').forEach(card=>{
     card.addEventListener('mousemove', (e)=>{
       const r = card.getBoundingClientRect();
       const px = (e.clientX - r.left) / r.width - .5;
       const py = (e.clientY - r.top) / r.height - .5;
-      card.style.transform = `translateY(-5px) rotateX(${py * -3}deg) rotateY(${px * 3}deg)`;
+      card.style.transform = `translateY(-6px) rotateX(${py * -5}deg) rotateY(${px * 5}deg)`;
     });
     card.addEventListener('mouseleave', ()=>{
       card.style.transform = '';
     });
   });
+}
+
+/* parallax on orbs + dishes */
+if (!reduce && window.matchMedia('(pointer:fine)').matches){
+  const orbs = document.querySelectorAll('.orb');
+  const dishes = document.querySelectorAll('.dish');
+  const bgLogo = document.querySelector('.bg-logo');
+
+  window.addEventListener('mousemove', (e)=>{
+    const x = (e.clientX / window.innerWidth - .5);
+    const y = (e.clientY / window.innerHeight - .5);
+
+    orbs.forEach((orb, i)=>{
+      const depth = (i + 1) * 6;
+      orb.style.transform = `translate(${x * depth}px, ${y * depth}px)`;
+    });
+    dishes.forEach((d, i)=>{
+      const depth = 10 + i * 6;
+      d.style.marginLeft = (x * depth) + "px";
+      d.style.marginTop  = (y * depth) + "px";
+    });
+    if (bgLogo){
+      bgLogo.style.filter = `blur(1.5px) saturate(1.1)`;
+      bgLogo.style.transform =
+        `translate(-50%,-50%) translate(${x * 14}px, ${y * 14}px)`;
+    }
+  }, { passive:true });
+}
+
+/* device orientation — subtle 3D on mobile */
+if (!reduce && window.DeviceOrientationEvent){
+  window.addEventListener('deviceorientation', (e)=>{
+    const x = Math.max(-1, Math.min(1, (e.gamma || 0) / 45));
+    const y = Math.max(-1, Math.min(1, ((e.beta || 0) - 45) / 45));
+    document.querySelectorAll('.dish').forEach((d, i)=>{
+      const depth = 6 + i * 4;
+      d.style.marginLeft = (x * depth) + "px";
+      d.style.marginTop  = (y * depth) + "px";
+    });
+  }, { passive:true });
 }
 </script>
 
