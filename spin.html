@@ -9,7 +9,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root{
@@ -25,6 +25,8 @@
   --ink:#2A1414;
   --ink-soft:#5A3A3A;
   --green:#1E7A3A;
+  --wa:#25D366;
+  --wa-dark:#128C7E;
   --shadow-lg:0 24px 60px -20px rgba(59,20,20,.45);
   --shadow-md:0 12px 32px -14px rgba(59,20,20,.35);
   --shadow-sm:0 6px 18px -10px rgba(59,20,20,.30);
@@ -40,175 +42,100 @@ body{
   overflow-x:hidden;
   position:relative;
   line-height:1.5;
-  perspective:1200px;
+  padding-bottom:110px;
+  perspective:1400px;
 }
 
 /* ============================================================
-   BACKGROUND LAYER — animated logo + floating 3D dishes
+   BACKGROUND
    ============================================================ */
 .bg-stage{
   position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none;
   background:
-    radial-gradient(900px 500px at 10% -5%, #6B1F1F18, transparent 60%),
-    radial-gradient(800px 500px at 100% 5%, #F2C20018, transparent 55%),
-    radial-gradient(700px 700px at 50% 110%, #5B2A8614, transparent 60%),
+    radial-gradient(1000px 600px at 12% -8%, #6B1F1F1a, transparent 62%),
+    radial-gradient(900px 600px at 100% 4%, #F2C2001a, transparent 58%),
+    radial-gradient(800px 800px at 50% 115%, #5B2A8614, transparent 62%),
     linear-gradient(180deg,#FBF6EC 0%,#F5EDDC 100%);
   transform-style:preserve-3d;
 }
-
-/* big animated logo behind everything */
 .bg-logo{
   position:absolute;
   top:50%; left:50%;
-  width:min(85vw, 620px);
-  height:min(85vw, 620px);
+  width:min(92vw, 640px);
+  height:min(92vw, 640px);
   transform:translate(-50%, -50%);
   opacity:.06;
-  filter:blur(2px);
-  animation:logoSpin 40s linear infinite, logoPulse 8s ease-in-out infinite;
-  pointer-events:none;
+  filter:blur(1.5px) saturate(1.1);
+  animation:logoSpin 48s linear infinite, logoPulse 7s ease-in-out infinite;
+  will-change:transform, opacity;
 }
 @keyframes logoSpin{
   from{ transform:translate(-50%,-50%) rotate(0deg) scale(1); }
+  50%{ transform:translate(-50%,-50%) rotate(180deg) scale(1.06); }
   to{ transform:translate(-50%,-50%) rotate(360deg) scale(1); }
 }
 @keyframes logoPulse{
   0%,100%{ opacity:.05; }
   50%{ opacity:.10; }
 }
-
-/* floating gradient orbs */
 .orb{
-  position:absolute; border-radius:50%; filter:blur(70px); opacity:.32;
-  animation:float 22s ease-in-out infinite;
+  position:absolute; border-radius:50%; filter:blur(70px); opacity:.30;
+  animation:float 24s ease-in-out infinite;
 }
 .orb.a{ width:300px; height:300px; left:-90px; top:-40px;
   background:radial-gradient(circle at 30% 30%,#F2C200,#D62828 70%); }
 .orb.b{ width:260px; height:260px; right:-80px; top:35%;
   background:radial-gradient(circle at 30% 30%,#5B2A86,#6B1F1F 70%); animation-delay:-8s; }
-.orb.c{ width:220px; height:220px; left:20%; bottom:-60px;
-  background:radial-gradient(circle at 30% 30%,#D62828,#F2C200 70%); animation-delay:-14s; opacity:.28; }
 @keyframes float{
   0%,100%{ transform:translate(0,0) scale(1); }
   50%{ transform:translate(25px,-30px) scale(1.08); }
 }
-
-/* drifting starfield */
 .starfield{
   position:absolute; inset:0;
   background-image:
-    radial-gradient(2px 2px at 20px 30px, #F2C20066, transparent),
+    radial-gradient(2px 2px at 20px 30px, #F2C20055, transparent),
     radial-gradient(2px 2px at 120px 90px, #D6282844, transparent),
     radial-gradient(1.5px 1.5px at 220px 40px, #5B2A8644, transparent),
-    radial-gradient(2px 2px at 320px 150px, #F2C20055, transparent),
-    radial-gradient(1.5px 1.5px at 420px 80px, #8A2E2E44, transparent);
+    radial-gradient(2px 2px at 320px 150px, #F2C20055, transparent);
   background-size:600px 300px;
   background-repeat:repeat;
   opacity:.5;
-  animation:starDrift 60s linear infinite;
+  animation:starDrift 70s linear infinite;
 }
 @keyframes starDrift{
   from{ background-position:0 0; }
   to{ background-position:600px 300px; }
 }
-
-/* ============================================================
-   3D FLOATING DISHES
-   CSS-built until real photos are added.
-   Swap .dish-visual with <img src="assets/img/dish-X.png"> later.
-   ============================================================ */
-.dish-stage{
-  position:absolute; inset:0;
-  transform-style:preserve-3d;
-  pointer-events:none;
-}
-.dish{
+.float-shape{
   position:absolute;
-  width:150px; height:150px;
-  transform-style:preserve-3d;
-  animation:dishFloat 9s ease-in-out infinite;
-  will-change:transform;
-}
-.dish .dish-visual{
-  width:100%; height:100%;
   border-radius:50%;
-  position:relative;
-  box-shadow:
-    0 26px 40px -20px rgba(59,20,20,.55),
-    inset 0 -10px 24px rgba(0,0,0,.18),
-    inset 0 8px 20px rgba(255,255,255,.25);
+  border:2px solid rgba(242,194,0,.28);
+  animation:shapeFloat 18s ease-in-out infinite;
 }
-/* plate look */
-.dish.plate .dish-visual{
-  background:
-    radial-gradient(circle at 35% 30%, #ffffff 0%, #f4ead6 55%, #d8c8a6 100%);
-  border:4px solid #e8dcc0;
+.float-shape.s1{ width:110px; height:110px; top:12%; left:8%;  animation-delay:0s; }
+.float-shape.s2{ width:70px;  height:70px;  top:60%; right:6%; animation-delay:-5s; border-color:rgba(214,40,40,.28); }
+.float-shape.s3{ width:90px;  height:90px;  bottom:14%; left:10%; animation-delay:-9s; border-color:rgba(91,42,134,.30); }
+.float-shape.s4{ width:50px;  height:50px;  top:28%; right:14%; animation-delay:-13s; }
+@keyframes shapeFloat{
+  0%,100%{ transform:translate(0,0) rotate(0deg) scale(1); }
+  33%{ transform:translate(20px,-25px) rotate(120deg) scale(1.08); }
+  66%{ transform:translate(-18px,18px) rotate(240deg) scale(.94); }
 }
-.dish.plate .dish-visual::after{
-  content:"";
-  position:absolute; inset:22%;
-  border-radius:50%;
-  background:radial-gradient(circle at 40% 35%, #b8341a, #6b1f1f 70%);
-  box-shadow:inset 0 6px 14px rgba(0,0,0,.35);
-}
-/* bowl look */
-.dish.bowl .dish-visual{
-  background:
-    radial-gradient(circle at 35% 30%, #fef3d6 0%, #f2c200 55%, #b88700 100%);
-  border:4px solid #d9a800;
-}
-.dish.bowl .dish-visual::after{
-  content:"";
-  position:absolute; inset:26%;
-  border-radius:50%;
-  background:radial-gradient(circle at 40% 35%, #7a2a0a, #3b1414 75%);
-  box-shadow:inset 0 6px 14px rgba(0,0,0,.4);
-}
-/* glass/cup look */
-.dish.cup .dish-visual{
-  border-radius:22% 22% 40% 40% / 18% 18% 55% 55%;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.95) 0%, rgba(255,244,214,.9) 45%, rgba(242,194,0,.85) 100%);
-  border:3px solid #e8dcc0;
-}
-.dish.cup .dish-visual::after{
-  content:"";
-  position:absolute; inset:18% 24% 32% 24%;
-  border-radius:50%;
-  background:radial-gradient(circle at 40% 35%, #a05a1a, #3b1414 80%);
-  box-shadow:inset 0 4px 10px rgba(0,0,0,.45);
-}
-/* shadow under dish */
-.dish::after{
-  content:"";
+.float-cube{
   position:absolute;
-  left:50%; bottom:-22px;
-  width:70%; height:12px;
-  transform:translateX(-50%);
-  background:radial-gradient(ellipse at center, rgba(59,20,20,.35), transparent 70%);
-  filter:blur(4px);
-  animation:dishShadow 9s ease-in-out infinite;
+  width:40px; height:40px;
+  background:linear-gradient(135deg, rgba(242,194,0,.25), rgba(214,40,40,.15));
+  border:1px solid rgba(242,194,0,.35);
+  border-radius:6px;
+  animation:cubeFloat 22s ease-in-out infinite;
+  transform:rotate(30deg) rotateX(20deg);
 }
-@keyframes dishShadow{
-  0%,100%{ transform:translateX(-50%) scale(1); opacity:.5; }
-  50%{ transform:translateX(-50%) scale(.85); opacity:.3; }
-}
-
-/* individual dish positions + timing */
-.dish.d1{ top:8%;  left:6%;  animation-delay:0s;   animation-duration:10s; }
-.dish.d2{ top:22%; right:4%; animation-delay:-2s;  animation-duration:11s; }
-.dish.d3{ bottom:14%; left:4%;  animation-delay:-4s; animation-duration:12s; }
-.dish.d4{ bottom:6%;  right:8%; animation-delay:-6s; animation-duration:9.5s; }
-
-@keyframes dishFloat{
-  0%,100%{ transform:translateY(0) rotate(-6deg) rotateX(0deg) rotateY(0deg) scale(1); }
-  33%{ transform:translateY(-22px) rotate(6deg) rotateX(8deg) rotateY(-10deg) scale(1.04); }
-  66%{ transform:translateY(12px) rotate(-4deg) rotateX(-6deg) rotateY(8deg) scale(.98); }
-}
-
-/* hide dishes on very small screens so they don't crowd */
-@media (max-width:420px){
-  .dish{ width:110px; height:110px; opacity:.7; }
+.float-cube.c1{ top:8%;  right:20%; animation-delay:0s; }
+.float-cube.c2{ bottom:18%; right:22%; animation-delay:-7s; background:linear-gradient(135deg, rgba(91,42,134,.25), rgba(107,31,31,.15)); border-color:rgba(91,42,134,.35); }
+.float-cube.c3{ top:50%; left:4%; animation-delay:-14s; background:linear-gradient(135deg, rgba(214,40,40,.22), rgba(242,194,0,.14)); border-color:rgba(214,40,40,.30); }
+@keyframes cubeFloat{
+  0%,100%{ transform:rotate(30deg) rotateX(20deg) translateY(0); }
+  50%{ transform:rotate(60deg) rotateX(40deg) translateY(-30px); }
 }
 
 /* ============================================================
@@ -330,7 +257,6 @@ body{
   animation:fadeUp 1s .25s both;
   max-width:520px; margin:0 auto;
 }
-
 .wheel-wrap{
   position:relative;
   width:min(86vw, 380px);
@@ -375,7 +301,6 @@ canvas#wheel{
   transition:transform 0s;
   transform:rotate(0deg);
 }
-
 .spin-btn{
   padding:16px 44px;
   border:none; border-radius:999px;
@@ -399,13 +324,29 @@ canvas#wheel{
 
 .spins-left{
   margin-top:14px;
-  font-size:12px; color:var(--ink-soft);
+  font-size:12.5px; color:var(--ink-soft);
   text-align:center;
+  line-height:1.5;
 }
 .spins-left strong{ color:var(--maroon); }
 
+/* next day countdown */
+.next-day{
+  margin-top:10px;
+  font-family:'Cinzel',serif;
+  font-size:12px;
+  color:var(--wine);
+  letter-spacing:.05em;
+}
+.next-day .big{
+  font-size:15px;
+  font-weight:800;
+  color:var(--maroon);
+  letter-spacing:.08em;
+}
+
 /* ============================================================
-   RULES (no odds revealed)
+   RULES
    ============================================================ */
 .rules{
   position:relative; z-index:1;
@@ -452,7 +393,6 @@ canvas#wheel{
   padding:20px;
 }
 .modal-overlay.show{ opacity:1; pointer-events:auto; }
-
 .modal{
   width:100%; max-width:400px;
   background:var(--cream);
@@ -465,7 +405,6 @@ canvas#wheel{
   max-height:90dvh; overflow-y:auto;
 }
 .modal-overlay.show .modal{ transform:scale(1) translateY(0); }
-
 .result-emoji{
   font-size:60px; line-height:1;
   margin-bottom:12px;
@@ -487,8 +426,6 @@ canvas#wheel{
   color:var(--ink-soft);
   line-height:1.55;
 }
-
-/* number input */
 .num-input{
   margin-top:16px;
   text-align:left;
@@ -521,7 +458,6 @@ canvas#wheel{
 }
 .num-input.err input{ border-color:var(--red); }
 .num-input.err .err{ display:block; }
-
 .modal-actions{
   display:flex; flex-direction:column; gap:10px;
   margin-top:20px;
@@ -539,7 +475,6 @@ canvas#wheel{
 }
 .btn-primary:active{ transform:scale(.97); }
 .btn-primary:disabled{ opacity:.5; cursor:not-allowed; }
-
 .btn-ghost{
   width:100%; padding:13px;
   border:1.5px solid rgba(107,31,31,.25);
@@ -552,7 +487,6 @@ canvas#wheel{
 }
 .btn-ghost:active{ transform:scale(.97); }
 
-/* coupon card */
 .coupon-card{
   margin-top:16px;
   padding:18px 16px;
@@ -616,7 +550,6 @@ canvas#wheel{
 }
 .coupon-card .cc-meta strong{ color:var(--maroon); }
 
-/* toast */
 .toast{
   position:fixed; left:50%; bottom:26px;
   transform:translate(-50%, 30px);
@@ -633,7 +566,6 @@ canvas#wheel{
 }
 .toast.show{ opacity:1; transform:translate(-50%,0); }
 
-/* confetti */
 #confetti{
   position:fixed; inset:0;
   pointer-events:none;
@@ -642,6 +574,62 @@ canvas#wheel{
   transition:opacity .3s;
 }
 #confetti.show{ opacity:1; }
+
+/* WA float */
+.wa-float{
+  position:fixed; right:14px; bottom:14px; z-index:46;
+  width:56px; height:56px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#25D366,#128C7E);
+  display:grid; place-items:center;
+  color:#fff;
+  text-decoration:none;
+  box-shadow:
+    0 12px 26px -8px rgba(37,211,102,.7),
+    0 0 0 4px rgba(37,211,102,.15);
+  animation:waPulse 2.4s ease-in-out infinite;
+  transition:transform .25s;
+}
+.wa-float:active{ transform:scale(.93); }
+.wa-float svg{ width:30px; height:30px; }
+@keyframes waPulse{
+  0%,100%{ box-shadow:0 12px 26px -8px rgba(37,211,102,.7), 0 0 0 4px rgba(37,211,102,.15); }
+  50%{ box-shadow:0 12px 26px -8px rgba(37,211,102,.9), 0 0 0 12px rgba(37,211,102,0); }
+}
+
+/* footer */
+.page-footer{
+  text-align:center;
+  padding:0 18px 24px;
+  position:relative; z-index:1;
+}
+.page-footer .line{
+  width:min(280px,70%);
+  height:1px;
+  margin:0 auto 14px;
+  background:linear-gradient(90deg,transparent,rgba(107,31,31,.3),transparent);
+}
+.page-footer .powered{
+  font-size:12px;
+  color:var(--ink-soft);
+  letter-spacing:.03em;
+}
+.page-footer .powered a{
+  font-family:'Cinzel',serif;
+  color:var(--wine);
+  font-weight:700;
+  letter-spacing:.05em;
+  text-decoration:none;
+  border-bottom:1px dashed rgba(107,31,31,.35);
+  transition:color .25s, border-color .25s;
+}
+.page-footer .powered a:hover{ color:var(--red); border-color:var(--red); }
+.page-footer .copy{
+  margin-top:8px;
+  font-size:10.5px;
+  color:#8a6a6a;
+  letter-spacing:.04em;
+}
 
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{
@@ -654,34 +642,22 @@ canvas#wheel{
 </head>
 <body>
 
-<!-- ============ ANIMATED BACKGROUND ============ -->
 <div class="bg-stage" aria-hidden="true">
-
-  <!-- rotating logo behind everything -->
-  <img class="bg-logo" src="neelkanthlogo.png" alt=""
-       onerror="this.style.display='none'"/>
-
-  <!-- drifting stars -->
+  <img class="bg-logo" src="neelkanthlogo.png" alt="" onerror="this.style.display='none'"/>
   <div class="starfield"></div>
-
-  <!-- gradient orbs -->
   <div class="orb a"></div>
   <div class="orb b"></div>
-  <div class="orb c"></div>
-
-  <!-- 3D floating dishes (CSS-built until real photos arrive) -->
-  <div class="dish-stage">
-    <div class="dish plate d1"><div class="dish-visual"></div></div>
-    <div class="dish bowl  d2"><div class="dish-visual"></div></div>
-    <div class="dish cup   d3"><div class="dish-visual"></div></div>
-    <div class="dish plate d4"><div class="dish-visual"></div></div>
-  </div>
-
+  <div class="float-shape s1"></div>
+  <div class="float-shape s2"></div>
+  <div class="float-shape s3"></div>
+  <div class="float-shape s4"></div>
+  <div class="float-cube c1"></div>
+  <div class="float-cube c2"></div>
+  <div class="float-cube c3"></div>
 </div>
 
 <canvas id="confetti"></canvas>
 
-<!-- TOPBAR -->
 <header class="topbar">
   <a class="back" href="index.html" aria-label="Back">←</a>
   <div class="brand-mini">
@@ -690,7 +666,6 @@ canvas#wheel{
   </div>
 </header>
 
-<!-- HERO -->
 <section class="hero">
   <h1>Lucky Spin</h1>
   <p class="sub">Spin the wheel · Win exciting prizes</p>
@@ -713,6 +688,7 @@ canvas#wheel{
   </div>
   <button class="spin-btn" id="spinBtn">Spin Now</button>
   <div class="spins-left" id="spinsLeft"></div>
+  <div class="next-day" id="nextDay"></div>
 </div>
 
 <!-- RULES -->
@@ -720,19 +696,26 @@ canvas#wheel{
   <h4>How it works</h4>
   <ul>
     <li><span class="ico">🎯</span><span>Spin the wheel and win exciting prizes — discounts, free items and more</span></li>
+    <li><span class="ico">🎟️</span><span><strong>One spin per day</strong> — come back tomorrow for another chance</span></li>
     <li><span class="ico">📱</span><span>To claim, enter the <strong>mobile number you ordered from</strong> and save your coupon</span></li>
-    <li><span class="ico">🎟️</span><span>Show the saved coupon at the counter on your <strong>next order</strong></span></li>
-    <li><span class="ico">🕒</span><span>Valid for <strong>30 days</strong> from issue · One use only · Non-transferable</span></li>
+    <li><span class="ico">🕒</span><span>Coupon valid for <strong>30 days</strong> from issue · One use only · Non-transferable</span></li>
     <li><span class="ico">🔒</span><span>Only guests <strong>inside the restaurant</strong> can spin — location verified</span></li>
-    <li><span class="ico">🙏</span><span>No luck this time? Come back and try again on your next visit</span></li>
+    <li><span class="ico">🙏</span><span>No luck this time? Come back tomorrow and try again</span></li>
   </ul>
 </section>
+
+<footer class="page-footer">
+  <div class="line"></div>
+  <p class="powered">
+    Powered by <a href="https://vaanconsultancy.in" target="_blank" rel="noopener">VAAN Consultancy</a>
+  </p>
+  <p class="copy">© <span id="yr"></span> Neelkanth Star Dhaba · All rights reserved</p>
+</footer>
 
 <!-- RESULT MODAL -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal" id="modal">
 
-    <!-- step 1: result reveal -->
     <div id="step1">
       <div class="result-emoji" id="rEmoji">🎉</div>
       <div class="result-title" id="rTitle">Result</div>
@@ -750,7 +733,6 @@ canvas#wheel{
       </div>
     </div>
 
-    <!-- step 2: coupon -->
     <div id="step2" style="display:none;">
       <div class="result-emoji" id="cEmoji">🎟️</div>
       <div class="result-title" id="cTitle">Coupon Saved</div>
@@ -778,43 +760,45 @@ canvas#wheel{
   </div>
 </div>
 
-<!-- hidden canvas for coupon export -->
 <canvas id="couponCanvas" width="800" height="500" style="display:none;"></canvas>
+
+<a class="wa-float" href="https://wa.me/919812400009?text=Hello%20Neelkanth!%20I%20have%20a%20query." target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.05 4.91A10.9 10.9 0 0 0 12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.97L2 22l5.25-1.38a9.86 9.86 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.91-7.02zm-7.01 15.25h-.01a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.11.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.39c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.83 2.42a8.2 8.2 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.25 8.24zm4.52-6.17c-.25-.12-1.47-.72-1.7-.81-.23-.08-.4-.12-.56.12-.17.25-.65.81-.79.98-.15.16-.29.19-.54.06-.25-.12-1.05-.39-2-1.23-.74-.66-1.24-1.47-1.38-1.72-.15-.25-.02-.38.11-.5.11-.11.25-.29.37-.44.12-.15.16-.25.25-.42.08-.17.04-.31-.02-.44-.06-.12-.56-1.35-.76-1.85-.2-.48-.4-.42-.56-.42h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.09 0 1.23.9 2.42 1.02 2.59.12.16 1.76 2.69 4.27 3.77.6.26 1.06.41 1.42.53.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.15-1.18-.06-.1-.23-.16-.48-.29z"/></svg>
+</a>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 /* ============================================================
-   NEELKANTH LUCKY SPIN
+   NEELKANTH LUCKY SPIN — 1 SPIN PER DAY
    ============================================================ */
 
 /* ---------- CONFIG ---------- */
-/* TODO: Vikas to fill real Neelkanth coords before going live.
-   If both are null, the location gate is skipped (demo mode). */
+/* TODO: Vikas — put real Neelkanth coords before going live.
+   If both null, location gate is skipped (demo mode). */
 const RESTAURANT_LAT = null;   // e.g. 29.0588
 const RESTAURANT_LNG = null;   // e.g. 76.0856
-const NEAR_RADIUS_M  = 300;    // allowed radius in meters
+const NEAR_RADIUS_M  = 300;
 
 const SPIN_STORAGE_KEY = "neelkanth_spin_data";
-const MAX_SPINS_PER_DAY = 3;
+const MAX_SPINS_PER_DAY = 1;
 
-/* ---------- PRIZE ODDS (hidden from UI) ----------
+/* ---------- PRIZE ODDS (hidden) ----------
    Per 100 spins:
-   1  × jackpot        (50% off next order)
-   5  × 25% off
-   5  × 10% off
-   10 × free low-rate item
-   79 × better luck next time
+   1  × jackpot (50%)
+   5  × 25%
+   5  × 10%
+   10 × free item
+   79 × better luck
 */
 const PRIZE_POOL = [
   { key:"JACKPOT", weight:1,  title:"50% OFF", desc:"Jackpot! Half price on your next order.", emoji:"🏆", color:"#D62828" },
   { key:"P25",     weight:5,  title:"25% OFF", desc:"Nice! 25% off your next order.",          emoji:"🎉", color:"#F2C200" },
   { key:"P10",     weight:5,  title:"10% OFF", desc:"10% off your next order.",                 emoji:"✨", color:"#6B1F1F" },
   { key:"FREE",    weight:10, title:"FREE ITEM", desc:"Free dessert, drink or papad on your next visit.", emoji:"🍰", color:"#5B2A86" },
-  { key:"LOSE",    weight:79, title:"Better Luck Next Time", desc:"No win this time. Try again on your next visit!", emoji:"🙏", color:"#8A2E2E" }
+  { key:"LOSE",    weight:79, title:"Better Luck Next Time", desc:"No win this time. Come back tomorrow and try again!", emoji:"🙏", color:"#8A2E2E" }
 ];
 
-/* wheel visual segments — deliberately mixed so winners aren't obvious */
 const WHEEL_SEGMENTS = [
   { label:"50% OFF",   type:"JACKPOT", color:"#D62828" },
   { label:"10% OFF",   type:"P10",     color:"#F2C200" },
@@ -830,13 +814,12 @@ const WHEEL_SEGMENTS = [
   { label:"FREE ITEM", type:"FREE",    color:"#3B1414" }
 ];
 
-/* ---------- STATE ---------- */
 let spinHistory = JSON.parse(localStorage.getItem(SPIN_STORAGE_KEY) || "{}");
 let rotation = 0;
 let spinning = false;
 let currentPrize = null;
+let countdownTimer = null;
 
-/* ---------- HELPERS ---------- */
 const $  = (s)=>document.querySelector(s);
 const $$ = (s)=>document.querySelectorAll(s);
 
@@ -848,8 +831,13 @@ function toast(msg){
   t._tm = setTimeout(()=> t.classList.remove("show"), 2400);
 }
 
+/* local day key (YYYY-MM-DD in user's timezone) */
 function todayKey(){
-  return new Date().toISOString().slice(0,10);
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
 }
 function getTodayRecord(){
   const k = todayKey();
@@ -881,14 +869,12 @@ function updateGateStatus(msg, cls){
 }
 
 function checkLocation(){
-  // demo mode: no coords set → skip check
   if (RESTAURANT_LAT === null || RESTAURANT_LNG === null){
     updateGateStatus("✅ Location check skipped (demo mode). You can spin!", "ok");
     $("#gateBtn").style.display = "none";
     revealWheel();
     return;
   }
-
   if (!("geolocation" in navigator)){
     updateGateStatus("Your browser doesn't support location. Please ask staff for help.", "err");
     return;
@@ -901,7 +887,6 @@ function checkLocation(){
       const { latitude, longitude, accuracy } = pos.coords;
       const dist = haversineMeters(latitude, longitude, RESTAURANT_LAT, RESTAURANT_LNG);
       const effectiveDist = Math.max(0, dist - Math.min(accuracy || 0, 200));
-
       if (effectiveDist <= NEAR_RADIUS_M){
         updateGateStatus(`✅ You're at Neelkanth (~${Math.round(dist)}m away). You can spin!`, "ok");
         $("#gateBtn").style.display = "none";
@@ -924,7 +909,6 @@ function checkLocation(){
     { enableHighAccuracy:true, timeout:12000, maximumAge:30000 }
   );
 }
-
 $("#gateBtn").addEventListener("click", checkLocation);
 
 /* ============================================================
@@ -939,16 +923,13 @@ const RADIUS = canvas.width / 2 - 12;
 function drawWheel(){
   const n = WHEEL_SEGMENTS.length;
   const arc = (Math.PI * 2) / n;
-
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // outer ring
   ctx.beginPath();
   ctx.arc(CX, CY, RADIUS + 6, 0, Math.PI * 2);
   ctx.fillStyle = "#3B1414";
   ctx.fill();
 
-  // segments
   WHEEL_SEGMENTS.forEach((seg, i)=>{
     const start = i * arc - Math.PI/2;
     const end = start + arc;
@@ -959,7 +940,6 @@ function drawWheel(){
     ctx.closePath();
     ctx.fillStyle = seg.color;
     ctx.fill();
-
     ctx.strokeStyle = "rgba(242,194,0,.55)";
     ctx.lineWidth = 2;
     ctx.stroke();
@@ -976,7 +956,6 @@ function drawWheel(){
     ctx.restore();
   });
 
-  // hub
   ctx.beginPath();
   ctx.arc(CX, CY, 54, 0, Math.PI * 2);
   const grad = ctx.createRadialGradient(CX-14, CY-14, 6, CX, CY, 54);
@@ -994,11 +973,10 @@ function drawWheel(){
   ctx.textBaseline = "middle";
   ctx.fillText("N", CX, CY + 1);
 }
-
 drawWheel();
 
 /* ============================================================
-   PRIZE PICK (weighted random — hidden from UI)
+   PRIZE PICK (weighted)
    ============================================================ */
 function pickPrize(){
   const totalWeight = PRIZE_POOL.reduce((a, p)=> a + p.weight, 0);
@@ -1009,7 +987,6 @@ function pickPrize(){
   }
   return PRIZE_POOL[PRIZE_POOL.length - 1];
 }
-
 function findSegmentIndexForPrize(prizeType){
   const candidates = WHEEL_SEGMENTS
     .map((s, i)=> ({ s, i }))
@@ -1021,7 +998,7 @@ function findSegmentIndexForPrize(prizeType){
 }
 
 /* ============================================================
-   SPIN
+   REVEAL + SPIN
    ============================================================ */
 function revealWheel(){
   $("#gate").style.display = "none";
@@ -1033,20 +1010,47 @@ function updateSpinsLeft(){
   const rec = getTodayRecord();
   const left = Math.max(0, MAX_SPINS_PER_DAY - rec.spins);
   const el = $("#spinsLeft");
+  const nextEl = $("#nextDay");
+
   if (left <= 0){
-    el.innerHTML = "You've used all <strong>3 spins</strong> for today. Come back tomorrow!";
+    el.innerHTML = "You've already used your <strong>spin for today</strong>.";
     $("#spinBtn").disabled = true;
+    startCountdown(nextEl);
   } else {
-    el.innerHTML = `You have <strong>${left}</strong> spin${left===1?"":"s"} left today`;
+    el.innerHTML = "You have <strong>1 spin</strong> available today.";
     $("#spinBtn").disabled = false;
+    nextEl.textContent = "";
+    if (countdownTimer){ clearInterval(countdownTimer); countdownTimer = null; }
   }
+}
+
+function startCountdown(el){
+  if (countdownTimer) clearInterval(countdownTimer);
+  function tick(){
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(now.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    let diff = Math.max(0, tomorrow - now);
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    el.innerHTML = `Next spin in <span class="big">${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}</span>`;
+    if (diff <= 0){
+      clearInterval(countdownTimer);
+      countdownTimer = null;
+      updateSpinsLeft();
+    }
+  }
+  tick();
+  countdownTimer = setInterval(tick, 1000);
 }
 
 function spin(){
   if (spinning) return;
   const rec = getTodayRecord();
   if (rec.spins >= MAX_SPINS_PER_DAY){
-    toast("You've used all spins for today");
+    toast("You've already spun today. Come back tomorrow!");
     return;
   }
 
@@ -1090,7 +1094,6 @@ function spin(){
   }
   requestAnimationFrame(frame);
 }
-
 $("#spinBtn").addEventListener("click", spin);
 
 /* ============================================================
@@ -1109,17 +1112,13 @@ function showResult(prize){
 
   if (prize.key === "LOSE"){
     $("#numWrap").style.display = "none";
-    $("#claimBtn").textContent = "Try Again Tomorrow";
+    $("#claimBtn").textContent = "Come Back Tomorrow";
   } else {
     $("#numWrap").style.display = "block";
     $("#claimBtn").textContent = "Claim Coupon";
   }
 }
-
-function closeModal(){
-  $("#modalOverlay").classList.remove("show");
-}
-
+function closeModal(){ $("#modalOverlay").classList.remove("show"); }
 $("#closeBtn1").addEventListener("click", closeModal);
 $("#closeBtn2").addEventListener("click", closeModal);
 $("#modalOverlay").addEventListener("click", (e)=>{
@@ -1141,7 +1140,6 @@ $("#claimBtn").addEventListener("click", ()=>{
   currentPrize.coupon = code;
   currentPrize.mobile = num;
   currentPrize.issued = new Date().toISOString();
-
   showCoupon();
 });
 
@@ -1152,9 +1150,6 @@ function randCode(len){
   return out;
 }
 
-/* ============================================================
-   COUPON SCREEN
-   ============================================================ */
 function showCoupon(){
   const p = currentPrize;
   $("#step1").style.display = "none";
@@ -1252,7 +1247,6 @@ function roundRect(c, x, y, w, h, r){
   c.arcTo(x, y, x + w, y, r);
   c.closePath();
 }
-
 function drawStar(c, cx, cy, r, fill, stroke){
   const spikes = 5, outer = r, inner = r * 0.45;
   let rot = Math.PI / 2 * 3;
@@ -1338,25 +1332,9 @@ function startConfetti(){
 }
 
 /* ============================================================
-   PARALLAX for dishes on pointer move (desktop)
-   ============================================================ */
-const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-if (!reduce && window.matchMedia("(pointer:fine)").matches){
-  const dishes = document.querySelectorAll(".dish");
-  window.addEventListener("mousemove", (e)=>{
-    const x = (e.clientX / window.innerWidth - .5);
-    const y = (e.clientY / window.innerHeight - .5);
-    dishes.forEach((d, i)=>{
-      const depth = 10 + i * 6;
-      d.style.marginLeft = (x * depth) + "px";
-      d.style.marginTop  = (y * depth) + "px";
-    });
-  }, { passive:true });
-}
-
-/* ============================================================
    INIT
    ============================================================ */
+document.getElementById('yr').textContent = new Date().getFullYear();
 updateSpinsLeft();
 </script>
 
