@@ -67,33 +67,36 @@
   .card-footer { padding: 20px; background: #fff; border-top: 1px solid #eee; }
   .total-row { display: flex; justify-content: space-between; font-weight: 800; font-size: 18px; margin-bottom: 15px; color: var(--navy); }
   .action-btns { display: flex; gap: 10px; }
-  .action-btns button { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 0.5px; }
+  .action-btns button { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
   .btn-start { background: var(--navy); color: white; }
-  .btn-start:hover { background: var(--navy-dark); }
   .btn-ready { background: var(--gold); color: var(--navy); }
-  .btn-ready:hover { background: #e0b000; }
   .btn-paid { background: var(--green); color: white; }
-  .btn-paid:hover { background: #155a29; }
   .badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
   .badge.ORDERED { background: #e3f2fd; color: var(--navy); }
   .badge.PREPARING { background: #fff9e6; color: #b8860b; }
   .badge.PREPARED { background: #e8f5e9; color: var(--green); }
 
   /* --- TAB 2: COUPONS --- */
-  .coupon-search { display: flex; gap: 10px; margin-bottom: 20px; max-width: 500px; }
+  .coupon-search { display: flex; gap: 10px; margin-bottom: 30px; max-width: 500px; }
   .coupon-search input { flex: 1; padding: 14px; border: 2px solid #ccc; border-radius: 8px; font-size: 16px; text-transform: uppercase; }
   .coupon-search button { padding: 14px 24px; background: var(--navy); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-  .coupon-result { background: white; padding: 20px; border-radius: 12px; max-width: 500px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: none; }
+  .coupon-result { background: white; padding: 20px; border-radius: 12px; max-width: 500px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: none; margin-bottom: 30px;}
   .coupon-result.valid { border-left: 6px solid var(--green); }
   .coupon-result.invalid { border-left: 6px solid var(--red); }
-  .coupon-result h3 { margin-bottom: 10px; }
+  .coupon-list table { width: 100%; background: white; border-collapse: collapse; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+  .coupon-list th, .coupon-list td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+  .coupon-list th { background: var(--navy); color: white; font-weight: 600; }
+  .c-badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+  .c-badge.active { background: #e8f5e9; color: var(--green); }
+  .c-badge.used { background: #ffebee; color: var(--red); text-decoration: line-through; }
+  .c-badge.expired { background: #eeeeee; color: #999; text-decoration: line-through; }
 
   /* --- TAB 3: MENU MANAGER --- */
   .menu-table { width: 100%; background: white; border-collapse: collapse; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
   .menu-table th, .menu-table td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
   .menu-table th { background: var(--navy); color: white; font-weight: 600; }
-  .menu-table tr:hover { background: #fafafa; }
   .menu-table input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+  .menu-table select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
   .btn-edit { background: var(--gold); color: var(--navy); border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
   .btn-delete { background: var(--red); color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
   .btn-add { background: var(--green); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; margin-bottom: 20px; }
@@ -125,7 +128,7 @@
   
   <button class="nav-btn" onclick="switchTab('tab-coupons', this)">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
-    Check Coupon
+    Coupons & Offers
   </button>
   
   <button class="nav-btn" onclick="switchTab('tab-menu', this)">
@@ -151,14 +154,34 @@
 
   <!-- TAB 2: COUPONS -->
   <div id="tab-coupons" class="tab-content">
+    <!-- Quick Verifier -->
     <div class="coupon-search">
       <input type="text" id="coupon-input" placeholder="Enter code (e.g. NEEL-A7X9K2)" />
-      <button onclick="checkCoupon()">Verify</button>
+      <button onclick="checkCoupon()">Verify Code</button>
     </div>
     <div class="coupon-result" id="coupon-result">
       <h3 id="c-res-title">Coupon Status</h3>
       <p id="c-res-desc"></p>
       <button id="c-use-btn" style="display:none; margin-top:15px; padding:10px 20px; background:var(--green); color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="markCouponUsed()">Mark as Used</button>
+    </div>
+
+    <!-- All Coupons List -->
+    <h3 style="margin-bottom:15px; color:var(--navy);">All Generated Coupons</h3>
+    <div class="coupon-list">
+      <table>
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Discount</th>
+            <th>Table</th>
+            <th>Issued Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="coupon-list-container">
+          <tr><td colspan="5">Loading...</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
@@ -171,7 +194,7 @@
           <th>Dish Name</th>
           <th>Price (₹)</th>
           <th>Category</th>
-          <th>Availability</th>
+          <th>Available</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -189,12 +212,18 @@
    ========================================================= */
 const SUPABASE_URL = 'https://scuiidvmhsyknhqlszzg.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjdWlpZHZtaHN5a25ocWxzenpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzNDgyOTEsImV4cCI6MjEwNzkyNDI5MX0.AiZgUL1lOcp7LHIP1JgQipXbtC-NPCBQjcWJAK_br-0';
-
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let currentOrders = [];
 let realtimeChannel = null;
 let activeCouponId = null;
+
+// All available categories for the dropdown
+const CATEGORIES = [
+  "Beverages", "Desserts", "Rice", "Salad & Raita", "Chinese", 
+  "Indian Main Course", "Mini Meals", "Snack", "Pakora Superhit", 
+  "Breads", "Combos & Thali", "Street Style", "Tandoori Local", "Sweets Treat"
+];
 
 /* =========================================================
    AUTHENTICATION
@@ -205,18 +234,13 @@ async function login() {
   const btn = document.getElementById('login-btn');
 
   btn.textContent = 'Logging in...';
-
-  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
   if (error) {
     alert(error.message);
     btn.textContent = 'Login to Panel';
   } else {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('sidebar').style.display = 'flex';
-    document.getElementById('main-panel').style.display = 'block';
-    initRealtime();
-    loadMenu();
+    initDashboard();
   }
 }
 
@@ -227,13 +251,17 @@ async function logout() {
 
 async function checkSession() {
   const { data: { session } } = await supabaseClient.auth.getSession();
-  if (session) {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('sidebar').style.display = 'flex';
-    document.getElementById('main-panel').style.display = 'block';
-    initRealtime();
-    loadMenu();
-  }
+  if (session) initDashboard();
+}
+
+function initDashboard() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('sidebar').style.display = 'flex';
+  document.getElementById('main-panel').style.display = 'block';
+  
+  initRealtime();
+  loadMenu();
+  loadCoupons(); // Load coupons on start
 }
 
 /* =========================================================
@@ -248,10 +276,12 @@ function switchTab(tabId, btn) {
 
   const titles = {
     'tab-orders': 'Live Orders',
-    'tab-coupons': 'Verify Coupons',
+    'tab-coupons': 'Coupons & Offers',
     'tab-menu': 'Menu Manager'
   };
   document.getElementById('page-title').textContent = titles[tabId];
+  
+  if (tabId === 'tab-coupons') loadCoupons();
 }
 
 /* =========================================================
@@ -264,10 +294,7 @@ async function fetchOrders() {
     .neq('status', 'PAID') 
     .order('created_at', { ascending: true });
 
-  if (error) {
-    console.error('Error fetching orders:', error);
-    return;
-  }
+  if (error) { console.error(error); return; }
   
   currentOrders = data || [];
   renderOrders();
@@ -284,8 +311,7 @@ function initRealtime() {
   
   realtimeChannel = supabaseClient
     .channel('public:orders')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, payload => {
-      console.log('Realtime change:', payload);
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => {
       fetchOrders(); 
     })
     .subscribe();
@@ -340,17 +366,64 @@ function renderOrders() {
 }
 
 async function updateStatus(orderId, newStatus) {
-  const { error } = await supabaseClient
-    .from('orders')
-    .update({ status: newStatus })
-    .eq('id', orderId);
-
+  const { error } = await supabaseClient.from('orders').update({ status: newStatus }).eq('id', orderId);
   if (error) alert('Error updating order: ' + error.message);
 }
 
 /* =========================================================
-   TAB 2: CHECK COUPONS
+   TAB 2: COUPONS
    ========================================================= */
+async function loadCoupons() {
+  const tbody = document.getElementById('coupon-list-container');
+  tbody.innerHTML = '<tr><td colspan="5">Loading...</td></tr>';
+
+  const { data, error } = await supabaseClient
+    .from('coupons')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error || !data) {
+    tbody.innerHTML = '<tr><td colspan="5">Error loading coupons.</td></tr>';
+    return;
+  }
+
+  if (data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5">No coupons generated yet.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = '';
+  const now = new Date();
+
+  data.forEach(c => {
+    const issued = new Date(c.created_at);
+    const diffDays = Math.floor((now - issued) / (1000 * 60 * 60 * 24));
+    
+    // Auto-delete expired coupons from UI (older than 30 days)
+    if (diffDays > 30) return; 
+
+    let statusHtml = '';
+    if (c.is_used) {
+      statusHtml = `<span class="c-badge used">Used</span>`;
+    } else if (diffDays > 30) {
+      statusHtml = `<span class="c-badge expired">Expired</span>`;
+    } else {
+      statusHtml = `<span class="c-badge active">Active</span>`;
+    }
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>${c.code}</strong></td>
+      <td>${c.discount_percent}% OFF</td>
+      <td>Table ${c.table_number}</td>
+      <td>${issued.toLocaleDateString()}</td>
+      <td>${statusHtml}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// Quick Search Verify
 async function checkCoupon() {
   const code = document.getElementById('coupon-input').value.trim().toUpperCase();
   const resBox = document.getElementById('coupon-result');
@@ -366,11 +439,7 @@ async function checkCoupon() {
   desc.textContent = '';
   btn.style.display = 'none';
 
-  const { data, error } = await supabaseClient
-    .from('coupons')
-    .select('*')
-    .eq('code', code)
-    .single();
+  const { data, error } = await supabaseClient.from('coupons').select('*').eq('code', code).single();
 
   if (error || !data) {
     resBox.classList.add('invalid');
@@ -380,36 +449,35 @@ async function checkCoupon() {
   }
 
   activeCouponId = data.id;
+  const issued = new Date(data.created_at);
+  const diffDays = Math.floor((new Date() - issued) / (1000 * 60 * 60 * 24));
 
-  if (data.is_used) {
+  if (diffDays > 30) {
+    resBox.classList.add('invalid');
+    title.textContent = '❌ Coupon Expired';
+    desc.textContent = `This coupon was issued on ${issued.toLocaleDateString()} and has expired.`;
+  } else if (data.is_used) {
     resBox.classList.add('invalid');
     title.textContent = '⚠️ Coupon Already Used';
-    desc.textContent = `This coupon (${data.discount_percent}% OFF) was already claimed and marked as used.`;
+    desc.textContent = `This coupon (${data.discount_percent}% OFF) was already marked as used.`;
   } else {
     resBox.classList.add('valid');
     title.textContent = '✅ Valid Coupon';
-    desc.textContent = `Discount: ${data.discount_percent}% OFF · Table: ${data.table_number}`;
+    desc.textContent = `Discount: ${data.discount_percent}% OFF · Issued: ${issued.toLocaleDateString()}`;
     btn.style.display = 'inline-block';
   }
 }
 
 async function markCouponUsed() {
   if (!activeCouponId) return;
+  await supabaseClient.from('coupons').update({ is_used: true }).eq('id', activeCouponId);
   
-  const { error } = await supabaseClient
-    .from('coupons')
-    .update({ is_used: true })
-    .eq('id', activeCouponId);
-
-  if (error) {
-    alert("Failed to update coupon.");
-  } else {
-    document.getElementById('coupon-result').className = 'coupon-result invalid';
-    document.getElementById('c-res-title').textContent = 'Coupon Marked Used';
-    document.getElementById('c-res-desc').textContent = 'You can now apply the discount to their bill.';
-    document.getElementById('c-use-btn').style.display = 'none';
-    document.getElementById('coupon-input').value = '';
-  }
+  document.getElementById('coupon-result').className = 'coupon-result invalid';
+  document.getElementById('c-res-title').textContent = 'Coupon Marked Used';
+  document.getElementById('c-res-desc').textContent = 'You can now apply the discount to their bill.';
+  document.getElementById('c-use-btn').style.display = 'none';
+  document.getElementById('coupon-input').value = '';
+  loadCoupons(); // Refresh the list below
 }
 
 /* =========================================================
@@ -419,31 +487,21 @@ async function loadMenu() {
   const tbody = document.getElementById('menu-container');
   tbody.innerHTML = '<tr><td colspan="5">Loading menu...</td></tr>';
 
-  const { data, error } = await supabaseClient
-    .from('menu_items')
-    .select('*')
-    .order('id', { ascending: false });
+  const { data, error } = await supabaseClient.from('menu_items').select('*').order('id', { ascending: false });
 
-  if (error) {
-    tbody.innerHTML = `<tr><td colspan="5">Error loading menu: ${error.message}</td></tr>`;
-    return;
-  }
-
-  if (data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5">No items found. Add your first dish.</td></tr>';
-    return;
-  }
+  if (error) { tbody.innerHTML = `<tr><td colspan="5">Error loading menu.</td></tr>`; return; }
+  if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="5">No items found. Add your first dish.</td></tr>'; return; }
 
   tbody.innerHTML = '';
   data.forEach(item => {
+    const catOptions = CATEGORIES.map(c => `<option value="${c}" ${item.category === c ? 'selected' : ''}>${c}</option>`).join('');
+
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td><input type="text" id="name-${item.id}" value="${item.name}" /></td>
       <td><input type="number" id="price-${item.id}" value="${item.price}" style="width:100px;" /></td>
-      <td><input type="text" id="cat-${item.id}" value="${item.category}" /></td>
-      <td>
-        <input type="checkbox" id="avail-${item.id}" ${item.is_available ? 'checked' : ''} style="width:20px;height:20px;" />
-      </td>
+      <td><select id="cat-${item.id}">${catOptions}</select></td>
+      <td><input type="checkbox" id="avail-${item.id}" ${item.is_available ? 'checked' : ''} style="width:20px;height:20px;" /></td>
       <td>
         <button class="btn-edit" onclick="saveMenuItem(${item.id})">Save</button>
         <button class="btn-delete" onclick="deleteMenuItem(${item.id})">Del</button>
@@ -459,23 +517,14 @@ async function saveMenuItem(id) {
   const category = document.getElementById(`cat-${id}`).value;
   const is_available = document.getElementById(`avail-${id}`).checked;
 
-  const { error } = await supabaseClient
-    .from('menu_items')
-    .update({ name, price, category, is_available })
-    .eq('id', id);
-
+  const { error } = await supabaseClient.from('menu_items').update({ name, price, category, is_available }).eq('id', id);
   if (error) alert("Error saving: " + error.message);
   else alert("Item updated successfully!");
 }
 
 async function deleteMenuItem(id) {
   if (!confirm("Are you sure you want to delete this dish?")) return;
-
-  const { error } = await supabaseClient
-    .from('menu_items')
-    .delete()
-    .eq('id', id);
-
+  const { error } = await supabaseClient.from('menu_items').delete().eq('id', id);
   if (error) alert("Error deleting: " + error.message);
   else loadMenu();
 }
@@ -485,13 +534,12 @@ async function addNewItem() {
   if (!name) return;
   const price = parseInt(prompt("Enter Price (₹):"));
   if (!price) return;
-  const category = prompt("Enter Category (e.g. Indian Main Course, Breads):");
+  
+  const catString = CATEGORIES.join(", ");
+  const category = prompt(`Enter Category (Options: ${catString}):`);
   if (!category) return;
 
-  const { error } = await supabaseClient
-    .from('menu_items')
-    .insert([{ name, price, category, is_available: true, is_veg: true }]);
-
+  const { error } = await supabaseClient.from('menu_items').insert([{ name, price, category, is_available: true, is_veg: true }]);
   if (error) alert("Error adding: " + error.message);
   else loadMenu();
 }
