@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+<title>Cashier Panel — Neelkanth Star</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --navy: #1B3A6B; --navy-dark: #142C52; --gold: #F2C200;
+    --red: #D62828; --green: #1E7A3A; --cream: #FBF6EC;
+    --ink: #1A1A2E; --gray: #E0E0E0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
+  body { background: #f4f4f4; color: var(--ink); display: flex; height: 100vh; overflow: hidden; }
+
+  /* Login Screen */
+  #login-screen { position: fixed; inset: 0; background: var(--navy); display: flex; align-items: center; justify-content: center; z-index: 100; }
+  .login-box { background: white; padding: 30px; border-radius: 12px; width: 100%; max-width: 340px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+  .login-box h2 { color: var(--navy); margin-bottom: 20px; font-family: 'Cinzel', serif; }
+  .login-box input { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
+  .login-box button { width: 100%; padding: 14px; background: var(--gold); color: var(--navy); border: none; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; transition: 0.2s; }
+  .login-box button:hover { background: #e0b000; }
+  .error-msg { color: var(--red); font-size: 13px; margin-top: 10px; display: none; }
+
+  /* Sidebar */
+  .sidebar { width: 250px; background: var(--navy-dark); color: white; padding: 20px; display: flex; flex-direction: column; }
+  .sidebar h1 { font-size: 22px; margin-bottom: 5px; color: var(--gold); font-family: 'Cinzel', serif; }
+  .sidebar p { font-size: 12px; opacity: 0.7; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px; }
+  .sidebar .nav-btn { padding: 12px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border: none; color: white; text-align: left; border-radius: 6px; cursor: pointer; font-size: 14px; transition: 0.2s; }
+  .sidebar .nav-btn:hover { background: rgba(255,255,255,0.1); }
+  .sidebar .nav-btn.active { background: var(--gold); color: var(--navy-dark); font-weight: bold; }
+  .sidebar .logout { margin-top: auto; background: transparent; color: #ff6b6b; padding: 12px; border: 1px solid #ff6b6b; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+  .sidebar .logout:hover { background: var(--red); color: white; }
+
+  /* Main Panel */
+  .main { flex: 1; padding: 25px; overflow-y: auto; }
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+  .header h2 { font-size: 24px; color: var(--navy); }
+  .connection-status { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; background: var(--gray); color: #666; display: flex; align-items: center; gap: 6px; }
+  .connection-status::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #999; }
+  .connection-status.live { background: #d4edda; color: var(--green); }
+  .connection-status.live::before { background: var(--green); animation: pulse 2s infinite; }
+
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(30, 122, 58, 0.4); }
+    70% { box-shadow: 0 0 0 6px rgba(30, 122, 58, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(30, 122, 58, 0); }
+  }
+
+  /* Orders Grid */
+  .orders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
+  
+  .order-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 6px solid var(--gray); display: flex; flex-direction: column; }
+  .order-card.ORDERED { border-left-color: var(--navy); }
+  .order-card.PREPARING { border-left-color: var(--gold); }
+  .order-card.PREPARED { border-left-color: var(--green); }
+
+  .card-header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #eee; background: #fafafa; }
+  .table-num { font-size: 22px; font-weight: 800; color: var(--ink); }
+  .order-time { font-size: 12px; color: #888; font-weight: 500; }
+  
+  .card-body { padding: 20px; flex: 1; }
+  .item-list { list-style: none; margin-bottom: 0; }
+  .item-list li { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #f0f0f0; }
+  .item-list li:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .item-list li span:first-child { font-weight: 600; }
+  
+  .card-footer { padding: 20px; background: #fff; border-top: 1px solid #eee; }
+  .total-row { display: flex; justify-content: space-between; font-weight: 800; font-size: 18px; margin-bottom: 15px; color: var(--navy); }
+  
+  .action-btns { display: flex; gap: 10px; }
+  .action-btns button { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 0.5px; }
+  
+  .btn-start { background: var(--navy); color: white; }
+  .btn-start:hover { background: var(--navy-dark); }
+  .btn-ready { background: var(--gold); color: var(--navy); }
+  .btn-ready:hover { background: #e0b000; }
+  .btn-paid { background: var(--green); color: white; }
+  .btn-paid:hover { background: #155a29; }
+
+  /* Status Badges */
+  .badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+  .badge.ORDERED { background: #e3f2fd; color: var(--navy); }
+  .badge.PREPARING { background: #fff9e6; color: #b8860b; }
+  .badge.PREPARED { background: #e8f5e9; color: var(--green); }
+
+  .empty-state { text-align: center; padding: 50px; color: #888; font-size: 15px; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-box">
+    <h2>Cashier Login</h2>
+    <input type="email" id="email" placeholder="Email Address" value="cashier@neelkanth.com" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="login()" id="login-btn">Login to Panel</button>
+    <p id="login-error" class="error-msg">Invalid email or password</p>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar" style="display:none;">
+  <h1>Neelkanth Star</h1>
+  <p>Cashier Panel</p>
+  <button class="nav-btn active">Live Orders</button>
+  <button class="nav-btn" onclick="alert('Coming in the paid version.')">Menu Manager</button>
+  <button class="nav-btn" onclick="alert('Coming in the paid version.')">Sales Reports</button>
+  <button class="logout" onclick="logout()">Logout</button>
+</div>
+
+<!-- MAIN PANEL -->
+<div class="main" id="main-panel" style="display:none;">
+  <div class="header">
+    <h2>Live Orders</h2>
+    <div class="connection-status" id="conn-status">Connecting...</div>
+  </div>
+  <div class="orders-grid" id="orders-container">
+    <!-- Orders will be injected here -->
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   SUPABASE CREDENTIALS
+   ========================================================= */
+const SUPABASE_URL = 'https://scuiidvmhsyknhqlszzg.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjdWlpZHZtaHN5a25ocWxzenpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzNDgyOTEsImV4cCI6MjEwNzkyNDI5MX0.AiZgUL1lOcp7LHIP1JgQipXbtC-NPCBQjcWJAK_br-0';
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let currentOrders = [];
+let realtimeChannel = null;
+
+/* ---------- AUTHENTICATION ---------- */
+async function login() {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  const errorEl = document.getElementById('login-error');
+  const btn = document.getElementById('login-btn');
+
+  btn.textContent = 'Logging in...';
+  errorEl.style.display = 'none';
+
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    errorEl.textContent = error.message;
+    errorEl.style.display = 'block';
+    btn.textContent = 'Login to Panel';
+  } else {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('sidebar').style.display = 'flex';
+    document.getElementById('main-panel').style.display = 'block';
+    initRealtime();
+  }
+}
+
+async function logout() {
+  await supabaseClient.auth.signOut();
+  window.location.reload();
+}
+
+// Check if already logged in
+async function checkSession() {
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if (session) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('sidebar').style.display = 'flex';
+    document.getElementById('main-panel').style.display = 'block';
+    initRealtime();
+  }
+}
+
+/* ---------- REALTIME DATA FETCH ---------- */
+async function fetchOrders() {
+  const { data, error } = await supabaseClient
+    .from('orders')
+    .select('*')
+    .neq('status', 'PAID') // Only show active orders
+    .order('created_at', { ascending: true }); // Oldest first (FIFO)
+
+  if (error) {
+    console.error('Error fetching orders:', error);
+    return;
+  }
+  
+  currentOrders = data || [];
+  renderOrders();
+}
+
+function initRealtime() {
+  const statusEl = document.getElementById('conn-status');
+  statusEl.textContent = 'LIVE';
+  statusEl.classList.add('live');
+
+  fetchOrders(); // Initial fetch
+
+  // Listen for live changes
+  if (realtimeChannel) supabaseClient.removeChannel(realtimeChannel);
+  
+  realtimeChannel = supabaseClient
+    .channel('public:orders')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, payload => {
+      console.log('Realtime change:', payload);
+      fetchOrders(); // Refresh UI instantly
+    })
+    .subscribe();
+}
+
+/* ---------- RENDER UI ---------- */
+function renderOrders() {
+  const container = document.getElementById('orders-container');
+  container.innerHTML = '';
+
+  if (currentOrders.length === 0) {
+    container.innerHTML = '<div class="empty-state">No active orders right now.<br>New orders will appear here automatically.</div>';
+    return;
+  }
+
+  currentOrders.forEach(order => {
+    const card = document.createElement('div');
+    card.className = `order-card ${order.status}`;
+    
+    // Format time
+    const time = new Date(order.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    // Build items HTML safely
+    let itemsHtml = '';
+    if (Array.isArray(order.items)) {
+      order.items.forEach(item => {
+        itemsHtml += `<li><span>${item.qty}x ${item.name}</span> <span>₹${item.price * item.qty}</span></li>`;
+      });
+    } else {
+      itemsHtml = '<li>Items data error</li>';
+    }
+
+    // Build Action Buttons based on status flow
+    let actionBtns = '';
+    if (order.status === 'ORDERED') {
+      actionBtns = `<button class="btn-start" onclick="updateStatus(${order.id}, 'PREPARING')">Start Preparing</button>`;
+    } else if (order.status === 'PREPARING') {
+      actionBtns = `<button class="btn-ready" onclick="updateStatus(${order.id}, 'PREPARED')">Mark Prepared</button>`;
+    } else if (order.status === 'PREPARED') {
+      actionBtns = `<button class="btn-paid" onclick="updateStatus(${order.id}, 'PAID')">Collect Payment</button>`;
+    }
+
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="table-num">Table ${order.table_number}</div>
+        <div class="order-time">${time}</div>
+      </div>
+      <div class="card-body">
+        <div style="margin-bottom: 12px;"><span class="badge ${order.status}">${order.status}</span></div>
+        <ul class="item-list">
+          ${itemsHtml}
+        </ul>
+      </div>
+      <div class="card-footer">
+        <div class="total-row">
+          <span>Total</span>
+          <span>₹${order.total_amount}</span>
+        </div>
+        <div class="action-btns">
+          ${actionBtns}
+        </div>
+      </div>
+    `;
+    
+    container.appendChild(card);
+  });
+}
+
+/* ---------- UPDATE STATUS ---------- */
+async function updateStatus(orderId, newStatus) {
+  // Optional: Show a loading state on the button here if you want
+  const { error } = await supabaseClient
+    .from('orders')
+    .update({ status: newStatus })
+    .eq('id', orderId);
+
+  if (error) {
+    alert('Error updating order: ' + error.message);
+  }
+  // The realtime subscription will automatically refresh the UI
+}
+
+/* ---------- INIT ---------- */
+checkSession();
+</script>
+</body>
+</html>
