@@ -347,10 +347,13 @@ let billBtnHtml = allPrepared
 card.innerHTML = `
   <div class="tab-head"><h3>Table ${tab.table}</h3><span class="bill-id">${tab.bill_id}</span></div>
   <div class="tab-body">${itemsHtml}</div>
-  <div class="tab-foot">
-    <div class="tab-total"><span>Total</span><span>₹${tab.total}</span></div>
-    ${billBtnHtml}
+<div class="tab-foot">
+  <div class="tab-total"><span>Total</span><span>₹${tab.total}</span></div>
+  <div style="display:flex; gap:10px;">
+    <button class="btn-generate" style="background:var(--navy);" onclick="sendToKitchen(${tab.table})">Accept & Send to Kitchen</button>
+    <button class="btn-generate" onclick="openBill(${tab.table})">Bill</button>
   </div>
+</div>
 `;
     container.appendChild(card);
   });
@@ -520,6 +523,31 @@ async function addNewItem() {
 }
 
 /* INIT */
+  async function sendToKitchen(tableNumber) {
+  const tab = activeTabs[tableNumber];
+  if (!tab) return;
+  
+  // Find only the orders in this tab that are still 'ORDERED'
+  const orderIds = tab.orders.filter(o => o.status === 'ORDERED').map(o => o.id);
+  
+  if (orderIds.length === 0) {
+    alert("These orders are already with the kitchen.");
+    return;
+  }
+
+  // Update them to PREPARING
+  const { error } = await supabaseClient
+    .from('orders')
+    .update({ status: 'PREPARING' })
+    .in('id', orderIds);
+
+  if (error) {
+    alert("Error sending to kitchen: " + error.message);
+  } else {
+    // Optional: If you want a visual notification
+    alert("Order sent to Kitchen!");
+  }
+  }
 checkSession();
 </script>
 </body>
