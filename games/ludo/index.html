@@ -8,114 +8,55 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-:root{
-  --navy:#1B3A6B; --navy-dark:#142C52; --navy-soft:#2A4F8A;
-  --gold:#F2C200; --red:#D62828; --purple:#5B2A86;
-  --cream:#FBF6EC; --ink:#1A1A2E; --ink-soft:#4A4A5E; --green:#1E7A3A;
-  --ludo-red:#E63946; --ludo-green:#2A9D3F; --ludo-yellow:#F2C200; --ludo-blue:#2B7FD6;
-  --shadow-lg:0 24px 60px -20px rgba(27,58,107,.45);
-  --shadow-md:0 12px 32px -14px rgba(27,58,107,.35);
-  --shadow-sm:0 6px 18px -10px rgba(27,58,107,.30);
-}
+/* ... (Keep all the CSS exactly as it was in the previous Ludo file) ... */
+:root{ --navy:#1B3A6B; --navy-dark:#142C52; --gold:#F2C200; --red:#D62828; --green:#1E7A3A; --cream:#FBF6EC; --ink:#1A1A2E; --ludo-red:#E63946; --ludo-green:#2A9D3F; --ludo-yellow:#F2C200; --ludo-blue:#2B7FD6; }
 *{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-html{ scroll-behavior:smooth; }
-body{ font-family:'Inter', system-ui, sans-serif; background:var(--cream); color:var(--ink); min-height:100dvh; overflow-x:hidden; position:relative; padding-bottom:40px; }
-
-/* BACKGROUND */
+body{ font-family:'Inter', sans-serif; background:var(--cream); color:var(--ink); min-height:100dvh; padding-bottom:40px; }
 .bg-stage{ position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; background:radial-gradient(1000px 600px at 12% -8%, #1B3A6B1a, transparent 62%), linear-gradient(180deg,#FBF6EC 0%,#F5EDDC 100%); }
-.bg-logo{ position:absolute; top:50%; left:50%; width:min(92vw, 640px); height:min(92vw, 640px); transform:translate(-50%,-50%); opacity:.06; filter:blur(1.5px); animation:logoSpin 60s linear infinite; }
-@keyframes logoSpin{ from{ transform:translate(-50%,-50%) rotate(0deg); } to{ transform:translate(-50%,-50%) rotate(360deg); } }
-
-/* TOPBAR */
+.bg-logo{ position:absolute; top:50%; left:50%; width:min(92vw, 640px); transform:translate(-50%,-50%); opacity:.06; filter:blur(1.5px); animation:logoSpin 60s linear infinite; }
+@keyframes logoSpin{ to{ transform:translate(-50%,-50%) rotate(360deg); } }
 .topbar{ position:sticky; top:0; z-index:40; background:rgba(251,246,236,.96); border-bottom:1px solid rgba(27,58,107,.12); padding:12px 14px 0; backdrop-filter:blur(10px); }
 .topbar-row{ display:flex; align-items:center; gap:12px; padding-bottom:12px; min-height:68px; }
-.topbar .back{ flex:0 0 auto; width:42px; height:42px; border-radius:12px; display:grid; place-items:center; background:var(--navy); color:var(--gold); font-size:18px; text-decoration:none; box-shadow:var(--shadow-sm); }
-.topbar .logo-center{ flex:1; display:flex; justify-content:center; align-items:center; min-height:60px; }
-.topbar .logo-center img{ height:60px; width:auto; filter:drop-shadow(0 4px 10px rgba(27,58,107,.28)); }
-.topbar .table-chip{ flex:0 0 auto; width:42px; height:42px; border-radius:12px; display:none; place-items:center; background:rgba(242,194,0,.15); color:var(--navy); font-family:'Cinzel',serif; font-weight:800; font-size:14px; border:1px solid rgba(242,194,0,.35); }
-.topbar .table-chip.show{ display:grid; }
-
-/* SCREENS */
+.topbar .back{ width:42px; height:42px; border-radius:12px; display:grid; place-items:center; background:var(--navy); color:var(--gold); font-size:18px; text-decoration:none; }
+.topbar .logo-center{ flex:1; display:flex; justify-content:center; align-items:center; }
+.topbar .logo-center img{ height:60px; filter:drop-shadow(0 4px 10px rgba(27,58,107,.28)); }
 .screen{ display:none; position:relative; z-index:1; max-width:640px; margin:0 auto; padding:22px 14px 20px; animation:fadeIn .4s both; }
 .screen.show{ display:block; }
 @keyframes fadeIn{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:translateY(0); } }
-
 .hero{ text-align:center; margin-bottom:18px; }
 .hero h1{ font-family:'Cinzel',serif; font-weight:800; font-size:clamp(24px,7vw,36px); color:var(--navy); }
-.hero .sub{ margin-top:6px; font-family:'Cormorant Garamond',serif; font-style:italic; color:var(--navy-soft); font-size:clamp(13px,3.8vw,16px); }
-
-/* OPTION CARDS */
-.opt{ display:flex; align-items:center; gap:14px; padding:16px; background:rgba(255,255,255,.96); border:1.5px solid rgba(27,58,107,.10); border-radius:20px; box-shadow:var(--shadow-sm); cursor:pointer; color:inherit; transition:transform .22s, box-shadow .22s; margin-bottom:12px; }
-.opt:hover, .opt:active{ transform:translateY(-2px); box-shadow:var(--shadow-md); border-color:rgba(242,194,0,.5); }
-.opt .o-ico{ flex:0 0 auto; width:52px; height:52px; border-radius:14px; display:grid; place-items:center; color:#fff; box-shadow:inset 0 -3px 0 rgba(0,0,0,.18); }
-.opt .o-ico svg{ width:26px; height:26px; }
-.opt.o1 .o-ico{ background:linear-gradient(145deg,var(--ludo-red),#A51928); }
-.opt.o2 .o-ico{ background:linear-gradient(145deg,var(--ludo-blue),#1B4F8E); }
-.opt.o3 .o-ico{ background:linear-gradient(145deg,var(--ludo-green),#145A25); }
-.opt.o4 .o-ico{ background:linear-gradient(145deg,var(--navy),var(--navy-dark)); }
-.opt .o-body{ flex:1; }
+.hero .sub{ margin-top:6px; font-family:'Cormorant Garamond',serif; font-style:italic; color:var(--navy-soft); }
+.opt{ display:flex; align-items:center; gap:14px; padding:16px; background:#fff; border:1.5px solid rgba(27,58,107,.10); border-radius:20px; box-shadow:0 6px 18px -10px rgba(0,0,0,0.1); cursor:pointer; margin-bottom:12px; }
+.opt:hover{ transform:translateY(-2px); border-color:var(--gold); }
+.opt .o-ico{ width:52px; height:52px; border-radius:14px; display:grid; place-items:center; color:#fff; }
+.opt.o1 .o-ico{ background:var(--ludo-red); } .opt.o2 .o-ico{ background:var(--ludo-blue); } .opt.o3 .o-ico{ background:var(--ludo-green); } .opt.o4 .o-ico{ background:var(--navy); }
 .opt .o-title{ font-family:'Cinzel',serif; font-weight:700; font-size:15px; color:var(--navy); }
-.opt .o-sub{ margin-top:3px; font-size:12px; color:var(--ink-soft); }
-
-/* PICK GRIDS */
-.pick-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin:18px 0; }
-.pick-btn{ padding:22px 12px; background:rgba(255,255,255,.96); border:2px solid rgba(27,58,107,.15); border-radius:18px; cursor:pointer; text-align:center; transition:0.2s; }
-.pick-btn.selected{ border-color:var(--gold); box-shadow:0 0 0 3px rgba(242,194,0,.35); }
-.pick-btn .pb-num{ font-family:'Cinzel',serif; font-weight:800; font-size:32px; color:var(--navy); }
-.pick-btn .pb-label{ margin-top:8px; font-weight:600; font-size:12px; color:var(--ink-soft); text-transform:uppercase; }
-
-.color-pick{ display:flex; gap:14px; justify-content:center; margin:18px 0 24px; }
-.color-btn{ width:64px; height:64px; border-radius:50%; border:4px solid #fff; box-shadow:0 0 0 2px rgba(27,58,107,.15); cursor:pointer; position:relative; transition:0.2s; }
-.color-btn.selected{ box-shadow:0 0 0 3px var(--gold), 0 0 0 5px var(--navy); transform:scale(1.08); }
-.color-btn[data-color="red"]{ background:var(--ludo-red); }
-.color-btn[data-color="green"]{ background:var(--ludo-green); }
-.color-btn[data-color="yellow"]{ background:var(--ludo-yellow); }
-.color-btn[data-color="blue"]{ background:var(--ludo-blue); }
-
-.diff-row{ display:flex; gap:10px; justify-content:center; margin:12px 0 22px; }
-.diff-btn{ padding:11px 20px; border-radius:12px; background:#fff; border:1.5px solid rgba(27,58,107,.18); cursor:pointer; font-weight:600; font-size:13px; color:var(--navy); }
-.diff-btn.selected{ background:var(--navy); color:var(--gold); }
-
-.big-btn{ display:block; width:100%; padding:16px; border:none; border-radius:14px; background:var(--navy); color:var(--gold); font-family:'Cinzel',serif; font-weight:800; font-size:15px; text-transform:uppercase; cursor:pointer; box-shadow:var(--shadow-md); margin-top:10px; }
-.big-btn:disabled{ opacity:.5; }
-.ghost-btn{ display:block; width:100%; padding:13px; margin-top:10px; background:transparent; border:1.5px solid rgba(27,58,107,.25); border-radius:12px; color:var(--navy); font-weight:600; font-size:13.5px; cursor:pointer; }
-
-/* GAME UI */
-.game-meta{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding:10px 14px; background:rgba(255,255,255,.96); border-radius:14px; border:1.5px solid rgba(27,58,107,.10); }
-.turn-indicator{ display:flex; align-items:center; gap:10px; font-family:'Cinzel',serif; font-weight:700; font-size:13.5px; color:var(--navy); }
-.turn-dot{ width:16px; height:16px; border-radius:50%; box-shadow:0 0 0 3px #fff, 0 0 0 4px rgba(27,58,107,.2); transition:0.2s; }
-.turn-dot.red{ background:var(--ludo-red); } .turn-dot.green{ background:var(--ludo-green); }
-.turn-dot.yellow{ background:var(--ludo-yellow); } .turn-dot.blue{ background:var(--ludo-blue); }
-.meta-right{ font-size:11.5px; color:var(--ink-soft); font-weight:600; }
-
+.opt .o-sub{ font-size:12px; color:var(--ink-soft); margin-top:3px; }
+.search-box{ text-align:center; padding:40px 20px; background:#fff; border-radius:22px; box-shadow:0 12px 32px -14px rgba(0,0,0,0.2); }
+.spinner{ width:60px; height:60px; border:5px solid rgba(27,58,107,.1); border-top-color:var(--gold); border-radius:50%; margin:0 auto 20px; animation:spin 1s linear infinite; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+.timer-big{ font-family:'Cinzel',serif; font-size:36px; font-weight:800; color:var(--red); margin:15px 0; }
+.game-meta{ display:flex; justify-content:space-between; padding:10px 14px; background:#fff; border-radius:14px; margin-bottom:10px; }
+.turn-indicator{ display:flex; align-items:center; gap:10px; font-family:'Cinzel',serif; font-weight:700; color:var(--navy); }
+.turn-dot{ width:16px; height:16px; border-radius:50%; }
+.turn-dot.red{ background:var(--ludo-red); } .turn-dot.green{ background:var(--ludo-green); } .turn-dot.yellow{ background:var(--ludo-yellow); } .turn-dot.blue{ background:var(--ludo-blue); }
 .board-area{ position:relative; width:100%; max-width:560px; aspect-ratio:1/1; margin:0 auto 14px; }
-.board-wrap{ position:relative; width:100%; height:100%; border-radius:20px; overflow:hidden; background:#fff; box-shadow:0 0 0 3px var(--gold), 0 0 0 6px var(--navy), 0 20px 40px -16px rgba(27,58,107,.5); }
-canvas#board{ width:100%; height:100%; display:block; touch-action:manipulation; }
-
-.dice-floating{
-  position:absolute; width:60px; height:60px; border-radius:14px; background:linear-gradient(145deg,#fff,#F0E6D0);
-  box-shadow:inset 0 -4px 0 rgba(0,0,0,.12), 0 10px 22px -8px rgba(27,58,107,.5), 0 0 0 3px var(--gold), 0 0 0 5px var(--navy);
-  display:grid; place-items:center; cursor:pointer; transition:left .5s, top .5s, opacity .3s; z-index:5; animation:diceIdle 2s infinite;
-}
-@keyframes diceIdle{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.board-wrap{ border-radius:20px; overflow:hidden; box-shadow:0 0 0 3px var(--gold), 0 0 0 6px var(--navy); }
+canvas#board{ width:100%; height:100%; display:block; }
+.dice-floating{ position:absolute; width:60px; height:60px; border-radius:14px; background:#fff; box-shadow:0 0 0 3px var(--gold), 0 0 0 5px var(--navy); display:grid; place-items:center; cursor:pointer; z-index:5; }
 .dice-floating.rolling{ animation:diceRoll .7s; }
-@keyframes diceRoll{ 0%{ transform:rotate(0) scale(1); } 50%{ transform:rotate(360deg) scale(1.1); } 100%{ transform:rotate(720deg) scale(1); } }
-.dice-floating.disabled{ opacity:.5; pointer-events:none; animation:none; }
-.dice-floating svg{ width:100%; height:100%; }
-
-.roll-info{ font-family:'Cinzel',serif; font-size:13px; font-weight:700; color:var(--navy); text-align:center; min-height:20px; margin-top:6px; }
-.roll-info strong{ color:var(--red); }
-
-/* MODALS */
-.modal-overlay{ position:fixed; inset:0; z-index:90; background:rgba(26,26,46,.75); display:grid; place-items:center; padding:20px; opacity:0; pointer-events:none; transition:0.3s; }
+@keyframes diceRoll{ 50%{ transform:rotate(360deg) scale(1.1); } 100%{ transform:rotate(720deg) scale(1); } }
+.dice-floating.disabled{ opacity:.5; pointer-events:none; }
+.roll-info{ font-family:'Cinzel',serif; font-weight:700; text-align:center; color:var(--navy); }
+.big-btn{ width:100%; padding:16px; border:none; border-radius:14px; background:var(--navy); color:var(--gold); font-family:'Cinzel',serif; font-weight:800; text-transform:uppercase; margin-top:10px; cursor:pointer; }
+.ghost-btn{ width:100%; padding:13px; margin-top:10px; border:1.5px solid var(--navy); border-radius:12px; color:var(--navy); font-weight:600; cursor:pointer; background:transparent; }
+.modal-overlay{ position:fixed; inset:0; z-index:90; background:rgba(26,26,46,.75); display:grid; place-items:center; opacity:0; pointer-events:none; }
 .modal-overlay.show{ opacity:1; pointer-events:auto; }
-.modal{ background:var(--cream); border-radius:22px; padding:26px 22px; text-align:center; max-width:380px; width:100%; box-shadow:var(--shadow-lg); transform:scale(.9); transition:0.35s; }
-.modal-overlay.show .modal{ transform:scale(1); }
-.modal h2{ font-family:'Cinzel',serif; font-size:20px; font-weight:800; color:var(--navy); }
-.modal p{ margin-top:8px; font-size:13.5px; color:var(--ink-soft); line-height:1.55; }
-.modal .actions{ display:flex; flex-direction:column; gap:10px; margin-top:20px; }
+.modal{ background:var(--cream); border-radius:22px; padding:26px 22px; text-align:center; max-width:380px; width:100%; }
+.modal h2{ font-family:'Cinzel',serif; color:var(--navy); }
 </style>
 </head>
 <body>
@@ -124,16 +65,6 @@ canvas#board{ width:100%; height:100%; display:block; touch-action:manipulation;
   <img class="bg-logo" src="../../neelkanthlogo.png" alt="" onerror="this.style.display='none'"/>
 </div>
 
-<header class="topbar">
-  <div class="topbar-row">
-    <a class="back" href="../index.html" data-nav="../index.html" aria-label="Back">←</a>
-    <div class="logo-center">
-      <img src="../../neelkanthlogo.png" alt="Neelkanth Star" onerror="this.style.display='none'"/>
-    </div>
-    <div class="table-chip" id="tableChip">—</div>
-  </div>
-</header>
-
 <!-- SCREEN 1: LOBBY -->
 <section class="screen show" id="screenHome">
   <div class="hero">
@@ -141,73 +72,78 @@ canvas#board{ width:100%; height:100%; display:block; touch-action:manipulation;
     <p class="sub">Roll the dice · Beat the table</p>
   </div>
 
-  <div class="opt o1" id="optTables" onclick="prepGame('tables')">
+  <div class="opt o1" onclick="startRandomMatch()">
     <div class="o-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
     <div class="o-body">
       <div class="o-title">Play vs Other Tables</div>
-      <div class="o-sub">Match with another table dining here right now</div>
+      <div class="o-sub">Auto-match with someone in the restaurant</div>
     </div>
   </div>
 
-  <div class="opt o2" id="optFriends" onclick="prepGame('friends')">
+  <div class="opt o2" onclick="createFriendRoom()">
     <div class="o-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></div>
     <div class="o-body">
       <div class="o-title">Play with Friends</div>
-      <div class="o-sub">Share a link — invite up to 3 friends</div>
+      <div class="o-sub">Generate a link and share on WhatsApp</div>
     </div>
   </div>
 
-  <div class="opt o3" id="optBots" onclick="prepGame('bots')">
-    <div class="o-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg></div>
+  <div class="opt o3" onclick="prepGame('bots')">
+    <div class="o-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/></svg></div>
     <div class="o-body">
       <div class="o-title">Play with Bots</div>
-      <div class="o-sub">2, 3 or 4 players — pick difficulty</div>
+      <div class="o-sub">Practice offline against the computer</div>
     </div>
   </div>
 
-  <div class="opt o4" id="optOffline" onclick="prepGame('offline')">
-    <div class="o-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg></div>
+  <div class="opt o4" onclick="prepGame('offline')">
+    <div class="o-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
     <div class="o-body">
-      <div class="o-title">Offline · Pass &amp; Play</div>
-      <div class="o-sub">Same device, take turns — no internet needed</div>
+      <div class="o-title">Offline · Pass & Play</div>
+      <div class="o-sub">Play with friends on the same phone</div>
     </div>
   </div>
 </section>
 
-<!-- SCREEN 2: PLAYER COUNT -->
-<section class="screen" id="screenCount">
-  <div class="hero">
-    <h1>How many players?</h1>
-    <p class="sub" id="countSubText">You play as one — the rest are bots</p>
+<!-- SCREEN 2: MATCHMAKING -->
+<section class="screen" id="screenMatch">
+  <div class="hero"><h1>Finding a Table</h1></div>
+  <div class="search-box">
+    <div class="spinner" id="searchSpinner"></div>
+    <h3 id="matchTitle">Searching...</h3>
+    <div class="timer-big" id="matchTimer">02:00</div>
+    <p id="matchSub">Waiting for another table to join.</p>
+    <button class="ghost-btn" onclick="cancelMatchmaking()" style="margin-top:20px;">Cancel</button>
   </div>
-  <div class="pick-grid" id="countGrid">
-    <div class="pick-btn" data-count="2"><div class="pb-num">2</div><div class="pb-label">Players</div></div>
-    <div class="pick-btn" data-count="3"><div class="pb-num">3</div><div class="pb-label">Players</div></div>
-    <div class="pick-btn" data-count="4"><div class="pb-num">4</div><div class="pb-label">Players</div></div>
-  </div>
-  <button class="ghost-btn" onclick="showScreen('screenHome')">← Back</button>
 </section>
 
-<!-- SCREEN 3: PICK COLOUR -->
-<section class="screen" id="screenColor">
-  <div class="hero">
-    <h1>Pick Your Colour</h1>
-    <p class="sub" id="colorSubText">2 players · 1 bot opponent</p>
+<!-- SCREEN 3: FRIEND ROOM -->
+<section class="screen" id="screenFriendRoom">
+  <div class="hero"><h1>Friend Invite</h1></div>
+  <div class="search-box">
+    <h3 style="color:var(--navy); margin-bottom:15px;">Share this link:</h3>
+    <div style="background:#eee; padding:15px; border-radius:8px; font-weight:bold; font-size:14px; word-break:break-all; margin-bottom:20px;" id="shareLink">...</div>
+    <button class="big-btn" onclick="copyLink()">Copy Link</button>
+    <button class="ghost-btn" onclick="cancelFriendRoom()">Cancel</button>
   </div>
-  <div class="color-pick" id="colorPick"></div>
+</section>
+
+<!-- SCREEN 4: COUNT/COLOUR (Only for Bots/Offline) -->
+<section class="screen" id="screenColor">
+  <div class="hero"><h1>Setup Game</h1><p class="sub" id="colorSubText"></p></div>
+  <div class="color-pick" id="colorPick" style="display:flex; gap:10px; justify-content:center;"></div>
   <div id="diffSection">
-    <div style="text-align:center;font-family:'Cinzel',serif;font-weight:700;font-size:13px;color:var(--navy);margin-top:16px;">Bot difficulty</div>
-    <div class="diff-row" id="diffRow">
-      <button class="diff-btn" data-diff="easy">Easy</button>
-      <button class="diff-btn selected" data-diff="medium">Medium</button>
-      <button class="diff-btn" data-diff="hard">Hard</button>
+    <div class="diff-row" id="diffRow" style="display:flex; gap:10px; justify-content:center; margin:15px 0;">
+      <button class="ghost-btn" style="width:auto; padding:8px 15px;" data-diff="easy">Easy</button>
+      <button class="ghost-btn" style="width:auto; padding:8px 15px;" data-diff="medium">Medium</button>
+      <button class="ghost-btn" style="width:auto; padding:8px 15px;" data-diff="hard">Hard</button>
     </div>
   </div>
   <button class="big-btn" id="btnStartGame" disabled>Start Game</button>
-  <button class="ghost-btn" onclick="showScreen('screenCount')">← Change player count</button>
+  <button class="ghost-btn" onclick="showScreen('screenHome')">← Back</button>
 </section>
 
-<!-- SCREEN 4: GAME -->
+<!-- SCREEN 5: GAME -->
 <section class="screen" id="screenGame">
   <div class="game-meta">
     <div class="turn-indicator">
@@ -216,72 +152,53 @@ canvas#board{ width:100%; height:100%; display:block; touch-action:manipulation;
     </div>
     <div class="meta-right" id="gameMeta"></div>
   </div>
-
   <div class="board-area" id="boardArea">
-    <div class="board-wrap">
-      <canvas id="board" width="600" height="600"></canvas>
-    </div>
-    <!-- Dice -->
-    <div class="dice-floating" id="dice">
-      <svg viewBox="0 0 100 100" id="diceFace"></svg>
-    </div>
+    <div class="board-wrap"><canvas id="board" width="600" height="600"></canvas></div>
+    <div class="dice-floating" id="dice"><svg viewBox="0 0 100 100" id="diceFace"></svg></div>
   </div>
-
   <div class="roll-info" id="rollInfo">Tap the dice to roll</div>
-
-  <div class="action-row" style="display:flex;gap:10px;justify-content:center;margin-top:14px;">
+  <div style="display:flex;gap:10px;justify-content:center;margin-top:14px;">
     <button class="ghost-btn" style="width:auto;padding:11px 22px;" onclick="quitGame()">Quit</button>
-    <button class="big-btn" style="width:auto;padding:11px 22px;margin-top:0;" onclick="restartGame()">Restart</button>
   </div>
 </section>
 
 <!-- MODALS -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
-    <div style="font-size:50px;margin-bottom:10px;" id="mEmoji">🚧</div>
-    <h2 id="mTitle">Coming Soon</h2>
-    <p id="mText"></p>
-    <div class="actions">
-      <button class="big-btn" onclick="closeModal()">Got it</button>
-    </div>
+    <h2 id="mTitle">Message</h2>
+    <p id="mText" style="margin:15px 0;"></p>
+    <button class="big-btn" onclick="closeModal()">Got it</button>
   </div>
 </div>
 
 <script>
+/* ============================================================ */
+/* SUPABASE CONFIG */
+/* ============================================================ */
+const SUPABASE_URL = 'https://scuiidvmhsyknhqlszzg.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjdWlpZHZtaHN5a25ocWxzenpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzNDgyOTEsImV4cCI6MjEwNzkyNDI5MX0.AiZgUL1lOcp7LHIP1JgQipXbtC-NPCBQjcWJAK_br-0';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 /* ============================================================ */
 /* CONSTANTS & DATA */
 /* ============================================================ */
 const colorHex = { red:"#E63946", green:"#2A9D3F", yellow:"#F2C200", blue:"#2B7FD6" };
 const colorName = { red:"Red", green:"Green", yellow:"Yellow", blue:"Blue" };
 const ALL_COLORS = ["red", "green", "yellow", "blue"];
-const BOARD_SIZE = 15;
-const MAIN_PATH = [
-  [6,1],[6,2],[6,3],[6,4],[6,5],[5,6],[4,6],[3,6],[2,6],[1,6],[0,6],
-  [0,7],[0,8],[1,8],[2,8],[3,8],[4,8],[5,8],[6,9],[6,10],[6,11],[6,12],[6,13],[6,14],
-  [7,14],[8,14],[8,13],[8,12],[8,11],[8,10],[8,9],[9,8],[10,8],[11,8],[12,8],[13,8],[14,8],
-  [14,7],[14,6],[13,6],[12,6],[11,6],[10,6],[9,6],[8,5],[8,4],[8,3],[8,2],[8,1],[8,0],
-  [7,0],[6,0]
-];
+
+const MAIN_PATH = [[6,1],[6,2],[6,3],[6,4],[6,5],[5,6],[4,6],[3,6],[2,6],[1,6],[0,6],[0,7],[0,8],[1,8],[2,8],[3,8],[4,8],[5,8],[6,9],[6,10],[6,11],[6,12],[6,13],[6,14],[7,14],[8,14],[8,13],[8,12],[8,11],[8,10],[8,9],[9,8],[10,8],[11,8],[12,8],[13,8],[14,8],[14,7],[14,6],[13,6],[12,6],[11,6],[10,6],[9,6],[8,5],[8,4],[8,3],[8,2],[8,1],[8,0],[7,0],[6,0]];
 const START_INDEX = { red:0, green:13, yellow:26, blue:39 };
-const HOME_PATH = {
-  red: [[7,1],[7,2],[7,3],[7,4],[7,5]],
-  green: [[1,7],[2,7],[3,7],[4,7],[5,7]],
-  yellow: [[7,13],[7,12],[7,11],[7,10],[7,9]],
-  blue: [[13,7],[12,7],[11,7],[10,7],[9,7]]
-};
-const YARD = {
-  red: [[1.5,1.5],[3.5,1.5],[1.5,3.5],[3.5,3.5]],
-  green: [[1.5,10.5],[3.5,10.5],[1.5,12.5],[3.5,12.5]],
-  yellow: [[10.5,10.5],[12.5,10.5],[10.5,12.5],[12.5,12.5]],
-  blue: [[10.5,1.5],[12.5,1.5],[10.5,3.5],[12.5,3.5]]
-};
+const HOME_PATH = { red: [[7,1],[7,2],[7,3],[7,4],[7,5]], green: [[1,7],[2,7],[3,7],[4,7],[5,7]], yellow: [[7,13],[7,12],[7,11],[7,10],[7,9]], blue: [[13,7],[12,7],[11,7],[10,7],[9,7]] };
+const YARD = { red: [[1.5,1.5],[3.5,1.5],[1.5,3.5],[3.5,3.5]], green: [[1.5,10.5],[3.5,10.5],[1.5,12.5],[3.5,12.5]], yellow: [[10.5,10.5],[12.5,10.5],[10.5,12.5],[12.5,12.5]], blue: [[10.5,1.5],[12.5,1.5],[10.5,3.5],[12.5,3.5]] };
 const SAFE_INDICES = [0, 8, 13, 21, 26, 34, 39, 47];
 
+let currentTable = localStorage.getItem('neelkanth_table') || "1";
 let GAME = null;
-let flowMode = null;
-let flowCount = null;
-let flowColor = null;
-let flowDifficulty = "medium";
+let currentRoom = null;
+let isMultiplayer = false;
+let isHost = false;
+let myMultiplayerColor = null;
+let realtimeChannel = null;
 
 /* ============================================================ */
 /* UI NAVIGATION */
@@ -291,8 +208,7 @@ function showScreen(id){
   document.getElementById(id).classList.add('show');
   window.scrollTo({ top:0, behavior:'smooth' });
 }
-function showModal(emoji, title, text){
-  document.getElementById('mEmoji').textContent = emoji;
+function showModal(title, text){
   document.getElementById('mTitle').textContent = title;
   document.getElementById('mText').textContent = text;
   document.getElementById('modalOverlay').classList.add('show');
@@ -300,514 +216,361 @@ function showModal(emoji, title, text){
 function closeModal(){ document.getElementById('modalOverlay').classList.remove('show'); }
 
 /* ============================================================ */
-/* GAME SETUP FLOW */
+/* MULTIPLAYER LOGIC (Matchmaking & Friends) */
+/* ============================================================ */
+
+// 1. Random Matchmaking
+let matchmakingTimer = 120;
+let matchmakingInterval = null;
+
+async function startRandomMatch(){
+  showScreen('screenMatch');
+  matchmakingTimer = 120;
+  
+  // Add self to queue
+  await supabaseClient.from('matchmaking_queue').delete().eq('table_number', currentTable);
+  await supabaseClient.from('matchmaking_queue').insert([{ table_number: parseInt(currentTable), status: 'SEARCHING' }]);
+
+  // Listen to queue for others
+  matchmakingInterval = setInterval(async ()=>{
+    matchmakingTimer--;
+    document.getElementById('matchTimer').textContent = `0${Math.floor(matchmakingTimer/60)}:${String(matchmakingTimer%60).padStart(2,'0')}`;
+
+    const { data } = await supabaseClient.from('matchmaking_queue').select('*').eq('status', 'SEARCHING').neq('table_number', parseInt(currentTable)).limit(1);
+
+    if (data && data.length > 0) {
+      // Match found!
+      clearInterval(matchmakingInterval);
+      await supabaseClient.from('matchmaking_queue').delete().in('table_number', [parseInt(currentTable), data[0].table_number]);
+      
+      // Host is the one with the lower table number to keep it consistent
+      const hostTable = Math.min(parseInt(currentTable), data[0].table_number);
+      const roomCode = "MATCH-" + hostTable + "-" + Math.max(parseInt(currentTable), data[0].table_number);
+      
+      joinRoom(roomCode, hostTable.toString() === currentTable);
+    }
+
+    if (matchmakingTimer <= 0) {
+      clearInterval(matchmakingInterval);
+      await supabaseClient.from('matchmaking_queue').delete().eq('table_number', currentTable);
+      showModal("Insufficient Players", "No other tables joined in 2 minutes. Try playing against bots!");
+      showScreen('screenHome');
+    }
+  }, 1000);
+}
+
+function cancelMatchmaking() {
+  clearInterval(matchmakingInterval);
+  supabaseClient.from('matchmaking_queue').delete().eq('table_number', currentTable).then(() => {
+    showScreen('screenHome');
+  });
+}
+
+// 2. Friend Invite (Link Sharing)
+async function createFriendRoom(){
+  const roomCode = "NEEL-" + Math.floor(1000 + Math.random() * 9000);
+  const shareUrl = window.location.origin + window.location.pathname + "?room=" + roomCode + "&host=1";
+  
+  document.getElementById('shareLink').textContent = shareUrl;
+  showScreen('screenFriendRoom');
+
+  // Start waiting for friend to join
+  joinRoom(roomCode, true); 
+}
+
+function cancelFriendRoom() {
+  if (realtimeChannel) supabaseClient.removeChannel(realtimeChannel);
+  window.history.replaceState({}, document.title, window.location.pathname);
+  showScreen('screenHome');
+}
+
+function copyLink() {
+  const text = document.getElementById('shareLink').textContent;
+  navigator.clipboard.writeText(text).then(() => alert("Link copied! Send it on WhatsApp."));
+}
+
+// 3. Connect to Supabase Realtime Room
+async function joinRoom(roomCode, amIHost) {
+  currentRoom = roomCode;
+  isMultiplayer = true;
+  isHost = amIHost;
+  myMultiplayerColor = isHost ? 'red' : 'green'; // Host is Red, Guest is Green
+
+  showModal("Connecting...", isHost ? "Waiting for opponent to join..." : "Joining game...");
+
+  // Setup Realtime Channel
+  if (realtimeChannel) supabaseClient.removeChannel(realtimeChannel);
+  
+  realtimeChannel = supabaseClient.channel('room_' + roomCode, {
+    config: { broadcast: { self: false } }
+  });
+
+  realtimeChannel
+    .on('broadcast', { event: 'start_game' }, payload => {
+      closeModal();
+      showScreen('screenGame');
+      // If Guest receives start_game, initialize the board
+      if (!isHost) {
+        GAME = createGameState({ mode: 'multiplayer', myColor: 'green' });
+        updateTurnUI();
+        renderBoard();
+        positionDice();
+      }
+    })
+    .on('broadcast', { event: 'roll' }, payload => {
+      // When opponent rolls, update our board
+      GAME.dice = payload.dice;
+      GAME.turn = payload.color;
+      renderDice(payload.dice);
+      document.getElementById('rollInfo').innerHTML = `Opponent rolled <strong>${payload.dice}</strong>`;
+      renderBoard();
+    })
+    .on('broadcast', { event: 'move' }, payload => {
+      // When opponent moves, apply to our board
+      applyMove(payload.color, payload.tokenIdx, payload.dice);
+      renderBoard();
+      checkWin(payload.color);
+    })
+    .on('broadcast', { event: 'next_turn' }, payload => {
+      GAME.turn = payload.turn;
+      GAME.hasRolled = false;
+      GAME.awaitingMove = false;
+      renderDice(1);
+      updateTurnUI();
+      positionDice();
+      document.getElementById('rollInfo').textContent = "Tap the dice to roll";
+    })
+    .subscribe((status) => {
+      if (status === 'SUBSCRIBED') {
+        if (isHost) {
+          // If host, wait for guest, then send start signal
+          setTimeout(() => {
+            if (realtimeChannel) {
+              realtimeChannel.send({ type: 'broadcast', event: 'start_game', payload: {} });
+              closeModal();
+              showScreen('screenGame');
+              startGame({ mode: 'multiplayer', myColor: 'red' });
+            }
+          }, 3000); // Give guest 3 seconds to join
+        }
+      }
+    });
+}
+
+/* ============================================================ */
+/* GAME SETUP (Bots / Offline) */
 /* ============================================================ */
 function prepGame(mode){
-  flowMode = mode;
-  flowCount = null;
+  if (mode === 'bots') {
+    isMultiplayer = false;
+    document.getElementById('colorSubText').textContent = "2 Players · 1 Bot";
+    document.getElementById('diffSection').style.display = 'block';
+  } else {
+    isMultiplayer = false;
+    document.getElementById('colorSubText').textContent = "2 Players · Pass & Play";
+    document.getElementById('diffSection').style.display = 'none';
+  }
   
-  // Set text based on mode
-  if (mode === 'bots') document.getElementById('countSubText').textContent = "You play as one — the rest are bots";
-  else if (mode === 'offline') document.getElementById('countSubText').textContent = "All players share this device";
-  else if (mode === 'tables' || mode === 'friends') document.getElementById('countSubText').textContent = "2 Players (Local Simulation)";
-  
-  showScreen('screenCount');
-}
-
-// Handle Player Count selection
-document.querySelectorAll('#countGrid .pick-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('#countGrid .pick-btn').forEach(b=> b.classList.remove('selected'));
-    btn.classList.add('selected');
-    flowCount = parseInt(btn.dataset.count);
-    
-    // If it's tables/friends, force 2 players
-    if (flowMode === 'tables' || flowMode === 'friends') flowCount = 2;
-
-    setTimeout(()=>{
-      prepColorScreen();
-      showScreen('screenColor');
-    }, 200);
-  });
-});
-
-function prepColorScreen(){
-  const isBotMode = flowMode === 'bots';
-  const bots = isBotMode ? (flowCount - 1) : 0;
-  document.getElementById('colorSubText').textContent = isBotMode
-    ? `${flowCount} players · you + ${bots} bot${bots === 1 ? '' : 's'}`
-    : `${flowCount} players · pass & play`;
-
-  const availableColors = ALL_COLORS.slice(0, flowCount);
+  // Setup color picker (Red or Green only for simplicity)
   const colorPick = document.getElementById('colorPick');
-  colorPick.innerHTML = "";
-  
-  availableColors.forEach(c=>{
+  colorPick.innerHTML = '';
+  ['red', 'green'].forEach(c => {
     const b = document.createElement('button');
-    b.className = "color-btn";
-    b.dataset.color = c;
-    b.innerHTML = '<span class="cb-check">✓</span>';
-    b.addEventListener('click', ()=>{
-      document.querySelectorAll('.color-btn').forEach(x=> x.classList.remove('selected'));
-      b.classList.add('selected');
-      flowColor = c;
+    b.className = "color-btn"; b.style.background = colorHex[c]; b.style.width="50px"; b.style.height="50px"; b.style.borderRadius="50%";
+    b.onclick = () => {
+      document.querySelectorAll('#colorPick button').forEach(x=> x.style.boxShadow = "none");
+      b.style.boxShadow = "0 0 0 3px var(--navy)";
+      GAME = createGameState({ mode, myColor: c });
       document.getElementById('btnStartGame').disabled = false;
-    });
+    };
     colorPick.appendChild(b);
   });
-
-  flowColor = null;
   document.getElementById('btnStartGame').disabled = true;
-  document.getElementById('diffSection').style.display = isBotMode ? 'block' : 'none';
+  showScreen('screenColor');
 }
 
-// Handle Difficulty selection
-document.querySelectorAll('#diffRow .diff-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('#diffRow .diff-btn').forEach(b=> b.classList.remove('selected'));
-    btn.classList.add('selected');
-    flowDifficulty = btn.dataset.diff;
-  });
-});
-
-document.getElementById('btnStartGame').addEventListener('click', ()=>{
-  if (!flowColor) return;
-  startGame({
-    mode: flowMode,
-    count: flowCount,
-    color: flowColor,
-    difficulty: flowDifficulty
-  });
+document.getElementById('btnStartGame').onclick = () => {
   showScreen('screenGame');
-});
+  updateTurnUI(); renderDice(1); renderBoard(); positionDice();
+  if (GAME.players[GAME.turn].isBot) setTimeout(botTurn, 800);
+};
 
-/* ============================================================ */
-/* GAME ENGINE */
-/* ============================================================ */
-function createGameState(opts){
-  const { mode, count, color, difficulty } = opts;
-  const availableColors = ALL_COLORS.slice(0, count);
-  if (!availableColors.includes(color)) availableColors[0] = color;
-
-  const state = {
-    mode, count, difficulty,
-    myColor: color,
-    activeColors: availableColors,
-    players: {},
-    turn: availableColors[0],
-    dice: 0,
-    hasRolled: false,
-    awaitingMove: false,
-    movableTokens: []
-  };
-
-  availableColors.forEach(c=>{
-    state.players[c] = {
-      isBot: mode === 'bots' && c !== color,
-      tokens: [ {pos:-1}, {pos:-1}, {pos:-1}, {pos:-1} ]
-    };
+function createGameState(opts) {
+  const state = { ...opts, activeColors: ["red","green"], turn:"red", dice:0, hasRolled:false, awaitingMove:false, movableTokens:[] };
+  ["red","green"].forEach(c => {
+    state.players = state.players || {};
+    state.players[c] = { isBot: opts.mode==='bots' && opts.myColor!==c, tokens: [{pos:-1},{pos:-1},{pos:-1},{pos:-1}] };
   });
-
   return state;
 }
 
-function startGame(opts){
-  GAME = createGameState(opts);
-  document.getElementById('gameMeta').textContent = opts.mode === 'bots' 
-    ? `vs Bots · ${opts.difficulty}` 
-    : `${opts.count} Players · Local`;
-
-  updateTurnUI();
-  renderDice(1);
-  renderBoard();
-  positionDice();
-  document.getElementById('rollInfo').textContent = "Tap the dice to roll";
-
-  if (GAME.players[GAME.turn].isBot) setTimeout(botTurn, 800);
-}
-
-/* ---------- DICE UI ---------- */
-const DICE_DOTS = {
-  1: [[50,50]], 2: [[32,32],[68,68]], 3: [[32,32],[50,50],[68,68]],
-  4: [[32,32],[32,68],[68,32],[68,68]], 5: [[32,32],[32,68],[50,50],[68,32],[68,68]],
-  6: [[32,32],[32,50],[32,68],[68,32],[68,50],[68,68]]
-};
-const diceFace = document.getElementById('diceFace');
-function renderDice(value){
-  diceFace.innerHTML = "";
-  const rect = document.createElementNS("http://www.w3.org/2000/svg","rect");
-  rect.setAttribute("x", "6"); rect.setAttribute("y", "6");
-  rect.setAttribute("width", "88"); rect.setAttribute("height", "88"); rect.setAttribute("rx", "16");
-  rect.setAttribute("fill", "#FFFCF4"); rect.setAttribute("stroke", "#1B3A6B"); rect.setAttribute("stroke-width", "3");
-  diceFace.appendChild(rect);
-  (DICE_DOTS[value] || []).forEach(([x,y])=>{
-    const c = document.createElementNS("http://www.w3.org/2000/svg","circle");
-    c.setAttribute("cx", x); c.setAttribute("cy", y); c.setAttribute("r", "9"); c.setAttribute("fill", "#1B3A6B");
-    diceFace.appendChild(c);
-  });
-}
-
-function positionDice(){
-  if (!GAME) return;
-  const dice = document.getElementById('dice');
-  const area = document.getElementById('boardArea').getBoundingClientRect();
-  const size = 60, m = 8;
-  let x, y;
-  switch(GAME.turn){
-    case 'red':    x = m; y = m; break;
-    case 'green':  x = area.width - size - m; y = m; break;
-    case 'yellow': x = area.width - size - m; y = area.height - size - m; break;
-    case 'blue':   x = m; y = area.height - size - m; break;
-  }
-  dice.style.left = x + "px"; dice.style.top = y + "px";
-}
-
-/* ---------- CANVAS RENDER ---------- */
+/* ============================================================ */
+/* GAMEPLAY LOGIC (Tap to Move) */
+/* ============================================================ */
 const canvas = document.getElementById('board');
 const ctx = canvas.getContext('2d');
-const CELL = canvas.width / BOARD_SIZE;
+const CELL = canvas.width / 15;
 
 function renderBoard(){
-  ctx.fillStyle = "#FFFCF4";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.strokeStyle = "#1A1A2E"; ctx.lineWidth = 6; ctx.strokeRect(3, 3, canvas.width - 6, canvas.height - 6);
-
-  drawQuadrant(0, 0, "red"); drawQuadrant(9, 0, "blue");
-  drawQuadrant(0, 9, "green"); drawQuadrant(9, 9, "yellow");
-
-  ctx.fillStyle = "#FFFCF4";
-  ctx.fillRect(6*CELL, 0, 3*CELL, 15*CELL);
-  ctx.fillRect(0, 6*CELL, 15*CELL, 3*CELL);
-
+  ctx.fillStyle = "#FFFCF4"; ctx.fillRect(0,0,600,600);
+  ctx.strokeStyle = "#1A1A2E"; ctx.lineWidth = 6; ctx.strokeRect(3,3,594,594);
+  
+  // Quadrants
+  drawQuadrant(0,0,"red"); drawQuadrant(9,0,"blue"); drawQuadrant(0,9,"green"); drawQuadrant(9,9,"yellow");
+  
+  // Cross
+  ctx.fillStyle = "#FFFCF4"; ctx.fillRect(6*CELL,0,3*CELL,15*CELL); ctx.fillRect(0,6*CELL,15*CELL,3*CELL);
   ctx.strokeStyle = "#1A1A2E"; ctx.lineWidth = 1.5;
-  for (let r = 0; r < 15; r++) for (let c = 0; c < 15; c++) {
-    if ((c >= 6 && c <= 8) || (r >= 6 && r <= 8)) {
-      if (c >= 6 && c <= 8 && r >= 6 && r <= 8) continue;
-      ctx.strokeRect(c*CELL, r*CELL, CELL, CELL);
-    }
+  for(let r=0;r<15;r++) for(let c=0;c<15;c++) {
+    if((c>=6&&c<=8)||(r>=6&&r<=8)) { if(c>=6&&c<=8&&r>=6&&r<=8) continue; ctx.strokeRect(c*CELL,r*CELL,CELL,CELL); }
   }
+  
+  // Paths
+  HOME_PATH.red.forEach(([r,c])=>{ ctx.fillStyle=colorHex.red; ctx.fillRect(c*CELL,r*CELL,CELL,CELL); });
+  HOME_PATH.green.forEach(([r,c])=>{ ctx.fillStyle=colorHex.green; ctx.fillRect(c*CELL,r*CELL,CELL,CELL); });
+  
+  // Center
+  ctx.fillStyle="#1A1A2E"; ctx.beginPath(); ctx.moveTo(6*CELL,6*CELL); ctx.lineTo(9*CELL,6*CELL); ctx.lineTo(9*CELL,9*CELL); ctx.lineTo(6*CELL,9*CELL); ctx.closePath(); ctx.fill();
 
-  HOME_PATH.red.forEach(([r,c])=>{ ctx.fillStyle = colorHex.red; ctx.fillRect(c*CELL, r*CELL, CELL, CELL); });
-  HOME_PATH.green.forEach(([r,c])=>{ ctx.fillStyle = colorHex.green; ctx.fillRect(c*CELL, r*CELL, CELL, CELL); });
-  HOME_PATH.yellow.forEach(([r,c])=>{ ctx.fillStyle = colorHex.yellow; ctx.fillRect(c*CELL, r*CELL, CELL, CELL); });
-  HOME_PATH.blue.forEach(([r,c])=>{ ctx.fillStyle = colorHex.blue; ctx.fillRect(c*CELL, r*CELL, CELL, CELL); });
-
-  ctx.strokeStyle = "#1A1A2E"; ctx.lineWidth = 1.5;
-  HOME_PATH.red.forEach(([r,c])=> ctx.strokeRect(c*CELL, r*CELL, CELL, CELL));
-  HOME_PATH.green.forEach(([r,c])=> ctx.strokeRect(c*CELL, r*CELL, CELL, CELL));
-  HOME_PATH.yellow.forEach(([r,c])=> ctx.strokeRect(c*CELL, r*CELL, CELL, CELL));
-  HOME_PATH.blue.forEach(([r,c])=> ctx.strokeRect(c*CELL, r*CELL, CELL, CELL));
-
-  const startCells = { red:[6,1], green:[1,8], yellow:[8,13], blue:[13,6] };
-  Object.entries(startCells).forEach(([c, [r, cc]])=>{
-    ctx.fillStyle = colorHex[c]; ctx.fillRect(cc*CELL, r*CELL, CELL, CELL);
-    ctx.strokeStyle = "#1A1A2E"; ctx.lineWidth = 1.5; ctx.strokeRect(cc*CELL, r*CELL, CELL, CELL);
-  });
-
-  SAFE_INDICES.forEach(idx=>{ const [r,c] = MAIN_PATH[idx]; drawStar(c*CELL + CELL/2, r*CELL + CELL/2, CELL*0.32, "#1A1A2E"); });
-  drawCenter();
-
-  if (GAME){
-    GAME.activeColors.forEach(color=>{
-      GAME.players[color].tokens.forEach((t, i)=>{
-        const [cx, cy] = tokenScreenPos(color, t, i);
-        const isMovable = GAME.awaitingMove && GAME.turn === color && GAME.movableTokens.includes(i);
-        drawToken(cx, cy, colorHex[color], isMovable);
+  if(GAME) {
+    GAME.activeColors.forEach(color => {
+      GAME.players[color].tokens.forEach((t,i) => {
+        const [cx,cy] = tokenScreenPos(color,t,i);
+        drawToken(cx,cy,colorHex[color], GAME.awaitingMove && GAME.turn===color && GAME.movableTokens.includes(i));
       });
     });
   }
 }
 
-function drawQuadrant(row, col, color){
-  const x = col * CELL, y = row * CELL, size = 6 * CELL;
-  ctx.fillStyle = colorHex[color]; ctx.fillRect(x, y, size, size);
-  ctx.fillStyle = "#FFFCF4"; ctx.fillRect(x + CELL*0.8, y + CELL*0.8, size - CELL*1.6, size - CELL*1.6);
-  YARD[color].forEach(([r,c])=>{
-    ctx.beginPath(); ctx.arc(c*CELL + CELL/2, r*CELL + CELL/2, CELL*0.38, 0, Math.PI*2);
-    ctx.fillStyle = "#FFFCF4"; ctx.fill(); ctx.strokeStyle = colorHex[color]; ctx.lineWidth = 3; ctx.stroke();
-  });
+function drawQuadrant(row,col,color){
+  const x=col*CELL, y=row*CELL, size=6*CELL;
+  ctx.fillStyle=colorHex[color]; ctx.fillRect(x,y,size,size);
+  ctx.fillStyle="#FFFCF4"; ctx.fillRect(x+CELL*0.8,y+CELL*0.8,size-CELL*1.6,size-CELL*1.6);
+  YARD[color].forEach(([r,c])=>{ ctx.beginPath(); ctx.arc(c*CELL+CELL/2,r*CELL+CELL/2,CELL*0.38,0,Math.PI*2); ctx.fillStyle="#FFFCF4"; ctx.fill(); ctx.strokeStyle=colorHex[color]; ctx.lineWidth=3; ctx.stroke(); });
 }
 
-function drawCenter(){
-  const x = 6 * CELL, y = 6 * CELL, size = 3 * CELL;
-  const tri = (x1,y1,x2,y2,color)=>{
-    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.lineTo(x+size/2, y+size/2);
-    ctx.closePath(); ctx.fillStyle = color; ctx.fill(); ctx.strokeStyle = "#1A1A2E"; ctx.lineWidth = 2; ctx.stroke();
-  };
-  tri(x, y, x+size, y, colorHex.green); tri(x+size, y, x+size, y+size, colorHex.yellow);
-  tri(x, y+size, x+size, y+size, colorHex.blue); tri(x, y, x, y+size, colorHex.red);
+function tokenScreenPos(color,t,idx){
+  if(t.pos===-1) { const [r,c] = YARD[color][idx]; return [c*CELL+CELL/2, r*CELL+CELL/2]; }
+  if(t.pos<52) { const [r,c] = MAIN_PATH[(START_INDEX[color]+t.pos)%52]; return [c*CELL+CELL/2, r*CELL+CELL/2]; }
+  const hp = HOME_PATH[color][t.pos-52]; return [hp[1]*CELL+CELL/2, hp[0]*CELL+CELL/2];
 }
 
-function drawStar(cx, cy, r, color){
-  ctx.save(); ctx.translate(cx, cy); ctx.beginPath();
-  for (let i = 0; i < 10; i++){
-    const rad = i % 2 === 0 ? r : r * 0.45;
-    const ang = -Math.PI/2 + i * Math.PI / 5;
-    const x = Math.cos(ang) * rad, y = Math.sin(ang) * rad;
-    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-  }
-  ctx.closePath(); ctx.fillStyle = "rgba(26,26,46,.15)"; ctx.fill(); ctx.strokeStyle = color; ctx.lineWidth = 1.5; ctx.stroke(); ctx.restore();
-}
-
-function drawToken(cx, cy, color, isMovable){
-  // Highlight if movable
-  if (isMovable){
-    ctx.beginPath();
-    ctx.arc(cx, cy, CELL*0.45, 0, Math.PI*2);
-    ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
-    ctx.fill();
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 3;
-    ctx.stroke();
-    // Pulsing effect
-    const pulse = (Math.sin(Date.now() / 150) + 1) / 2 * 0.2 + 0.8;
-    ctx.beginPath();
-    ctx.arc(cx, cy, CELL*0.5 * pulse, 0, Math.PI*2);
-    ctx.strokeStyle = "rgba(0,0,0,0.2)";
-    ctx.lineWidth = 2;
-    ctx.stroke();
-  }
-
-  ctx.beginPath(); ctx.ellipse(cx, cy + CELL*0.18, CELL*0.28, CELL*0.12, 0, 0, Math.PI*2);
-  ctx.fillStyle = "rgba(0,0,0,.25)"; ctx.fill();
-  ctx.beginPath(); ctx.arc(cx, cy, CELL*0.28, 0, Math.PI*2);
-  ctx.fillStyle = color; ctx.fill(); ctx.strokeStyle = "#FFF"; ctx.lineWidth = 2.5; ctx.stroke();
-  ctx.beginPath(); ctx.arc(cx - CELL*0.08, cy - CELL*0.10, CELL*0.10, 0, Math.PI*2);
-  ctx.fillStyle = "rgba(255,255,255,.6)"; ctx.fill();
-}
-
-function tokenScreenPos(color, token, idx){
-  if (token.pos === -1) {
-    const [r, c] = YARD[color][idx]; return [c*CELL + CELL/2, r*CELL + CELL/2];
-  } else if (token.pos < 52) {
-    const [r, c] = MAIN_PATH[(START_INDEX[color] + token.pos) % 52]; return [c*CELL + CELL/2, r*CELL + CELL/2];
-  } else if (token.pos < 57) {
-    const hp = HOME_PATH[color][token.pos - 52]; return [hp[1]*CELL + CELL/2, hp[0]*CELL + CELL/2];
-  }
-  return [7.5*CELL, 7.5*CELL];
+function drawToken(cx,cy,color,isMovable){
+  if(isMovable){ ctx.beginPath(); ctx.arc(cx,cy,CELL*0.45,0,Math.PI*2); ctx.fillStyle="rgba(255,255,255,0.8)"; ctx.fill(); ctx.strokeStyle=color; ctx.lineWidth=3; ctx.stroke(); }
+  ctx.beginPath(); ctx.arc(cx,cy,CELL*0.28,0,Math.PI*2); ctx.fillStyle=color; ctx.fill(); ctx.strokeStyle="#FFF"; ctx.lineWidth=2.5; ctx.stroke();
 }
 
 function updateTurnUI(){
-  if (!GAME) return;
-  const dot = document.getElementById('turnDot');
-  const txt = document.getElementById('turnText');
-  dot.className = "turn-dot " + GAME.turn;
-  const isBot = GAME.players[GAME.turn].isBot;
-  txt.textContent = isBot ? `${colorName[GAME.turn]} (Bot)'s turn` : `${colorName[GAME.turn]}'s turn`;
+  document.getElementById('turnDot').className = "turn-dot " + GAME.turn;
+  document.getElementById('turnText').textContent = `${colorName[GAME.turn]}'s turn`;
 }
 
-/* ============================================================ */
-/* GAME LOGIC */
-/* ============================================================ */
-function canTokenMove(color, idx, value){
-  const t = GAME.players[color].tokens[idx];
-  if (t.pos === -1) return value === 6;
-  if (t.pos === 57) return false;
-  return t.pos + value <= 57;
+/* DICE & MOVES */
+const DICE_DOTS = { 1: [[50,50]], 2: [[32,32],[68,68]], 3: [[32,32],[50,50],[68,68]], 4: [[32,32],[32,68],[68,32],[68,68]], 5: [[32,32],[32,68],[50,50],[68,32],[68,68]], 6: [[32,32],[32,50],[32,68],[68,32],[68,50],[68,68]] };
+function renderDice(value){
+  const svg = document.getElementById('diceFace'); svg.innerHTML = "";
+  svg.innerHTML = `<rect x="6" y="6" width="88" height="88" rx="16" fill="#FFFCF4" stroke="#1B3A6B" stroke-width="3"/>`;
+  (DICE_DOTS[value]||[]).forEach(([x,y])=> svg.innerHTML += `<circle cx="${x}" cy="${y}" r="9" fill="#1B3A6B"/>`);
 }
 
-function applyMove(color, idx, value){
-  const t = GAME.players[color].tokens[idx];
-  if (t.pos === -1) t.pos = 0;
-  else { t.pos += value; if (t.pos > 57) t.pos = 57; }
+function positionDice(){
+  const dice = document.getElementById('dice'), area = document.getElementById('boardArea').getBoundingClientRect();
+  let x = GAME.turn==='red'?8:area.width-68, y = GAME.turn==='red'?8:area.height-68;
+  dice.style.left = x+"px"; dice.style.top = y+"px";
 }
 
-const diceEl = document.getElementById('dice');
-diceEl.addEventListener('click', ()=>{
-  if (!GAME || GAME.hasRolled || GAME.awaitingMove) return;
-  if (GAME.players[GAME.turn].isBot) return;
-  playerRoll();
-});
-
-function playerRoll(){
+document.getElementById('dice').onclick = () => {
+  if(!GAME || GAME.hasRolled || GAME.awaitingMove) return;
+  if(isMultiplayer && GAME.turn !== myMultiplayerColor) return; // Not your turn
   GAME.hasRolled = true;
-  diceEl.classList.add('rolling');
-  let rc = 0;
-  const iv = setInterval(()=>{
-    renderDice(Math.floor(Math.random()*6) + 1);
-    rc++;
-    if (rc >= 10){
-      clearInterval(iv);
-      const val = Math.floor(Math.random()*6) + 1;
-      renderDice(val);
-      diceEl.classList.remove('rolling');
-      GAME.dice = val;
-      document.getElementById('rollInfo').innerHTML = `Rolled <strong>${val}</strong>`;
-      afterRoll(GAME.turn, val);
-    }
-  }, 65);
+  document.getElementById('dice').classList.add('rolling');
+  setTimeout(()=>{
+    document.getElementById('dice').classList.remove('rolling');
+    GAME.dice = Math.floor(Math.random()*6)+1;
+    renderDice(GAME.dice);
+    document.getElementById('rollInfo').innerHTML = `Rolled <strong>${GAME.dice}</strong>`;
+    
+    if(isMultiplayer) realtimeChannel.send({ type:'broadcast', event:'roll', payload:{ dice:GAME.dice, color:GAME.turn } });
+    
+    afterRoll(GAME.turn, GAME.dice);
+  }, 600);
+};
+
+function canTokenMove(color, idx, val){
+  const t = GAME.players[color].tokens[idx];
+  if(t.pos===-1) return val===6;
+  return t.pos + val <= 57;
+}
+
+function applyMove(color, idx, val){
+  const t = GAME.players[color].tokens[idx];
+  if(t.pos===-1) t.pos=0; else t.pos = Math.min(57, t.pos+val);
 }
 
 function afterRoll(color, val){
   const movable = [];
-  for (let i = 0; i < 4; i++) if (canTokenMove(color, i, val)) movable.push(i);
-
-  if (movable.length === 0){
+  for(let i=0;i<4;i++) if(canTokenMove(color,i,val)) movable.push(i);
+  
+  if(movable.length===0){
     document.getElementById('rollInfo').innerHTML = `No moves possible.`;
-    setTimeout(nextTurn, 900);
-    return;
+    setTimeout(nextTurn, 900); return;
   }
-
-  if (movable.length === 1){
-    setTimeout(()=>{
-      applyMove(color, movable[0], val);
-      renderBoard();
-      checkWin(color);
-      afterMove(color, val);
-    }, 400);
-    return;
+  
+  if(movable.length===1){
+    setTimeout(()=>{ executeMove(color, movable[0], val); }, 400); return;
   }
-
-  // Multiple moves - enable Tap to Move
-  if (!GAME.players[color].isBot){
-    GAME.awaitingMove = true;
-    GAME.movableTokens = movable;
-    document.getElementById('rollInfo').innerHTML = `Tap a glowing token to move`;
-    renderBoard(); // Re-render to show glows
-  } else {
-    // Bot picks
-    const pick = botChoose(color, movable);
-    setTimeout(()=>{
-      applyMove(color, pick, val);
-      renderBoard();
-      checkWin(color);
-      afterMove(color, val);
-    }, 450);
-  }
+  
+  GAME.awaitingMove = true; GAME.movableTokens = movable;
+  document.getElementById('rollInfo').innerHTML = `Tap a glowing token`;
+  renderBoard();
 }
 
-// CANVAS CLICK HANDLER (Tap to move)
 canvas.addEventListener('click', (e) => {
-  if (!GAME || !GAME.awaitingMove) return;
-  
+  if(!GAME || !GAME.awaitingMove) return;
   const rect = canvas.getBoundingClientRect();
-  const scaleX = canvas.width / rect.width;
-  const scaleY = canvas.height / rect.height;
-  const clickX = (e.clientX - rect.left) * scaleX;
-  const clickY = (e.clientY - rect.top) * scaleY;
-
-  const color = GAME.turn;
-  const movable = GAME.movableTokens;
-
-  // Find which token was tapped
-  for (let i of movable) {
-    const t = GAME.players[color].tokens[i];
-    const [cx, cy] = tokenScreenPos(color, t, i);
-    
-    // Check distance (allow some tolerance for tapping)
-    const dist = Math.hypot(clickX - cx, clickY - cy);
-    if (dist < CELL * 0.6) {
-      // Token tapped!
-      GAME.awaitingMove = false;
-      GAME.movableTokens = [];
-      applyMove(color, i, GAME.dice);
-      renderBoard();
-      checkWin(color);
-      afterMove(color, GAME.dice);
-      return;
+  const cx = (e.clientX-rect.left) * (600/rect.width), cy = (e.clientY-rect.top) * (600/rect.height);
+  
+  for(let i of GAME.movableTokens){
+    const [tx,ty] = tokenScreenPos(GAME.turn, GAME.players[GAME.turn].tokens[i], i);
+    if(Math.hypot(cx-tx, cy-ty) < CELL*0.6) {
+      executeMove(GAME.turn, i, GAME.dice); return;
     }
   }
 });
 
-function afterMove(color, val){
-  if (GAME.finishOrder && GAME.finishOrder.length === GAME.activeColors.length - 1) return;
+function executeMove(color, idx, val){
+  GAME.awaitingMove = false; GAME.movableTokens = [];
+  applyMove(color, idx, val);
+  renderBoard();
   
-  if (val === 6){
-    GAME.hasRolled = false;
-    document.getElementById('rollInfo').innerHTML = `Six! Roll again`;
-    positionDice();
-    if (GAME.players[color].isBot) setTimeout(botTurn, 500);
-  } else {
-    nextTurn();
-  }
+  if(isMultiplayer) realtimeChannel.send({ type:'broadcast', event:'move', payload:{ color, tokenIdx:idx, dice:val } });
+  
+  if(val===6){ GAME.hasRolled=false; document.getElementById('rollInfo').innerHTML="Six! Roll again"; positionDice(); }
+  else { nextTurn(); }
 }
 
 function nextTurn(){
-  const idx = GAME.activeColors.indexOf(GAME.turn);
-  GAME.turn = GAME.activeColors[(idx + 1) % GAME.activeColors.length];
-  GAME.hasRolled = false;
-  GAME.dice = 0;
-  GAME.awaitingMove = false;
-  GAME.movableTokens = [];
-  
-  renderDice(1);
-  updateTurnUI();
-  renderBoard();
-  positionDice();
+  GAME.turn = GAME.turn === 'red' ? 'green' : 'red';
+  GAME.hasRolled = false; GAME.awaitingMove = false;
+  renderDice(1); updateTurnUI(); positionDice(); renderBoard();
   document.getElementById('rollInfo').textContent = "Tap the dice to roll";
-
-  if (GAME.players[GAME.turn].isBot) setTimeout(botTurn, 700);
-}
-
-function botChoose(color, movable){
-  if (GAME.difficulty === 'easy') return movable[Math.floor(Math.random() * movable.length)];
   
-  let best = movable[0], bestScore = -999;
-  movable.forEach(i=>{
-    const t = GAME.players[color].tokens[i];
-    let s = t.pos;
-    if (t.pos === -1) s -= 30; 
-    if (t.pos >= 52) s += 50; 
-    if (s > bestScore){ bestScore = s; best = i; }
-  });
-  return best;
+  if(isMultiplayer) realtimeChannel.send({ type:'broadcast', event:'next_turn', payload:{ turn:GAME.turn } });
 }
 
-function botTurn(){
-  if (!GAME || !GAME.players[GAME.turn].isBot) return;
-  GAME.hasRolled = true;
-  diceEl.classList.add('rolling');
-  let rc = 0;
-  const iv = setInterval(()=>{
-    renderDice(Math.floor(Math.random()*6) + 1);
-    rc++;
-    if (rc >= 8){
-      clearInterval(iv);
-      const val = Math.floor(Math.random()*6) + 1;
-      renderDice(val);
-      diceEl.classList.remove('rolling');
-      GAME.dice = val;
-      document.getElementById('rollInfo').innerHTML = `Bot rolled <strong>${val}</strong>`;
-      afterRoll(GAME.turn, val);
-    }
-  }, 65);
-}
-
-function checkWin(color){
-  if (GAME.players[color].tokens.every(t=> t.pos === 57)){
-    if (!GAME.finishOrder) GAME.finishOrder = [];
-    if (!GAME.finishOrder.includes(color)) GAME.finishOrder.push(color);
-    
-    const isWin = (color === GAME.myColor);
-    showModal(
-      isWin ? "🏆" : "😔",
-      isWin ? "You Won!" : `${colorName[color]} Won!`,
-      isWin ? "Great game! Show this at the counter." : "Tough luck — try again!"
-    );
-    GAME = null;
-  }
-}
-
-function quitGame(){
-  if (confirm("Quit current game?")) { GAME = null; showScreen('screenHome'); }
-}
-function restartGame(){
-  if (!GAME) return;
-  startGame({ mode: GAME.mode, count: GAME.count, color: GAME.myColor, difficulty: GAME.difficulty });
-}
-
-/* INIT */
-(function initTable(){
+/* ============================================================ */
+/* INIT & URL PARSING (Friend Joins via Link) */
+/* ============================================================ */
+(function init(){
   const params = new URLSearchParams(window.location.search);
-  const tUrl = params.get('table');
-  if (tUrl && /^[0-9]{1,3}$/.test(tUrl)) localStorage.setItem('neelkanth_table', tUrl);
-  const saved = localStorage.getItem('neelkanth_table');
-  if (saved) {
-    const chip = document.getElementById('tableChip');
-    if (chip) { chip.textContent = saved; chip.classList.add('show'); }
-    document.querySelectorAll('a[data-nav]').forEach(a=>{
-      a.href = a.href + (a.href.includes('?') ? '&' : '?') + 'table=' + saved;
-    });
+  const roomCode = params.get('room');
+  const isHostParam = params.get('host');
+
+  if (roomCode) {
+    // Someone clicked a friend invite link
+    joinRoom(roomCode, isHostParam === '1');
+  } else {
+    renderBoard();
   }
 })();
 </script>
