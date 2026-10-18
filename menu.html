@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root{
@@ -29,8 +30,8 @@
   --shadow-lg:0 24px 60px -20px rgba(27,58,107,.45);
   --shadow-md:0 12px 32px -14px rgba(27,58,107,.35);
   --shadow-sm:0 6px 18px -10px rgba(27,58,107,.30);
-  --topbar-h: 128px;   /* total sticky topbar height (logo row + quick-nav) */
-  --chips-top: 128px;  /* chips stick right below topbar */
+  --topbar-h: 128px;
+  --chips-top: 128px;
 }
 *{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 html{ scroll-behavior:smooth; }
@@ -86,9 +87,7 @@ body{
   to{ background-position:600px 300px; }
 }
 
-/* ============================================================
-   TOPBAR — bigger logo, taller row, quick-nav below
-   ============================================================ */
+/* TOPBAR */
 .topbar{
   position:sticky; top:0; z-index:40;
   background:rgba(251,246,236,.96);
@@ -116,10 +115,7 @@ body{
   min-height:60px;
 }
 .topbar .logo-center img{
-  height:60px;
-  max-height:60px;
-  width:auto;
-  display:block;
+  height:60px; max-height:60px; width:auto; display:block;
   filter:drop-shadow(0 4px 10px rgba(27,58,107,.28));
 }
 .topbar .cart-btn{
@@ -143,7 +139,6 @@ body{
 }
 .cart-count.show{ transform:scale(1); }
 
-/* Quick nav */
 .quick-nav{
   display:flex; gap:8px;
   padding:10px 0 12px;
@@ -203,7 +198,7 @@ body{
   font-size:clamp(14px,4vw,17px);
 }
 
-/* CHIPS — sticks right below the taller topbar */
+/* CHIPS */
 .chips-wrap{
   position:sticky; top:var(--chips-top); z-index:35;
   background:rgba(251,246,236,.97);
@@ -842,15 +837,21 @@ body{
 </div>
 
 <script>
-/* ============================================================
-   NEELKANTH STAR — MENU
-   ============================================================ */
+/* ============================================================ */
+/* SUPABASE CONFIG */
+/* ============================================================ */
+const SUPABASE_URL = 'https://scuiidvmhsyknhqlszzg.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjdWlpZHZtaHN5a25ocWxzenpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzNDgyOTEsImV4cCI6MjEwNzkyNDI5MX0.AiZgUL1lOcp7LHIP1JgQipXbtC-NPCBQjcWJAK_br-0';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 const WA_NUMBER = "919812400009";
 const RESTAURANT_LAT = 29.6493081;
 const RESTAURANT_LNG = 76.9853392;
 const NEAR_RADIUS_M  = 500;
 
-/* dish SVG library — same as before, kept inline */
+/* ============================================================ */
+/* DISH SVG LIBRARY */
+/* ============================================================ */
 const DISH_SVG = {
   tea: `<svg class="dish-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><ellipse cx="50" cy="80" rx="32" ry="6" fill="#000" opacity=".12"/><path d="M22 40 Q22 72 50 72 Q78 72 78 40 Z" fill="#F5E6C8" stroke="#8B5A2B" stroke-width="3"/><ellipse cx="50" cy="40" rx="28" ry="7" fill="#FFF8E6" stroke="#8B5A2B" stroke-width="3"/><ellipse cx="50" cy="41" rx="22" ry="5" fill="#8B4A1A"/><path d="M78 48 Q92 48 90 62 Q88 72 76 68" fill="none" stroke="#8B5A2B" stroke-width="4" stroke-linecap="round"/><path d="M42 32 Q40 24 46 20" fill="none" stroke="#FFF" stroke-width="2" opacity=".7"/><path d="M54 30 Q52 22 58 18" fill="none" stroke="#FFF" stroke-width="2" opacity=".7"/></svg>`,
   coffee: `<svg class="dish-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><ellipse cx="50" cy="82" rx="30" ry="5" fill="#000" opacity=".12"/><path d="M24 38 L28 76 Q50 82 72 76 L76 38 Z" fill="#F0DCC0" stroke="#4A2810" stroke-width="3"/><ellipse cx="50" cy="38" rx="26" ry="6" fill="#FDF3E0" stroke="#4A2810" stroke-width="3"/><ellipse cx="50" cy="39" rx="20" ry="4" fill="#3A1A08"/><path d="M76 46 Q90 46 88 60 Q86 70 74 66" fill="none" stroke="#4A2810" stroke-width="4" stroke-linecap="round"/></svg>`,
@@ -887,227 +888,93 @@ const DISH_SVG = {
 
 const MENU = [
   { id:"beverages", name:"Beverages", items:[
-    { n:"Tea", p:49, ico:"tea" },
-    { n:"Black Tea", p:49, ico:"tea" },
-    { n:"Dip Tea", p:49, ico:"tea" },
-    { n:"Lemon Tea", p:49, ico:"tea" },
-    { n:"Hot Milk", p:49, ico:"lassi" },
-    { n:"Hot Coffee", p:129, ico:"coffee" },
-    { n:"Black Coffee", p:129, ico:"coffee" },
-    { n:"Cold Coffee", p:159, ico:"coffeeCold" },
-    { n:"Lime Water", p:99, ico:"soda" },
-    { n:"Fresh Lime Soda", p:119, ico:"soda" },
-    { n:"Lassi (Sweet & Salty)", p:149, ico:"lassi" },
-    { n:"Chhach Per Glass", p:149, ico:"lassi" },
-    { n:"Chhach Per Jug", p:259, ico:"lassi" },
-    { n:"Mineral Water", p:"MRP", ico:"soda" },
-    { n:"Mojito (Pan / Kacha Aamb / Water Melon)", p:149, ico:"soda" },
-    { n:"Soft Drink", p:"MRP", ico:"soda" },
-    { n:"Oreo Kitkat Shake", p:169, ico:"faludaShake" },
-    { n:"Strawberry Shake", p:169, ico:"faludaShake" }
+    { n:"Tea", p:49, ico:"tea" }, { n:"Black Tea", p:49, ico:"tea" }, { n:"Dip Tea", p:49, ico:"tea" }, { n:"Lemon Tea", p:49, ico:"tea" },
+    { n:"Hot Milk", p:49, ico:"lassi" }, { n:"Hot Coffee", p:129, ico:"coffee" }, { n:"Black Coffee", p:129, ico:"coffee" }, { n:"Cold Coffee", p:159, ico:"coffeeCold" },
+    { n:"Lime Water", p:99, ico:"soda" }, { n:"Fresh Lime Soda", p:119, ico:"soda" }, { n:"Lassi (Sweet & Salty)", p:149, ico:"lassi" }, { n:"Chhach Per Glass", p:149, ico:"lassi" },
+    { n:"Chhach Per Jug", p:259, ico:"lassi" }, { n:"Mineral Water", p:"MRP", ico:"soda" }, { n:"Mojito (Pan / Kacha Aamb / Water Melon)", p:149, ico:"soda" },
+    { n:"Soft Drink", p:"MRP", ico:"soda" }, { n:"Oreo Kitkat Shake", p:169, ico:"faludaShake" }, { n:"Strawberry Shake", p:169, ico:"faludaShake" }
   ]},
-  { id:"desserts", name:"Desserts", items:[
-    { n:"Special Chilled Kheer", p:119, ico:"kheer" },
-    { n:"Rabri Faluda", p:169, ico:"faluda" }
-  ]},
+  { id:"desserts", name:"Desserts", items:[ { n:"Special Chilled Kheer", p:119, ico:"kheer" }, { n:"Rabri Faluda", p:169, ico:"faluda" } ]},
   { id:"rice", name:"Rice", items:[
-    { n:"Plain Rice", p:249, ico:"rice" },
-    { n:"Kashmiri Pulao", p:349, ico:"rice" },
-    { n:"Jeera Rice", p:249, ico:"rice" },
-    { n:"Veg. Fried Rice", p:299, ico:"rice" },
-    { n:"Veg. Biryani", p:349, ico:"biryani" },
-    { n:"Cheese Biryani", p:369, ico:"biryani" },
-    { n:"Veg. Pulao", p:299, ico:"rice" },
-    { n:"Veg. Hyderabadi Biryani", p:369, ico:"biryani" },
+    { n:"Plain Rice", p:249, ico:"rice" }, { n:"Kashmiri Pulao", p:349, ico:"rice" }, { n:"Jeera Rice", p:249, ico:"rice" }, { n:"Veg. Fried Rice", p:299, ico:"rice" },
+    { n:"Veg. Biryani", p:349, ico:"biryani" }, { n:"Cheese Biryani", p:369, ico:"biryani" }, { n:"Veg. Pulao", p:299, ico:"rice" }, { n:"Veg. Hyderabadi Biryani", p:369, ico:"biryani" },
     { n:"Neelkanth Special Biryani", p:399, ico:"biryani" }
   ]},
   { id:"salad", name:"Salad & Raita", items:[
-    { n:"Green Salad", p:129, ico:"salad" },
-    { n:"Aloo Raita", p:169, ico:"raita" },
-    { n:"Plain Raita (Dahi)", p:99, ico:"raita" },
-    { n:"Mix Raita", p:169, ico:"raita" },
-    { n:"Pudina Raita", p:169, ico:"raita" },
-    { n:"Papad (Fried/Roasted)", p:30, ico:"papad" },
-    { n:"Onion Ring Salad", p:99, ico:"salad" },
-    { n:"Boondi Raita", p:169, ico:"raita" },
-    { n:"Pineapple Raita", p:199, ico:"raita" },
-    { n:"Masala Papad", p:69, ico:"papad" }
+    { n:"Green Salad", p:129, ico:"salad" }, { n:"Aloo Raita", p:169, ico:"raita" }, { n:"Plain Raita (Dahi)", p:99, ico:"raita" }, { n:"Mix Raita", p:169, ico:"raita" },
+    { n:"Pudina Raita", p:169, ico:"raita" }, { n:"Papad (Fried/Roasted)", p:30, ico:"papad" }, { n:"Onion Ring Salad", p:99, ico:"salad" }, { n:"Boondi Raita", p:169, ico:"raita" },
+    { n:"Pineapple Raita", p:199, ico:"raita" }, { n:"Masala Papad", p:69, ico:"papad" }
   ]},
   { id:"chinese", name:"Chinese", items:[
-    { n:"Chana Chilli", p:269, ico:"chana" },
-    { n:"Honey Chilly Cauliflower", p:269, ico:"manchurian" },
-    { n:"Chilli Potato", p:269, ico:"manchurian" },
-    { n:"Spring Roll", p:269, ico:"pakora" },
-    { n:"Crispy Chilly Baby Corn", p:399, ico:"manchurian" },
-    { n:"Cheese Manchurian", p:399, ico:"manchurian" },
-    { n:"Gobhi Manchurian", p:419, ico:"manchurian" },
-    { n:"Veg. Manchurian-Gravy", p:399, ico:"manchurian" },
-    { n:"Veg. Manchurian-Dry", p:419, ico:"manchurian" },
-    { n:"Cheese Chilly-Dry", p:429, ico:"manchurian" },
-    { n:"Cheese Chilly Gravy", p:429, ico:"manchurian" },
-    { n:"Mushroom Chilly Gravy", p:419, ico:"mushroom" },
-    { n:"Mushroom Chilly-Dry", p:279, ico:"mushroom" },
-    { n:"Veg. Chowmin", p:299, ico:"noodle" },
-    { n:"Veg. Hakka Noodles", p:249, ico:"noodle" },
-    { n:"Veg. Manchow Soup", p:249, ico:"soup" },
-    { n:"Lemon Coriander Soup", p:249, ico:"soup" },
-    { n:"Veg. Sweet Corn Soup", p:249, ico:"soup" },
-    { n:"Hot & Sour Soup", p:249, ico:"soup" },
-    { n:"Talumein Soup", p:249, ico:"soup" },
-    { n:"Tomato Soup", p:249, ico:"soup" },
-    { n:"Veg. Cream Soup", p:249, ico:"soup" },
-    { n:"Mushroom Cream Soup", p:249, ico:"soup" },
-    { n:"Cream of Broccoli Soup", p:249, ico:"soup" },
-    { n:"Tomato Shorba", p:249, ico:"soup" },
-    { n:"Orien Sizzlers", p:499, ico:"sizzler" },
-    { n:"Italian Sizzlers", p:499, ico:"sizzler" },
-    { n:"Cheese Sizzlers", p:499, ico:"sizzler" },
-    { n:"Pasta Red Sauce", p:279, ico:"noodle" },
-    { n:"Pasta White Sauce", p:279, ico:"noodle" }
+    { n:"Chana Chilli", p:269, ico:"chana" }, { n:"Honey Chilly Cauliflower", p:269, ico:"manchurian" }, { n:"Chilli Potato", p:269, ico:"manchurian" },
+    { n:"Spring Roll", p:269, ico:"pakora" }, { n:"Crispy Chilly Baby Corn", p:399, ico:"manchurian" }, { n:"Cheese Manchurian", p:399, ico:"manchurian" },
+    { n:"Gobhi Manchurian", p:419, ico:"manchurian" }, { n:"Veg. Manchurian-Gravy", p:399, ico:"manchurian" }, { n:"Veg. Manchurian-Dry", p:419, ico:"manchurian" },
+    { n:"Cheese Chilly-Dry", p:429, ico:"manchurian" }, { n:"Cheese Chilly Gravy", p:429, ico:"manchurian" }, { n:"Mushroom Chilly Gravy", p:419, ico:"mushroom" },
+    { n:"Mushroom Chilly-Dry", p:279, ico:"mushroom" }, { n:"Veg. Chowmin", p:299, ico:"noodle" }, { n:"Veg. Hakka Noodles", p:249, ico:"noodle" },
+    { n:"Veg. Manchow Soup", p:249, ico:"soup" }, { n:"Lemon Coriander Soup", p:249, ico:"soup" }, { n:"Veg. Sweet Corn Soup", p:249, ico:"soup" },
+    { n:"Hot & Sour Soup", p:249, ico:"soup" }, { n:"Talumein Soup", p:249, ico:"soup" }, { n:"Tomato Soup", p:249, ico:"soup" }, { n:"Veg. Cream Soup", p:249, ico:"soup" },
+    { n:"Mushroom Cream Soup", p:249, ico:"soup" }, { n:"Cream of Broccoli Soup", p:249, ico:"soup" }, { n:"Tomato Shorba", p:249, ico:"soup" },
+    { n:"Orien Sizzlers", p:499, ico:"sizzler" }, { n:"Italian Sizzlers", p:499, ico:"sizzler" }, { n:"Cheese Sizzlers", p:499, ico:"sizzler" },
+    { n:"Pasta Red Sauce", p:279, ico:"noodle" }, { n:"Pasta White Sauce", p:279, ico:"noodle" }
   ]},
   { id:"indian", name:"Indian Main Course", items:[
-    { n:"Kadhai Paneer", p:419, ico:"paneer" },
-    { n:"Shahi Paneer", p:419, ico:"paneer" },
-    { n:"Paneer Handi", p:419, ico:"paneer" },
-    { n:"Palak Paneer", p:419, ico:"vegcurry" },
-    { n:"Paneer Pasanda", p:439, ico:"paneer" },
-    { n:"Cheese Butter Masala", p:439, ico:"paneer" },
-    { n:"Paneer Tikka Butter Masala", p:439, ico:"paneer" },
-    { n:"Matar Paneer", p:419, ico:"paneer" },
-    { n:"Cheese Tomato", p:419, ico:"paneer" },
-    { n:"Malai Kofta", p:419, ico:"paneer" },
-    { n:"Tawa Vegetable", p:439, ico:"vegcurry" },
-    { n:"Jeera Aloo", p:329, ico:"vegcurry" },
-    { n:"Chana Masala", p:329, ico:"chana" },
-    { n:"Dum Aloo Bhojpuri", p:329, ico:"dal" },
-    { n:"Navrattan Korma", p:439, ico:"vegcurry" },
-    { n:"Gobhi Masala", p:329, ico:"vegcurry" },
-    { n:"Paneer Maharaja", p:439, ico:"paneer" },
-    { n:"Dal Tadka Yellow", p:329, ico:"dal" },
-    { n:"Dal Makhani", p:329, ico:"dal" },
-    { n:"Dal Balti", p:339, ico:"dal" },
-    { n:"Dal Handi", p:339, ico:"dal" },
-    { n:"Dal Pachranga", p:339, ico:"dal" },
-    { n:"Mushroom Matar", p:419, ico:"mushroom" },
-    { n:"Mushroom Masala", p:419, ico:"mushroom" },
-    { n:"Mushroom Chilly", p:419, ico:"mushroom" },
-    { n:"Paneer Bhurji", p:419, ico:"paneer" },
-    { n:"Paneer Do Pyaza", p:419, ico:"paneer" },
-    { n:"Paneer Takatak", p:419, ico:"paneer" },
-    { n:"Neelkanth Special Paneer", p:449, ico:"paneer" },
-    { n:"Kadi Pakora", p:329, ico:"pakora" },
-    { n:"Rajma", p:329, ico:"dal" },
-    { n:"Mix Vegetable", p:329, ico:"vegcurry" },
-    { n:"Sarson Ka Saag (Seasonal)", p:329, ico:"vegcurry" },
-    { n:"Aloo Gobhi", p:329, ico:"vegcurry" },
-    { n:"Bhindi", p:329, ico:"vegcurry" },
-    { n:"Gajar Matar", p:329, ico:"vegcurry" },
-    { n:"Manchurian With Gravy", p:419, ico:"manchurian" },
-    { n:"Palak Corn", p:419, ico:"vegcurry" },
-    { n:"Paneer Lababdar", p:419, ico:"paneer" },
-    { n:"Paneer Banjara", p:419, ico:"paneer" },
-    { n:"Cheese Chilly", p:419, ico:"manchurian" },
-    { n:"Methi Malai Matar", p:419, ico:"vegcurry" },
-    { n:"Cheese Chilly With Gravy", p:429, ico:"manchurian" },
-    { n:"Mushroom Chilly With Gravy", p:429, ico:"mushroom" },
-    { n:"Mushroom Do Pyaza", p:419, ico:"mushroom" },
-    { n:"Soya Chaap With Gravy", p:419, ico:"vegcurry" }
+    { n:"Kadhai Paneer", p:419, ico:"paneer" }, { n:"Shahi Paneer", p:419, ico:"paneer" }, { n:"Paneer Handi", p:419, ico:"paneer" }, { n:"Palak Paneer", p:419, ico:"vegcurry" },
+    { n:"Paneer Pasanda", p:439, ico:"paneer" }, { n:"Cheese Butter Masala", p:439, ico:"paneer" }, { n:"Paneer Tikka Butter Masala", p:439, ico:"paneer" },
+    { n:"Matar Paneer", p:419, ico:"paneer" }, { n:"Cheese Tomato", p:419, ico:"paneer" }, { n:"Malai Kofta", p:419, ico:"paneer" }, { n:"Tawa Vegetable", p:439, ico:"vegcurry" },
+    { n:"Jeera Aloo", p:329, ico:"vegcurry" }, { n:"Chana Masala", p:329, ico:"chana" }, { n:"Dum Aloo Bhojpuri", p:329, ico:"dal" }, { n:"Navrattan Korma", p:439, ico:"vegcurry" },
+    { n:"Gobhi Masala", p:329, ico:"vegcurry" }, { n:"Paneer Maharaja", p:439, ico:"paneer" }, { n:"Dal Tadka Yellow", p:329, ico:"dal" }, { n:"Dal Makhani", p:329, ico:"dal" },
+    { n:"Dal Balti", p:339, ico:"dal" }, { n:"Dal Handi", p:339, ico:"dal" }, { n:"Dal Pachranga", p:339, ico:"dal" }, { n:"Mushroom Matar", p:419, ico:"mushroom" },
+    { n:"Mushroom Masala", p:419, ico:"mushroom" }, { n:"Mushroom Chilly", p:419, ico:"mushroom" }, { n:"Paneer Bhurji", p:419, ico:"paneer" },
+    { n:"Paneer Do Pyaza", p:419, ico:"paneer" }, { n:"Paneer Takatak", p:419, ico:"paneer" }, { n:"Neelkanth Special Paneer", p:449, ico:"paneer" },
+    { n:"Kadi Pakora", p:329, ico:"pakora" }, { n:"Rajma", p:329, ico:"dal" }, { n:"Mix Vegetable", p:329, ico:"vegcurry" }, { n:"Sarson Ka Saag (Seasonal)", p:329, ico:"vegcurry" },
+    { n:"Aloo Gobhi", p:329, ico:"vegcurry" }, { n:"Bhindi", p:329, ico:"vegcurry" }, { n:"Gajar Matar", p:329, ico:"vegcurry" }, { n:"Manchurian With Gravy", p:419, ico:"manchurian" },
+    { n:"Palak Corn", p:419, ico:"vegcurry" }, { n:"Paneer Lababdar", p:419, ico:"paneer" }, { n:"Paneer Banjara", p:419, ico:"paneer" }, { n:"Cheese Chilly", p:419, ico:"manchurian" },
+    { n:"Methi Malai Matar", p:419, ico:"vegcurry" }, { n:"Cheese Chilly With Gravy", p:429, ico:"manchurian" }, { n:"Mushroom Chilly With Gravy", p:429, ico:"mushroom" },
+    { n:"Mushroom Do Pyaza", p:419, ico:"mushroom" }, { n:"Soya Chaap With Gravy", p:419, ico:"vegcurry" }
   ]},
-  { id:"mini", name:"Mini Meals", items:[
-    { n:"Mini Meal (Sarson Ka Saag + Makki Ki Roti + 1 Glass Chhachh + Gur)", p:329, ico:"thali" }
-  ]},
+  { id:"mini", name:"Mini Meals", items:[ { n:"Mini Meal (Sarson Ka Saag + Makki Ki Roti + 1 Glass Chhachh + Gur)", p:329, ico:"thali" } ]},
   { id:"snack", name:"Snack", items:[
-    { n:"Veg Sandwich", p:169, ico:"sandwich" },
-    { n:"Butter Toast / Butter Slice", p:169, ico:"sandwich" },
-    { n:"Cheese Sandwich", p:189, ico:"sandwich" },
-    { n:"Grilled Mushroom Sandwich", p:189, ico:"sandwich" },
-    { n:"Grilled Sandwich / Coleslaw Sandwich", p:189, ico:"sandwich" },
-    { n:"Club Sandwich", p:219, ico:"sandwich" }
+    { n:"Veg Sandwich", p:169, ico:"sandwich" }, { n:"Butter Toast / Butter Slice", p:169, ico:"sandwich" }, { n:"Cheese Sandwich", p:189, ico:"sandwich" },
+    { n:"Grilled Mushroom Sandwich", p:189, ico:"sandwich" }, { n:"Grilled Sandwich / Coleslaw Sandwich", p:189, ico:"sandwich" }, { n:"Club Sandwich", p:219, ico:"sandwich" }
   ]},
   { id:"pakora", name:"Pakora Superhit", items:[
-    { n:"Bread Pakora With Cheese", p:89, ico:"pakora" },
-    { n:"Veg Cutlets (2 Pcs) / French Fries", p:169, ico:"pakora" },
-    { n:"Paneer Pakora", p:189, ico:"pakora" },
-    { n:"Cheese Cutlet (2 Pcs)", p:179, ico:"pakora" },
-    { n:"Mix Pakora", p:169, ico:"pakora" },
-    { n:"Fresh Cheese", p:169, ico:"paneer" }
+    { n:"Bread Pakora With Cheese", p:89, ico:"pakora" }, { n:"Veg Cutlets (2 Pcs) / French Fries", p:169, ico:"pakora" }, { n:"Paneer Pakora", p:189, ico:"pakora" },
+    { n:"Cheese Cutlet (2 Pcs)", p:179, ico:"pakora" }, { n:"Mix Pakora", p:169, ico:"pakora" }, { n:"Fresh Cheese", p:169, ico:"paneer" }
   ]},
   { id:"breads", name:"Breads", items:[
-    { n:"Tandoori Roti / Tawa Roti", p:40, ico:"roti" },
-    { n:"Tawa Roti With Butter", p:42, ico:"roti" },
-    { n:"Tandoori Butter Roti", p:42, ico:"roti" },
-    { n:"Onion Chilly Roti", p:69, ico:"roti" },
-    { n:"Makki Ki Roti", p:69, ico:"roti" },
-    { n:"Missi Roti", p:69, ico:"roti" },
-    { n:"Lachha Parantha (With Butter)", p:99, ico:"roti" },
-    { n:"Aloo Parantha (With Butter)", p:129, ico:"roti" },
-    { n:"Stuffed Parantha (With Butter)", p:129, ico:"roti" },
-    { n:"Gobhi Parantha (With Butter)", p:129, ico:"roti" },
-    { n:"Paneer Parantha (With Butter)", p:129, ico:"roti" },
-    { n:"Mix Parantha (With Butter)", p:129, ico:"roti" },
-    { n:"Pudina Parantha (With Butter)", p:99, ico:"roti" },
-    { n:"Chilly Parantha (With Butter)", p:99, ico:"roti" },
-    { n:"Onion Parantha (With Butter)", p:129, ico:"roti" },
-    { n:"Onion Kulcha", p:139, ico:"roti" },
-    { n:"Cheese Kulcha", p:139, ico:"roti" },
-    { n:"Stuffed Kulcha", p:139, ico:"roti" },
-    { n:"Plain Naan", p:129, ico:"roti" },
-    { n:"Garlic Naan", p:139, ico:"roti" },
-    { n:"Stuffed Naan", p:139, ico:"roti" },
-    { n:"Paneer Naan", p:139, ico:"roti" },
-    { n:"Aloo Naan", p:139, ico:"roti" },
-    { n:"Butter Naan", p:129, ico:"roti" },
-    { n:"Amul Butter", p:15, ico:"butter" },
-    { n:"White Butter", p:15, ico:"butter" }
+    { n:"Tandoori Roti / Tawa Roti", p:40, ico:"roti" }, { n:"Tawa Roti With Butter", p:42, ico:"roti" }, { n:"Tandoori Butter Roti", p:42, ico:"roti" },
+    { n:"Onion Chilly Roti", p:69, ico:"roti" }, { n:"Makki Ki Roti", p:69, ico:"roti" }, { n:"Missi Roti", p:69, ico:"roti" }, { n:"Lachha Parantha (With Butter)", p:99, ico:"roti" },
+    { n:"Aloo Parantha (With Butter)", p:129, ico:"roti" }, { n:"Stuffed Parantha (With Butter)", p:129, ico:"roti" }, { n:"Gobhi Parantha (With Butter)", p:129, ico:"roti" },
+    { n:"Paneer Parantha (With Butter)", p:129, ico:"roti" }, { n:"Mix Parantha (With Butter)", p:129, ico:"roti" }, { n:"Pudina Parantha (With Butter)", p:99, ico:"roti" },
+    { n:"Chilly Parantha (With Butter)", p:99, ico:"roti" }, { n:"Onion Parantha (With Butter)", p:129, ico:"roti" }, { n:"Onion Kulcha", p:139, ico:"roti" },
+    { n:"Cheese Kulcha", p:139, ico:"roti" }, { n:"Stuffed Kulcha", p:139, ico:"roti" }, { n:"Plain Naan", p:129, ico:"roti" }, { n:"Garlic Naan", p:139, ico:"roti" },
+    { n:"Stuffed Naan", p:139, ico:"roti" }, { n:"Paneer Naan", p:139, ico:"roti" }, { n:"Aloo Naan", p:139, ico:"roti" }, { n:"Butter Naan", p:129, ico:"roti" },
+    { n:"Amul Butter", p:15, ico:"butter" }, { n:"White Butter", p:15, ico:"butter" }
   ]},
   { id:"combo", name:"Combos & Thali", items:[
-    { n:"Neelkanth Spl. (Gravy + 1 Cheese Naan & Plain Raita)", p:319, ico:"thali" },
-    { n:"Cholle Bhatura", p:219, ico:"chana" },
-    { n:"Poori Aloo", p:219, ico:"dal" },
-    { n:"Combo (Rajma + Rice + Raita + Dry Papad)", p:319, ico:"thali" },
-    { n:"Combo (Veg. Manchurian Gravy + Veg. Fried Rice)", p:319, ico:"thali" },
-    { n:"Combo (Cheese Chilly With Gravy + Veg. Noodles)", p:319, ico:"thali" },
-    { n:"Combo (Chana Masala + Stuffed Kulcha + Curd)", p:319, ico:"thali" },
-    { n:"Combo (Kadhi Pakora + Jeera Rice + 1 Lachha Parantha)", p:319, ico:"thali" },
-    { n:"Combo (Dal + 1 Stuffed Naan + Curd)", p:319, ico:"thali" },
-    { n:"Special Thali", p:495, ico:"thali" },
-    { n:"Takeaway Thali", p:359, ico:"thali" },
-    { n:"Veg. Biryani + Mix Raita", p:289, ico:"biryani" }
+    { n:"Neelkanth Spl. (Gravy + 1 Cheese Naan & Plain Raita)", p:319, ico:"thali" }, { n:"Cholle Bhatura", p:219, ico:"chana" }, { n:"Poori Aloo", p:219, ico:"dal" },
+    { n:"Combo (Rajma + Rice + Raita + Dry Papad)", p:319, ico:"thali" }, { n:"Combo (Veg. Manchurian Gravy + Veg. Fried Rice)", p:319, ico:"thali" },
+    { n:"Combo (Cheese Chilly With Gravy + Veg. Noodles)", p:319, ico:"thali" }, { n:"Combo (Chana Masala + Stuffed Kulcha + Curd)", p:319, ico:"thali" },
+    { n:"Combo (Kadhi Pakora + Jeera Rice + 1 Lachha Parantha)", p:319, ico:"thali" }, { n:"Combo (Dal + 1 Stuffed Naan + Curd)", p:319, ico:"thali" },
+    { n:"Special Thali", p:495, ico:"thali" }, { n:"Takeaway Thali", p:359, ico:"thali" }, { n:"Veg. Biryani + Mix Raita", p:289, ico:"biryani" }
   ]},
   { id:"street", name:"Street Style", items:[
-    { n:"Gol Gappe 6 Pcs.", p:89, ico:"street" },
-    { n:"Bharwa Gol Gappe", p:109, ico:"street" },
-    { n:"Dahi Bhalla / Chaat Papri / Bhalla Papri", p:119, ico:"raita" },
-    { n:"Raj Kachori", p:119, ico:"street" },
-    { n:"Pav Bhaji", p:169, ico:"street" },
-    { n:"Samosa 1 Pc.", p:59, ico:"pakora" },
-    { n:"Samosa Cholle / Kachori Aloo / Tikki", p:119, ico:"chana" },
-    { n:"Kachori Chutney", p:89, ico:"street" },
-    { n:"Vada Pav", p:89, ico:"street" },
-    { n:"Red Bull", p:"MRP", ico:"soda" },
-    { n:"Cold Drink 600ml", p:"MRP", ico:"soda" }
+    { n:"Gol Gappe 6 Pcs.", p:89, ico:"street" }, { n:"Bharwa Gol Gappe", p:109, ico:"street" }, { n:"Dahi Bhalla / Chaat Papri / Bhalla Papri", p:119, ico:"raita" },
+    { n:"Raj Kachori", p:119, ico:"street" }, { n:"Pav Bhaji", p:169, ico:"street" }, { n:"Samosa 1 Pc.", p:59, ico:"pakora" },
+    { n:"Samosa Cholle / Kachori Aloo / Tikki", p:119, ico:"chana" }, { n:"Kachori Chutney", p:89, ico:"street" }, { n:"Vada Pav", p:89, ico:"street" },
+    { n:"Red Bull", p:"MRP", ico:"soda" }, { n:"Cold Drink 600ml", p:"MRP", ico:"soda" }
   ]},
   { id:"tandoori", name:"Tandoori Local", items:[
-    { n:"Soya Chaap Tikka / Haryali Chaap Tikka", p:249, ico:"tandoori" },
-    { n:"Malai Chaap Tikka / Mushroom Tikka", p:279, ico:"tandoori" },
-    { n:"Mushroom Malai Tikka / Stuffed Mushroom", p:289, ico:"mushroom" },
-    { n:"Paneer Tikka / Paneer Achari Tikka", p:259, ico:"tandoori" },
-    { n:"Paneer Garlic Tikka / Paneer Malai", p:279, ico:"tandoori" },
-    { n:"Paneer Afgani Tikka / Paneer Mint Tikka", p:279, ico:"tandoori" },
-    { n:"Special Tandoori Platter", p:499, ico:"thali" },
-    { n:"Veg. Seekh Kabab / Methi Paneer Seekh", p:259, ico:"tandoori" },
-    { n:"Makhmali Chaap", p:269, ico:"tandoori" },
-    { n:"Harabhara Kabab", p:249, ico:"tandoori" }
+    { n:"Soya Chaap Tikka / Haryali Chaap Tikka", p:249, ico:"tandoori" }, { n:"Malai Chaap Tikka / Mushroom Tikka", p:279, ico:"tandoori" },
+    { n:"Mushroom Malai Tikka / Stuffed Mushroom", p:289, ico:"mushroom" }, { n:"Paneer Tikka / Paneer Achari Tikka", p:259, ico:"tandoori" },
+    { n:"Paneer Garlic Tikka / Paneer Malai", p:279, ico:"tandoori" }, { n:"Paneer Afgani Tikka / Paneer Mint Tikka", p:279, ico:"tandoori" },
+    { n:"Special Tandoori Platter", p:499, ico:"thali" }, { n:"Veg. Seekh Kabab / Methi Paneer Seekh", p:259, ico:"tandoori" },
+    { n:"Makhmali Chaap", p:269, ico:"tandoori" }, { n:"Harabhara Kabab", p:249, ico:"tandoori" }
   ]},
   { id:"sweets", name:"Sweets Treat", items:[
-    { n:"Jalebi", p:119, ico:"jalebi" },
-    { n:"Jalebi With Rabri", p:139, ico:"jalebi" },
-    { n:"Gulab Jamun (1 Pc)", p:49, ico:"sweet" },
-    { n:"Sponge Rasgulla (1 Pc)", p:69, ico:"sweet" },
-    { n:"Rabri", p:89, ico:"kheer" },
-    { n:"Rasmalai (2 Pcs)", p:199, ico:"sweet" },
-    { n:"Kasora Milk / Gajar Halwa (Seasonal)", p:199, ico:"kheer" },
-    { n:"Moong Dal Halwa (Seasonal)", p:199, ico:"sweet" }
+    { n:"Jalebi", p:119, ico:"jalebi" }, { n:"Jalebi With Rabri", p:139, ico:"jalebi" }, { n:"Gulab Jamun (1 Pc)", p:49, ico:"sweet" },
+    { n:"Sponge Rasgulla (1 Pc)", p:69, ico:"sweet" }, { n:"Rabri", p:89, ico:"kheer" }, { n:"Rasmalai (2 Pcs)", p:199, ico:"sweet" },
+    { n:"Kasora Milk / Gajar Halwa (Seasonal)", p:199, ico:"kheer" }, { n:"Moong Dal Halwa (Seasonal)", p:199, ico:"sweet" }
   ]}
 ];
 
@@ -1478,12 +1345,33 @@ locOverlay.addEventListener("click", (e)=>{
   if (e.target === locOverlay) closeLocModal();
 });
 
-/* WhatsApp order */
-$("#waBtn").addEventListener("click", ()=>{
+/* ============================================================ */
+/* MASTER ORDER (SUPABASE + WHATSAPP) */
+/* ============================================================ */
+$("#waBtn").addEventListener("click", async ()=>{
   const keys = Object.keys(cart);
   if (keys.length === 0) return;
   if (!currentTable){ askTableNumber(); return; }
 
+  // 1. Build Order Data
+  const orderItems = keys.map(k => ({ name: cart[k].name, qty: cart[k].qty, price: cart[k].price }));
+  const totalAmount = keys.reduce((sum, k) => sum + (cart[k].price * cart[k].qty), 0);
+
+  // 2. Push to Supabase
+  const btn = $("#waBtn");
+  btn.textContent = "Sending...";
+  btn.disabled = true;
+
+  const { error } = await supabaseClient
+    .from('orders')
+    .insert([{ 
+      table_number: parseInt(currentTable), 
+      items: orderItems, 
+      total_amount: totalAmount,
+      status: 'ORDERED' 
+    }]);
+
+  // 3. Build WhatsApp Message (Backup)
   let msg = "Hello Neelkanth Star! 👋%0A%0AI'd like to place an order:%0A%0A";
   keys.forEach(k=>{
     const c = cart[k];
@@ -1493,10 +1381,25 @@ $("#waBtn").addEventListener("click", ()=>{
   msg += `%0A(Self Food Charges ₹30/person + taxes extra)`;
   msg += `%0A%0A*Table Number:* ${currentTable}`;
   msg += `%0A%0AThank you!`;
+  const waUrl = `https://wa.me/${WA_NUMBER}?text=${msg}`;
 
-  pendingWAMessage = `https://wa.me/${WA_NUMBER}?text=${msg}`;
-  openLocModal();
-  checkLocationAndSend();
+  // 4. Execute based on Supabase result
+  if(!error){
+    localStorage.removeItem('neelkanth_cart');
+    cart = {};
+    renderCart();
+    updateBadges();
+    pendingWAMessage = waUrl;
+    openLocModal();
+    checkLocationAndSend();
+  } else {
+    alert("Kitchen Panel Error: " + error.message);
+    // Fallback to just WhatsApp if Supabase fails
+    window.open(waUrl, "_blank");
+  }
+
+  btn.textContent = "Order on WhatsApp";
+  btn.disabled = false;
 });
 
 /* init */
