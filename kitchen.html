@@ -4,7 +4,11 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
 <title>Kitchen Display — Neelkanth Star</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
   :root {
     --navy: #1B3A6B; --navy-dark: #142C52; --gold: #F2C200;
@@ -15,8 +19,8 @@
 
   /* Login Screen */
   #login-screen { position: fixed; inset: 0; background: var(--navy-dark); display: flex; align-items: center; justify-content: center; z-index: 100; }
-  .login-box { background: white; padding: 30px; border-radius: 12px; width: 300px; text-align: center; color: var(--ink); }
-  .login-box h2 { margin-bottom: 20px; color: var(--navy); }
+  .login-box { background: white; padding: 30px; border-radius: 12px; width: 300px; text-align: center; color: var(--ink); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+  .login-box h2 { margin-bottom: 20px; color: var(--navy); font-family: 'Cinzel', serif; }
   .login-box input { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 6px; }
   .login-box button { width: 100%; padding: 14px; background: var(--gold); color: var(--navy); border: none; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; }
 
@@ -120,24 +124,21 @@ async function login() {
     alert(error.message);
     btn.textContent = 'Start Kitchen Display';
   } else {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('header').style.display = 'flex';
-    document.getElementById('main-panel').style.display = 'block';
-    initRealtime();
-    startClock();
+    initDashboard();
   }
 }
 
-// Check if already logged in
 async function checkSession() {
   const { data: { session } } = await supabaseClient.auth.getSession();
-  if (session) {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('header').style.display = 'flex';
-    document.getElementById('main-panel').style.display = 'block';
-    initRealtime();
-    startClock();
-  }
+  if (session) initDashboard();
+}
+
+function initDashboard() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('header').style.display = 'flex';
+  document.getElementById('main-panel').style.display = 'block';
+  initRealtime();
+  startClock();
 }
 
 /* =========================================================
@@ -201,7 +202,7 @@ function renderOrders() {
     let itemsHtml = '';
     if (Array.isArray(order.items)) {
       order.items.forEach(item => {
-        itemsHtml += `<li><span>${item.qty}x ${item.name}</span> <span>x${item.qty}</span></li>`;
+        itemsHtml += `<li><span>${item.qty}x ${item.name}</span> <span>${item.qty}</span></li>`;
       });
     }
 
@@ -219,7 +220,7 @@ function renderOrders() {
         </ul>
       </div>
       <div class="card-footer">
-        <button class="btn-done" onclick="markPrepared(${order.id})">✓ Mark Prepared</button>
+        <button class="btn-done" onclick="markPrepared(${order.id}, this)">✓ Mark Prepared</button>
       </div>
     `;
     
@@ -268,8 +269,7 @@ function updateTimers() {
 /* =========================================================
    UPDATE STATUS (Mark Prepared)
    ========================================================= */
-async function markPrepared(orderId) {
-  const btn = event.target;
+async function markPrepared(orderId, btn) {
   btn.textContent = "Updating...";
   btn.disabled = true;
 
