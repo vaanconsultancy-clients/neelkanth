@@ -336,14 +336,22 @@ function renderTabs() {
       itemsHtml += `<div class="item-row"><span>${item.qty}x ${item.name}</span> <span>₹${item.price * item.qty}</span></div>`;
     });
 
-    card.innerHTML = `
-      <div class="tab-head"><h3>Table ${tab.table}</h3><span class="bill-id">${tab.bill_id}</span></div>
-      <div class="tab-body">${itemsHtml}</div>
-      <div class="tab-foot">
-        <div class="tab-total"><span>Total</span><span>₹${tab.total}</span></div>
-        <button class="btn-generate" onclick="openBill(${tab.table})">Generate Bill</button>
-      </div>
-    `;
+    // Check if ALL orders for this table are marked as PREPARED by the kitchen
+const allPrepared = tab.orders.every(o => o.status === 'PREPARED');
+
+// Change button color/text if food is ready
+let billBtnHtml = allPrepared 
+  ? `<button class="btn-generate" style="background:var(--gold); color:var(--navy);" onclick="openBill(${tab.table})">Food Ready - Generate Bill</button>`
+  : `<button class="btn-generate" onclick="openBill(${tab.table})">Generate Bill</button>`;
+
+card.innerHTML = `
+  <div class="tab-head"><h3>Table ${tab.table}</h3><span class="bill-id">${tab.bill_id}</span></div>
+  <div class="tab-body">${itemsHtml}</div>
+  <div class="tab-foot">
+    <div class="tab-total"><span>Total</span><span>₹${tab.total}</span></div>
+    ${billBtnHtml}
+  </div>
+`;
     container.appendChild(card);
   });
 }
