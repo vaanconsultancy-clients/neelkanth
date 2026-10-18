@@ -19,47 +19,71 @@
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
   body { background: #f4f4f4; color: var(--ink); display: flex; height: 100vh; overflow: hidden; }
 
-  /* Login */
+  /* Login Screen */
   #login-screen { position: fixed; inset: 0; background: var(--navy-dark); display: flex; align-items: center; justify-content: center; z-index: 100; }
   .login-box { background: white; padding: 30px; border-radius: 12px; width: 100%; max-width: 340px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
   .login-box h2 { color: var(--navy); margin-bottom: 20px; font-family: 'Cinzel', serif; }
   .login-box input { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
-  .login-box button { width: 100%; padding: 14px; background: var(--gold); color: var(--navy); border: none; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; }
+  .login-box button { width: 100%; padding: 14px; background: var(--gold); color: var(--navy); border: none; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; transition: 0.2s; }
 
   /* Sidebar */
   .sidebar { width: 260px; background: var(--navy-dark); color: white; padding: 20px; display: flex; flex-direction: column; }
   .sidebar h1 { font-size: 22px; margin-bottom: 5px; color: var(--gold); font-family: 'Cinzel', serif; }
-  .sidebar p { font-size: 12px; opacity: 0.7; margin-bottom: 30px; text-transform: uppercase; }
-  .sidebar .nav-btn { padding: 14px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border: none; color: white; text-align: left; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+  .sidebar p { font-size: 12px; opacity: 0.7; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px; }
+  .sidebar .nav-btn { padding: 14px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border: none; color: white; text-align: left; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 600; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
+  .sidebar .nav-btn:hover { background: rgba(255,255,255,0.1); }
   .sidebar .nav-btn.active { background: var(--gold); color: var(--navy-dark); }
-  .sidebar .logout { margin-top: auto; background: transparent; color: #ff6b6b; padding: 12px; border: 1px solid #ff6b6b; border-radius: 8px; cursor: pointer; font-weight: bold; }
+  .sidebar .logout { margin-top: auto; background: transparent; color: #ff6b6b; padding: 12px; border: 1px solid #ff6b6b; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; }
 
-  /* Main */
+  /* Main Content */
   .main { flex: 1; padding: 25px; overflow-y: auto; }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
+  
   .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
   .header h2 { font-size: 26px; color: var(--navy); }
   .connection-status { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; background: var(--gray); color: #666; display: flex; align-items: center; gap: 6px; }
+  .connection-status::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #999; }
   .connection-status.live { background: #d4edda; color: var(--green); }
-  .connection-status.live::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+  .connection-status.live::before { background: var(--green); animation: pulse 2s infinite; }
   @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(30, 122, 58, 0.4); } 70% { box-shadow: 0 0 0 6px rgba(30, 122, 58, 0); } 100% { box-shadow: 0 0 0 0 rgba(30, 122, 58, 0); } }
 
-  /* Table Tabs Grid */
-  .table-tabs { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+  /* --- TAB 1: TABLE TABS (LIVE ORDERS) --- */
+  .table-tabs { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
   .tab-card { background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 6px solid var(--gold); display: flex; flex-direction: column; overflow: hidden; }
-  
   .tab-head { padding: 15px 20px; background: #fafafa; border-bottom: 1px dashed #eee; display: flex; justify-content: space-between; align-items: center; }
   .tab-head h3 { font-family: 'Cinzel', serif; font-size: 20px; color: var(--navy); }
   .bill-id { font-size: 12px; background: var(--navy); color: var(--gold); padding: 4px 8px; border-radius: 4px; font-weight: bold; letter-spacing: 1px; }
-  
   .tab-body { padding: 20px; flex: 1; max-height: 250px; overflow-y: auto; }
   .item-row { display: flex; justify-content: space-between; font-size: 14px; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
   .item-row span:first-child { font-weight: 600; }
-  
   .tab-foot { padding: 20px; background: #fff; border-top: 1px solid #eee; }
   .tab-total { display: flex; justify-content: space-between; font-weight: 800; font-size: 20px; color: var(--navy); margin-bottom: 15px; }
   .btn-generate { width: 100%; padding: 14px; background: var(--green); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; text-transform: uppercase; cursor: pointer; letter-spacing: 1px; }
+
+  /* --- TAB 2: COUPONS --- */
+  .coupon-search { display: flex; gap: 10px; margin-bottom: 30px; max-width: 500px; }
+  .coupon-search input { flex: 1; padding: 14px; border: 2px solid #ccc; border-radius: 8px; font-size: 16px; text-transform: uppercase; }
+  .coupon-search button { padding: 14px 24px; background: var(--navy); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+  .coupon-result { background: white; padding: 20px; border-radius: 12px; max-width: 500px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: none; margin-bottom: 30px;}
+  .coupon-result.valid { border-left: 6px solid var(--green); }
+  .coupon-result.invalid { border-left: 6px solid var(--red); }
+  .coupon-list table { width: 100%; background: white; border-collapse: collapse; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+  .coupon-list th, .coupon-list td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+  .coupon-list th { background: var(--navy); color: white; font-weight: 600; }
+  .c-badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+  .c-badge.active { background: #e8f5e9; color: var(--green); }
+  .c-badge.used { background: #ffebee; color: var(--red); text-decoration: line-through; }
+
+  /* --- TAB 3: MENU MANAGER --- */
+  .menu-table { width: 100%; background: white; border-collapse: collapse; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+  .menu-table th, .menu-table td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+  .menu-table th { background: var(--navy); color: white; font-weight: 600; }
+  .menu-table input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+  .menu-table select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+  .btn-edit { background: var(--gold); color: var(--navy); border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+  .btn-delete { background: var(--red); color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+  .btn-add { background: var(--green); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; margin-bottom: 20px; }
 
   .empty-state { text-align: center; padding: 50px; color: #888; font-size: 15px; }
 
@@ -67,24 +91,19 @@
   #bill-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; display: none; place-items: center; padding: 20px; }
   #bill-modal.show { display: grid; }
   .bill-box { background: white; width: 100%; max-width: 380px; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
-  
   .bill-header { text-align: center; padding: 20px; background: var(--navy); color: white; }
   .bill-header img { height: 50px; margin-bottom: 10px; }
   .bill-header h3 { font-family: 'Cinzel', serif; font-size: 20px; color: var(--gold); }
   .bill-header p { font-size: 11px; opacity: 0.8; margin-top: 4px; }
-  
   .bill-body { padding: 20px; }
   .bill-info { display: flex; justify-content: space-between; font-size: 12px; color: #666; margin-bottom: 15px; border-bottom: 1px dashed #ccc; padding-bottom: 10px; }
   .bill-items { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 15px; }
   .bill-items th { text-align: left; border-bottom: 2px solid #eee; padding-bottom: 5px; font-weight: 700; }
   .bill-items td { padding: 8px 0; border-bottom: 1px solid #f9f9f9; }
-  
   .bill-total { display: flex; justify-content: space-between; font-weight: 800; font-size: 18px; color: var(--navy); border-top: 2px dashed #ccc; padding-top: 10px; }
-  
   .bill-qr { text-align: center; margin-top: 20px; }
   .bill-qr #qrcode { display: inline-block; padding: 10px; background: white; border: 1px solid #eee; border-radius: 8px; }
   .bill-qr p { font-size: 10px; color: #888; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
-  
   .bill-actions { display: flex; gap: 10px; padding: 20px; background: #f9f9f9; border-top: 1px solid #eee; }
   .bill-actions button { flex: 1; padding: 14px; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; }
   .btn-print { background: var(--navy); color: white; }
@@ -107,20 +126,66 @@
 <div class="sidebar" id="sidebar" style="display:none;">
   <h1>Neelkanth Star</h1>
   <p>Cashier Panel</p>
-  <button class="nav-btn active" onclick="switchTab('tab-orders', this)">Live Tables</button>
+  
+  <button class="nav-btn active" onclick="switchTab('tab-orders', this)">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    Live Orders
+  </button>
+  
+  <button class="nav-btn" onclick="switchTab('tab-coupons', this)">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+    Coupons
+  </button>
+  
+  <button class="nav-btn" onclick="switchTab('tab-menu', this)">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+    Menu Manager
+  </button>
+  
   <button class="logout" onclick="logout()">Logout</button>
 </div>
 
 <!-- MAIN PANEL -->
 <div class="main" id="main-panel" style="display:none;">
+  
   <div class="header">
-    <h2>Live Table Tabs</h2>
+    <h2 id="page-title">Live Orders</h2>
     <div class="connection-status" id="conn-status">Connecting...</div>
   </div>
 
+  <!-- TAB 1: LIVE ORDERS -->
   <div id="tab-orders" class="tab-content active">
     <div class="table-tabs" id="orders-container"></div>
   </div>
+
+  <!-- TAB 2: COUPONS -->
+  <div id="tab-coupons" class="tab-content">
+    <div class="coupon-search">
+      <input type="text" id="coupon-input" placeholder="Enter code" />
+      <button onclick="checkCoupon()">Verify</button>
+    </div>
+    <div class="coupon-result" id="coupon-result">
+      <h3 id="c-res-title">Coupon Status</h3>
+      <p id="c-res-desc"></p>
+      <button id="c-use-btn" style="display:none; margin-top:15px; padding:10px 20px; background:var(--green); color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="markCouponUsed()">Mark as Used</button>
+    </div>
+    <div class="coupon-list">
+      <table>
+        <thead><tr><th>Code</th><th>Discount</th><th>Table</th><th>Status</th></tr></thead>
+        <tbody id="coupon-list-container"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 3: MENU MANAGER -->
+  <div id="tab-menu" class="tab-content">
+    <button class="btn-add" onclick="addNewItem()">+ Add New Dish</button>
+    <table class="menu-table">
+      <thead><tr><th>Dish Name</th><th>Price (₹)</th><th>Category</th><th>Available</th><th>Actions</th></tr></thead>
+      <tbody id="menu-container"></tbody>
+    </table>
+  </div>
+
 </div>
 
 <!-- BILL MODAL -->
@@ -164,9 +229,12 @@ const SUPABASE_URL = 'https://scuiidvmhsyknhqlszzg.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjdWlpZHZtaHN5a25ocWxzenpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzNDgyOTEsImV4cCI6MjEwNzkyNDI5MX0.AiZgUL1lOcp7LHIP1JgQipXbtC-NPCBQjcWJAK_br-0';
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-let activeTabs = {}; // Stores grouped orders by table_number
+let activeTabs = {};
 let realtimeChannel = null;
-let currentBill = null; // Stores the tab being billed
+let activeCouponId = null;
+let currentBill = null;
+
+const CATEGORIES = ["Beverages", "Desserts", "Rice", "Salad & Raita", "Chinese", "Indian Main Course", "Mini Meals", "Snack", "Pakora Superhit", "Breads", "Combos & Thali", "Street Style", "Tandoori Local", "Sweets Treat"];
 
 /* ========================================================= */
 /* AUTHENTICATION */
@@ -177,7 +245,7 @@ async function login() {
   const btn = document.getElementById('login-btn');
   btn.textContent = 'Logging in...';
   const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-  if (error) { alert(error.message); btn.textContent = 'Login'; }
+  if (error) { alert(error.message); btn.textContent = 'Login to Panel'; }
   else initDashboard();
 }
 
@@ -192,35 +260,39 @@ function initDashboard() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('sidebar').style.display = 'flex';
   document.getElementById('main-panel').style.display = 'block';
-  initRealtime();
+  initRealtime(); loadMenu(); loadCoupons();
 }
 
 /* ========================================================= */
-/* TAB LOGIC & REALTIME */
+/* TAB SWITCHING */
+/* ========================================================= */
+function switchTab(tabId, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  btn.classList.add('active');
+  const titles = { 'tab-orders': 'Live Orders', 'tab-coupons': 'Coupons & Offers', 'tab-menu': 'Menu Manager' };
+  document.getElementById('page-title').textContent = titles[tabId];
+  if (tabId === 'tab-coupons') loadCoupons();
+}
+
+/* ========================================================= */
+/* TAB 1: LIVE ORDERS (THE TAB SYSTEM) */
 /* ========================================================= */
 async function fetchOrders() {
-  // Fetch all active orders (ORDERED, PREPARING, PREPARED)
-  const { data, error } = await supabaseClient
-    .from('orders')
-    .select('*')
-    .neq('status', 'PAID')
-    .order('created_at', { ascending: true });
-
+  const { data, error } = await supabaseClient.from('orders').select('*').neq('status', 'PAID').order('created_at', { ascending: true });
   if (error) return;
 
-  // Group orders by Table Number
   activeTabs = {};
   data.forEach(order => {
     if (!activeTabs[order.table_number]) {
-      // Create a new Tab for this table
       activeTabs[order.table_number] = {
         table: order.table_number,
-        bill_id: `#NK-${5000 + order.id}`, // Unique Bill ID based on first order
+        bill_id: `#NK-${5000 + order.id}`,
         orders: [],
         total: 0
       };
     }
-    // Add items to the tab
     activeTabs[order.table_number].orders.push(order);
     activeTabs[order.table_number].total += order.total_amount;
   });
@@ -250,13 +322,9 @@ function renderTabs() {
     const card = document.createElement('div');
     card.className = 'tab-card';
 
-    // Flatten all items from all orders in this tab
     let allItems = [];
-    tab.orders.forEach(o => {
-      if (Array.isArray(o.items)) allItems = allItems.concat(o.items);
-    });
+    tab.orders.forEach(o => { if (Array.isArray(o.items)) allItems = allItems.concat(o.items); });
 
-    // Group identical items (e.g., if they ordered Dal Makhani twice)
     const groupedItems = {};
     allItems.forEach(item => {
       if (!groupedItems[item.name]) groupedItems[item.name] = { name: item.name, qty: 0, price: item.price };
@@ -269,13 +337,8 @@ function renderTabs() {
     });
 
     card.innerHTML = `
-      <div class="tab-head">
-        <h3>Table ${tab.table}</h3>
-        <span class="bill-id">${tab.bill_id}</span>
-      </div>
-      <div class="tab-body">
-        ${itemsHtml}
-      </div>
+      <div class="tab-head"><h3>Table ${tab.table}</h3><span class="bill-id">${tab.bill_id}</span></div>
+      <div class="tab-body">${itemsHtml}</div>
       <div class="tab-foot">
         <div class="tab-total"><span>Total</span><span>₹${tab.total}</span></div>
         <button class="btn-generate" onclick="openBill(${tab.table})">Generate Bill</button>
@@ -286,18 +349,16 @@ function renderTabs() {
 }
 
 /* ========================================================= */
-/* BILL GENERATION */
+/* BILL GENERATION & PAYMENT */
 /* ========================================================= */
 function openBill(tableNumber) {
   currentBill = activeTabs[tableNumber];
   if (!currentBill) return;
 
-  // Fill Bill Details
   document.getElementById('b-table').textContent = currentBill.table;
   document.getElementById('b-id').textContent = currentBill.bill_id;
   document.getElementById('b-total').textContent = `₹${currentBill.total}`;
 
-  // Flatten and group items
   let allItems = [];
   currentBill.orders.forEach(o => { allItems = allItems.concat(o.items); });
   const groupedItems = {};
@@ -312,12 +373,10 @@ function openBill(tableNumber) {
     tbody.innerHTML += `<tr><td>${item.name}</td><td style="text-align:center;">${item.qty}</td><td style="text-align:right;">₹${item.price * item.qty}</td></tr>`;
   });
 
-  // Generate UPI QR
   document.getElementById('qrcode').innerHTML = '';
   const upiString = `upi://pay?pa=neelkanthstar@upi&pn=Neelkanth%20Star&am=${currentBill.total}&cu=INR`;
   new QRCode(document.getElementById("qrcode"), {
-    text: upiString,
-    width: 120, height: 120,
+    text: upiString, width: 120, height: 120,
     colorDark : "#1B3A6B", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H
   });
 
@@ -326,22 +385,130 @@ function openBill(tableNumber) {
 
 async function confirmPayment() {
   if (!currentBill) return;
-
-  // Mark ALL orders for this table as PAID
   const orderIds = currentBill.orders.map(o => o.id);
+  const { error } = await supabaseClient.from('orders').update({ status: 'PAID' }).in('id', orderIds);
   
-  const { error } = await supabaseClient
-    .from('orders')
-    .update({ status: 'PAID' })
-    .in('id', orderIds);
-
-  if (error) {
-    alert("Error marking paid: " + error.message);
-  } else {
+  if (error) alert("Error marking paid: " + error.message);
+  else {
     document.getElementById('bill-modal').classList.remove('show');
     currentBill = null;
-    // The realtime listener will automatically refresh the tabs and remove this table
   }
+}
+
+/* ========================================================= */
+/* TAB 2: COUPONS */
+/* ========================================================= */
+async function loadCoupons() {
+  const tbody = document.getElementById('coupon-list-container');
+  tbody.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
+  const { data, error } = await supabaseClient.from('coupons').select('*').order('created_at', { ascending: false });
+  if (error || !data) { tbody.innerHTML = '<tr><td colspan="4">Error loading coupons.</td></tr>'; return; }
+  if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="4">No coupons generated yet.</td></tr>'; return; }
+
+  tbody.innerHTML = '';
+  data.forEach(c => {
+    const issued = new Date(c.created_at);
+    const diffDays = Math.floor((new Date() - issued) / (1000 * 60 * 60 * 24));
+    if (diffDays > 30) return;
+
+    let statusHtml = c.is_used ? `<span class="c-badge used">Used</span>` : `<span class="c-badge active">Active</span>`;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>${c.code}</strong></td>
+      <td>${c.discount_percent}% OFF</td>
+      <td>Table ${c.table_number}</td>
+      <td>${statusHtml}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+async function checkCoupon() {
+  const code = document.getElementById('coupon-input').value.trim().toUpperCase();
+  const resBox = document.getElementById('coupon-result');
+  const title = document.getElementById('c-res-title');
+  const desc = document.getElementById('c-res-desc');
+  const btn = document.getElementById('c-use-btn');
+  if (!code) return;
+
+  resBox.style.display = 'block'; resBox.className = 'coupon-result';
+  title.textContent = 'Checking...'; desc.textContent = ''; btn.style.display = 'none';
+
+  const { data, error } = await supabaseClient.from('coupons').select('*').eq('code', code).single();
+  if (error || !data) {
+    resBox.classList.add('invalid'); title.textContent = '❌ Invalid Coupon'; desc.textContent = 'This code does not exist.';
+    return;
+  }
+
+  activeCouponId = data.id;
+  const issued = new Date(data.created_at);
+  if (data.is_used) {
+    resBox.classList.add('invalid'); title.textContent = '⚠️ Coupon Used'; desc.textContent = 'Already marked as used.';
+  } else {
+    resBox.classList.add('valid'); title.textContent = '✅ Valid Coupon'; desc.textContent = `${data.discount_percent}% OFF · Table ${data.table_number}`;
+    btn.style.display = 'inline-block';
+  }
+}
+
+async function markCouponUsed() {
+  if (!activeCouponId) return;
+  await supabaseClient.from('coupons').update({ is_used: true }).eq('id', activeCouponId);
+  document.getElementById('coupon-result').className = 'coupon-result invalid';
+  document.getElementById('c-res-title').textContent = 'Coupon Marked Used';
+  document.getElementById('c-use-btn').style.display = 'none';
+  loadCoupons();
+}
+
+/* ========================================================= */
+/* TAB 3: MENU MANAGER */
+/* ========================================================= */
+async function loadMenu() {
+  const tbody = document.getElementById('menu-container');
+  tbody.innerHTML = '<tr><td colspan="5">Loading menu...</td></tr>';
+  const { data, error } = await supabaseClient.from('menu_items').select('*').order('id', { ascending: false });
+  if (error) { tbody.innerHTML = `<tr><td colspan="5">Error loading menu.</td></tr>`; return; }
+  if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="5">No items found.</td></tr>'; return; }
+
+  tbody.innerHTML = '';
+  data.forEach(item => {
+    const catOptions = CATEGORIES.map(c => `<option value="${c}" ${item.category === c ? 'selected' : ''}>${c}</option>`).join('');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="text" id="name-${item.id}" value="${item.name}" /></td>
+      <td><input type="number" id="price-${item.id}" value="${item.price}" style="width:100px;" /></td>
+      <td><select id="cat-${item.id}">${catOptions}</select></td>
+      <td><input type="checkbox" id="avail-${item.id}" ${item.is_available ? 'checked' : ''} style="width:20px;height:20px;" /></td>
+      <td>
+        <button class="btn-edit" onclick="saveMenuItem(${item.id})">Save</button>
+        <button class="btn-delete" onclick="deleteMenuItem(${item.id})">Del</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+async function saveMenuItem(id) {
+  const name = document.getElementById(`name-${id}`).value;
+  const price = parseInt(document.getElementById(`price-${id}`).value);
+  const category = document.getElementById(`cat-${id}`).value;
+  const is_available = document.getElementById(`avail-${id}`).checked;
+  const { error } = await supabaseClient.from('menu_items').update({ name, price, category, is_available }).eq('id', id);
+  if (error) alert("Error saving: " + error.message);
+  else alert("Item updated!");
+}
+
+async function deleteMenuItem(id) {
+  if (!confirm("Delete this dish?")) return;
+  await supabaseClient.from('menu_items').delete().eq('id', id);
+  loadMenu();
+}
+
+async function addNewItem() {
+  const name = prompt("Enter Dish Name:"); if (!name) return;
+  const price = parseInt(prompt("Enter Price (₹):")); if (!price) return;
+  const category = prompt(`Category (${CATEGORIES.join(", ")}):`); if (!category) return;
+  await supabaseClient.from('menu_items').insert([{ name, price, category, is_available: true, is_veg: true }]);
+  loadMenu();
 }
 
 /* INIT */
