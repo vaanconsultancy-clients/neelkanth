@@ -7,11 +7,10 @@
 <title>Ludo — Neelkanth Star</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-/* ... (Keep all the CSS exactly as it was in the previous Ludo file) ... */
 :root{ --navy:#1B3A6B; --navy-dark:#142C52; --gold:#F2C200; --red:#D62828; --green:#1E7A3A; --cream:#FBF6EC; --ink:#1A1A2E; --ludo-red:#E63946; --ludo-green:#2A9D3F; --ludo-yellow:#F2C200; --ludo-blue:#2B7FD6; }
 *{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 body{ font-family:'Inter', sans-serif; background:var(--cream); color:var(--ink); min-height:100dvh; padding-bottom:40px; }
@@ -42,7 +41,7 @@ body{ font-family:'Inter', sans-serif; background:var(--cream); color:var(--ink)
 .game-meta{ display:flex; justify-content:space-between; padding:10px 14px; background:#fff; border-radius:14px; margin-bottom:10px; }
 .turn-indicator{ display:flex; align-items:center; gap:10px; font-family:'Cinzel',serif; font-weight:700; color:var(--navy); }
 .turn-dot{ width:16px; height:16px; border-radius:50%; }
-.turn-dot.red{ background:var(--ludo-red); } .turn-dot.green{ background:var(--ludo-green); } .turn-dot.yellow{ background:var(--ludo-yellow); } .turn-dot.blue{ background:var(--ludo-blue); }
+.turn-dot.red{ background:var(--ludo-red); } .turn-dot.green{ background:var(--ludo-green); }
 .board-area{ position:relative; width:100%; max-width:560px; aspect-ratio:1/1; margin:0 auto 14px; }
 .board-wrap{ border-radius:20px; overflow:hidden; box-shadow:0 0 0 3px var(--gold), 0 0 0 6px var(--navy); }
 canvas#board{ width:100%; height:100%; display:block; }
@@ -67,41 +66,26 @@ canvas#board{ width:100%; height:100%; display:block; }
 
 <!-- SCREEN 1: LOBBY -->
 <section class="screen show" id="screenHome">
-  <div class="hero">
-    <h1>Ludo</h1>
-    <p class="sub">Roll the dice · Beat the table</p>
-  </div>
+  <div class="hero"><h1>Ludo</h1><p class="sub">Roll the dice · Beat the table</p></div>
 
   <div class="opt o1" onclick="startRandomMatch()">
     <div class="o-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-    <div class="o-body">
-      <div class="o-title">Play vs Other Tables</div>
-      <div class="o-sub">Auto-match with someone in the restaurant</div>
-    </div>
+    <div class="o-body"><div class="o-title">Play vs Other Tables</div><div class="o-sub">Auto-match with someone in the restaurant</div></div>
   </div>
 
   <div class="opt o2" onclick="createFriendRoom()">
     <div class="o-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></div>
-    <div class="o-body">
-      <div class="o-title">Play with Friends</div>
-      <div class="o-sub">Generate a link and share on WhatsApp</div>
-    </div>
+    <div class="o-body"><div class="o-title">Play with Friends</div><div class="o-sub">Generate a link and share on WhatsApp</div></div>
   </div>
 
   <div class="opt o3" onclick="prepGame('bots')">
     <div class="o-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/></svg></div>
-    <div class="o-body">
-      <div class="o-title">Play with Bots</div>
-      <div class="o-sub">Practice offline against the computer</div>
-    </div>
+    <div class="o-body"><div class="o-title">Play with Bots</div><div class="o-sub">Practice offline against the computer</div></div>
   </div>
 
   <div class="opt o4" onclick="prepGame('offline')">
     <div class="o-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
-    <div class="o-body">
-      <div class="o-title">Offline · Pass & Play</div>
-      <div class="o-sub">Play with friends on the same phone</div>
-    </div>
+    <div class="o-body"><div class="o-title">Offline · Pass & Play</div><div class="o-sub">Play with friends on the same phone</div></div>
   </div>
 </section>
 
@@ -128,7 +112,7 @@ canvas#board{ width:100%; height:100%; display:block; }
   </div>
 </section>
 
-<!-- SCREEN 4: COUNT/COLOUR (Only for Bots/Offline) -->
+<!-- SCREEN 4: SETUP (Bots/Offline) -->
 <section class="screen" id="screenColor">
   <div class="hero"><h1>Setup Game</h1><p class="sub" id="colorSubText"></p></div>
   <div class="color-pick" id="colorPick" style="display:flex; gap:10px; justify-content:center;"></div>
@@ -146,10 +130,7 @@ canvas#board{ width:100%; height:100%; display:block; }
 <!-- SCREEN 5: GAME -->
 <section class="screen" id="screenGame">
   <div class="game-meta">
-    <div class="turn-indicator">
-      <span class="turn-dot red" id="turnDot"></span>
-      <span id="turnText">Red's turn</span>
-    </div>
+    <div class="turn-indicator"><span class="turn-dot red" id="turnDot"></span><span id="turnText">Red's turn</span></div>
     <div class="meta-right" id="gameMeta"></div>
   </div>
   <div class="board-area" id="boardArea">
@@ -180,25 +161,16 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /* ============================================================ */
-/* CONSTANTS & DATA */
+/* GLOBAL STATE */
 /* ============================================================ */
-const colorHex = { red:"#E63946", green:"#2A9D3F", yellow:"#F2C200", blue:"#2B7FD6" };
-const colorName = { red:"Red", green:"Green", yellow:"Yellow", blue:"Blue" };
-const ALL_COLORS = ["red", "green", "yellow", "blue"];
-
-const MAIN_PATH = [[6,1],[6,2],[6,3],[6,4],[6,5],[5,6],[4,6],[3,6],[2,6],[1,6],[0,6],[0,7],[0,8],[1,8],[2,8],[3,8],[4,8],[5,8],[6,9],[6,10],[6,11],[6,12],[6,13],[6,14],[7,14],[8,14],[8,13],[8,12],[8,11],[8,10],[8,9],[9,8],[10,8],[11,8],[12,8],[13,8],[14,8],[14,7],[14,6],[13,6],[12,6],[11,6],[10,6],[9,6],[8,5],[8,4],[8,3],[8,2],[8,1],[8,0],[7,0],[6,0]];
-const START_INDEX = { red:0, green:13, yellow:26, blue:39 };
-const HOME_PATH = { red: [[7,1],[7,2],[7,3],[7,4],[7,5]], green: [[1,7],[2,7],[3,7],[4,7],[5,7]], yellow: [[7,13],[7,12],[7,11],[7,10],[7,9]], blue: [[13,7],[12,7],[11,7],[10,7],[9,7]] };
-const YARD = { red: [[1.5,1.5],[3.5,1.5],[1.5,3.5],[3.5,3.5]], green: [[1.5,10.5],[3.5,10.5],[1.5,12.5],[3.5,12.5]], yellow: [[10.5,10.5],[12.5,10.5],[10.5,12.5],[12.5,12.5]], blue: [[10.5,1.5],[12.5,1.5],[10.5,3.5],[12.5,3.5]] };
-const SAFE_INDICES = [0, 8, 13, 21, 26, 34, 39, 47];
-
 let currentTable = localStorage.getItem('neelkanth_table') || "1";
 let GAME = null;
 let currentRoom = null;
 let isMultiplayer = false;
 let isHost = false;
-let myMultiplayerColor = null;
+let myMultiplayerColor = 'red'; // Host is always Red, Guest is always Green
 let realtimeChannel = null;
+let matchmakingInterval = null;
 
 /* ============================================================ */
 /* UI NAVIGATION */
@@ -216,38 +188,38 @@ function showModal(title, text){
 function closeModal(){ document.getElementById('modalOverlay').classList.remove('show'); }
 
 /* ============================================================ */
-/* MULTIPLAYER LOGIC (Matchmaking & Friends) */
+/* MATCHMAKING (Table vs Table) */
 /* ============================================================ */
-
-// 1. Random Matchmaking
-let matchmakingTimer = 120;
-let matchmakingInterval = null;
-
 async function startRandomMatch(){
   showScreen('screenMatch');
-  matchmakingTimer = 120;
+  let matchmakingTimer = 120;
   
-  // Add self to queue
+  // 1. Add to queue
   await supabaseClient.from('matchmaking_queue').delete().eq('table_number', currentTable);
   await supabaseClient.from('matchmaking_queue').insert([{ table_number: parseInt(currentTable), status: 'SEARCHING' }]);
 
-  // Listen to queue for others
+  // 2. Poll the queue
   matchmakingInterval = setInterval(async ()=>{
     matchmakingTimer--;
     document.getElementById('matchTimer').textContent = `0${Math.floor(matchmakingTimer/60)}:${String(matchmakingTimer%60).padStart(2,'0')}`;
 
+    // Check if someone else is waiting
     const { data } = await supabaseClient.from('matchmaking_queue').select('*').eq('status', 'SEARCHING').neq('table_number', parseInt(currentTable)).limit(1);
 
     if (data && data.length > 0) {
-      // Match found!
+      // Match found! Create a room code
       clearInterval(matchmakingInterval);
-      await supabaseClient.from('matchmaking_queue').delete().in('table_number', [parseInt(currentTable), data[0].table_number]);
+      const opponentTable = data[0].table_number;
+      const roomCode = `MATCH-${Math.min(currentTable, opponentTable)}-${Math.max(currentTable, opponentTable)}`;
       
-      // Host is the one with the lower table number to keep it consistent
-      const hostTable = Math.min(parseInt(currentTable), data[0].table_number);
-      const roomCode = "MATCH-" + hostTable + "-" + Math.max(parseInt(currentTable), data[0].table_number);
+      // Delete both from queue
+      await supabaseClient.from('matchmaking_queue').delete().in('table_number', [parseInt(currentTable), opponentTable]);
       
-      joinRoom(roomCode, hostTable.toString() === currentTable);
+      // Determine who is host (lower table number)
+      const hostTable = Math.min(parseInt(currentTable), opponentTable);
+      const amIHost = (parseInt(currentTable) === hostTable);
+      
+      joinRoom(roomCode, amIHost);
     }
 
     if (matchmakingTimer <= 0) {
@@ -261,25 +233,30 @@ async function startRandomMatch(){
 
 function cancelMatchmaking() {
   clearInterval(matchmakingInterval);
-  supabaseClient.from('matchmaking_queue').delete().eq('table_number', currentTable).then(() => {
-    showScreen('screenHome');
-  });
+  supabaseClient.from('matchmaking_queue').delete().eq('table_number', currentTable).then(() => showScreen('screenHome'));
 }
 
-// 2. Friend Invite (Link Sharing)
+/* ============================================================ */
+/* FRIENDS INVITE (Link Sharing) */
+/* ============================================================ */
 async function createFriendRoom(){
+  // Generate a 4-digit code
   const roomCode = "NEEL-" + Math.floor(1000 + Math.random() * 9000);
   const shareUrl = window.location.origin + window.location.pathname + "?room=" + roomCode + "&host=1";
   
   document.getElementById('shareLink').textContent = shareUrl;
   showScreen('screenFriendRoom');
 
-  // Start waiting for friend to join
+  // Insert into rooms table as 'waiting'
+  await supabaseClient.from('rooms').insert([{ id: roomCode, host_table: currentTable, status: 'waiting' }]);
+
+  // Start listening for guest to join
   joinRoom(roomCode, true); 
 }
 
 function cancelFriendRoom() {
   if (realtimeChannel) supabaseClient.removeChannel(realtimeChannel);
+  if (currentRoom) supabaseClient.from('rooms').delete().eq('id', currentRoom);
   window.history.replaceState({}, document.title, window.location.pathname);
   showScreen('screenHome');
 }
@@ -289,36 +266,41 @@ function copyLink() {
   navigator.clipboard.writeText(text).then(() => alert("Link copied! Send it on WhatsApp."));
 }
 
-// 3. Connect to Supabase Realtime Room
+/* ============================================================ */
+/* SUPABASE ROOM SYNC */
+/* ============================================================ */
 async function joinRoom(roomCode, amIHost) {
   currentRoom = roomCode;
   isMultiplayer = true;
   isHost = amIHost;
-  myMultiplayerColor = isHost ? 'red' : 'green'; // Host is Red, Guest is Green
+  myMultiplayerColor = isHost ? 'red' : 'green';
 
-  showModal("Connecting...", isHost ? "Waiting for opponent to join..." : "Joining game...");
+  // Listen to the room row for the guest to join
+  if (isHost) {
+    supabaseClient.channel('room_watch_' + roomCode)
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: `id=eq.${roomCode}` }, payload => {
+        if (payload.new.status === 'playing') {
+          // Guest joined!
+          closeModal();
+          showScreen('screenGame');
+          startGame({ mode: 'multiplayer', myColor: 'red' });
+        }
+      }).subscribe();
+      
+    showModal("Waiting...", "Waiting for opponent to join...");
+  } else {
+    // If Guest, update room status to playing
+    await supabaseClient.from('rooms').update({ status: 'playing', guest_table: currentTable }).eq('id', roomCode);
+    showScreen('screenGame');
+    startGame({ mode: 'multiplayer', myColor: 'green' });
+  }
 
-  // Setup Realtime Channel
+  // Setup the broadcast channel for gameplay
   if (realtimeChannel) supabaseClient.removeChannel(realtimeChannel);
+  realtimeChannel = supabaseClient.channel('game_' + roomCode, { config: { broadcast: { self: false } } });
   
-  realtimeChannel = supabaseClient.channel('room_' + roomCode, {
-    config: { broadcast: { self: false } }
-  });
-
   realtimeChannel
-    .on('broadcast', { event: 'start_game' }, payload => {
-      closeModal();
-      showScreen('screenGame');
-      // If Guest receives start_game, initialize the board
-      if (!isHost) {
-        GAME = createGameState({ mode: 'multiplayer', myColor: 'green' });
-        updateTurnUI();
-        renderBoard();
-        positionDice();
-      }
-    })
     .on('broadcast', { event: 'roll' }, payload => {
-      // When opponent rolls, update our board
       GAME.dice = payload.dice;
       GAME.turn = payload.color;
       renderDice(payload.dice);
@@ -326,7 +308,6 @@ async function joinRoom(roomCode, amIHost) {
       renderBoard();
     })
     .on('broadcast', { event: 'move' }, payload => {
-      // When opponent moves, apply to our board
       applyMove(payload.color, payload.tokenIdx, payload.dice);
       renderBoard();
       checkWin(payload.color);
@@ -340,21 +321,7 @@ async function joinRoom(roomCode, amIHost) {
       positionDice();
       document.getElementById('rollInfo').textContent = "Tap the dice to roll";
     })
-    .subscribe((status) => {
-      if (status === 'SUBSCRIBED') {
-        if (isHost) {
-          // If host, wait for guest, then send start signal
-          setTimeout(() => {
-            if (realtimeChannel) {
-              realtimeChannel.send({ type: 'broadcast', event: 'start_game', payload: {} });
-              closeModal();
-              showScreen('screenGame');
-              startGame({ mode: 'multiplayer', myColor: 'red' });
-            }
-          }, 3000); // Give guest 3 seconds to join
-        }
-      }
-    });
+    .subscribe();
 }
 
 /* ============================================================ */
@@ -371,7 +338,6 @@ function prepGame(mode){
     document.getElementById('diffSection').style.display = 'none';
   }
   
-  // Setup color picker (Red or Green only for simplicity)
   const colorPick = document.getElementById('colorPick');
   colorPick.innerHTML = '';
   ['red', 'green'].forEach(c => {
@@ -391,8 +357,7 @@ function prepGame(mode){
 
 document.getElementById('btnStartGame').onclick = () => {
   showScreen('screenGame');
-  updateTurnUI(); renderDice(1); renderBoard(); positionDice();
-  if (GAME.players[GAME.turn].isBot) setTimeout(botTurn, 800);
+  startGame({ mode: GAME.mode, myColor: GAME.myColor, difficulty: GAME.difficulty });
 };
 
 function createGameState(opts) {
@@ -404,8 +369,16 @@ function createGameState(opts) {
   return state;
 }
 
+function startGame(opts) {
+  GAME = createGameState(opts);
+  document.getElementById('gameMeta').textContent = opts.mode === 'multiplayer' ? "vs Player" : "vs Bot";
+  updateTurnUI(); renderDice(1); renderBoard(); positionDice();
+  document.getElementById('rollInfo').textContent = "Tap the dice to roll";
+  if (GAME.players[GAME.turn].isBot) setTimeout(botTurn, 800);
+}
+
 /* ============================================================ */
-/* GAMEPLAY LOGIC (Tap to Move) */
+/* GAMEPLAY LOGIC */
 /* ============================================================ */
 const canvas = document.getElementById('board');
 const ctx = canvas.getContext('2d');
@@ -415,21 +388,17 @@ function renderBoard(){
   ctx.fillStyle = "#FFFCF4"; ctx.fillRect(0,0,600,600);
   ctx.strokeStyle = "#1A1A2E"; ctx.lineWidth = 6; ctx.strokeRect(3,3,594,594);
   
-  // Quadrants
   drawQuadrant(0,0,"red"); drawQuadrant(9,0,"blue"); drawQuadrant(0,9,"green"); drawQuadrant(9,9,"yellow");
   
-  // Cross
   ctx.fillStyle = "#FFFCF4"; ctx.fillRect(6*CELL,0,3*CELL,15*CELL); ctx.fillRect(0,6*CELL,15*CELL,3*CELL);
   ctx.strokeStyle = "#1A1A2E"; ctx.lineWidth = 1.5;
   for(let r=0;r<15;r++) for(let c=0;c<15;c++) {
     if((c>=6&&c<=8)||(r>=6&&r<=8)) { if(c>=6&&c<=8&&r>=6&&r<=8) continue; ctx.strokeRect(c*CELL,r*CELL,CELL,CELL); }
   }
   
-  // Paths
   HOME_PATH.red.forEach(([r,c])=>{ ctx.fillStyle=colorHex.red; ctx.fillRect(c*CELL,r*CELL,CELL,CELL); });
   HOME_PATH.green.forEach(([r,c])=>{ ctx.fillStyle=colorHex.green; ctx.fillRect(c*CELL,r*CELL,CELL,CELL); });
   
-  // Center
   ctx.fillStyle="#1A1A2E"; ctx.beginPath(); ctx.moveTo(6*CELL,6*CELL); ctx.lineTo(9*CELL,6*CELL); ctx.lineTo(9*CELL,9*CELL); ctx.lineTo(6*CELL,9*CELL); ctx.closePath(); ctx.fill();
 
   if(GAME) {
@@ -462,7 +431,7 @@ function drawToken(cx,cy,color,isMovable){
 
 function updateTurnUI(){
   document.getElementById('turnDot').className = "turn-dot " + GAME.turn;
-  document.getElementById('turnText').textContent = `${colorName[GAME.turn]}'s turn`;
+  document.getElementById('turnText').textContent = `${GAME.turn === 'red' ? 'Red' : 'Green'}'s turn`;
 }
 
 /* DICE & MOVES */
@@ -481,9 +450,11 @@ function positionDice(){
 
 document.getElementById('dice').onclick = () => {
   if(!GAME || GAME.hasRolled || GAME.awaitingMove) return;
-  if(isMultiplayer && GAME.turn !== myMultiplayerColor) return; // Not your turn
+  if(isMultiplayer && GAME.turn !== myMultiplayerColor) return; 
+  
   GAME.hasRolled = true;
   document.getElementById('dice').classList.add('rolling');
+  
   setTimeout(()=>{
     document.getElementById('dice').classList.remove('rolling');
     GAME.dice = Math.floor(Math.random()*6)+1;
@@ -556,10 +527,31 @@ function nextTurn(){
   document.getElementById('rollInfo').textContent = "Tap the dice to roll";
   
   if(isMultiplayer) realtimeChannel.send({ type:'broadcast', event:'next_turn', payload:{ turn:GAME.turn } });
+  if(GAME.players[GAME.turn].isBot) setTimeout(botTurn, 700);
+}
+
+function botTurn(){
+  if(!GAME || !GAME.players[GAME.turn].isBot) return;
+  GAME.hasRolled = true;
+  document.getElementById('dice').classList.add('rolling');
+  setTimeout(()=>{
+    document.getElementById('dice').classList.remove('rolling');
+    GAME.dice = Math.floor(Math.random()*6)+1;
+    renderDice(GAME.dice);
+    document.getElementById('rollInfo').innerHTML = `Bot rolled <strong>${GAME.dice}</strong>`;
+    afterRoll(GAME.turn, GAME.dice);
+  }, 600);
+}
+
+function checkWin(color){
+  if(GAME.players[color].tokens.every(t=> t.pos===57)){
+    showModal("Game Over", `${color === 'red' ? 'Red' : 'Green'} Wins!`);
+    GAME = null;
+  }
 }
 
 /* ============================================================ */
-/* INIT & URL PARSING (Friend Joins via Link) */
+/* INIT & FRIEND LINK JOINING */
 /* ============================================================ */
 (function init(){
   const params = new URLSearchParams(window.location.search);
@@ -567,7 +559,7 @@ function nextTurn(){
   const isHostParam = params.get('host');
 
   if (roomCode) {
-    // Someone clicked a friend invite link
+    // Friend clicked the link!
     joinRoom(roomCode, isHostParam === '1');
   } else {
     renderBoard();
