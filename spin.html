@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root{
@@ -711,28 +712,36 @@ canvas#wheel{
 
 <script>
 /* ============================================================
-   NEELKANTH STAR — LUCKY SPIN
+   SUPABASE CONFIG
    ============================================================ */
+const SUPABASE_URL = 'https://scuiidvmhsyknhqlszzg.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjdWlpZHZtaHN5a25ocWxzenpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzNDgyOTEsImV4cCI6MjEwNzkyNDI5MX0.AiZgUL1lOcp7LHIP1JgQipXbtC-NPCBQjcWJAK_br-0';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+/* ============================================================ */
+/* NEELKANTH STAR — LUCKY SPIN */
+/* ============================================================ */
 document.getElementById('yr').textContent = new Date().getFullYear();
+
+let currentTable = null;
 
 (function initTable(){
   const params = new URLSearchParams(window.location.search);
   const tUrl = params.get('table');
-  let table = null;
   if (tUrl && /^[0-9]{1,3}$/.test(tUrl)){
-    table = tUrl;
+    currentTable = tUrl;
     localStorage.setItem('neelkanth_table', tUrl);
   } else {
     const saved = localStorage.getItem('neelkanth_table');
-    if (saved && /^[0-9]{1,3}$/.test(saved)) table = saved;
+    if (saved && /^[0-9]{1,3}$/.test(saved)) currentTable = saved;
   }
-  if (table){
+  if (currentTable){
     const chip = document.getElementById('tableChip');
-    if (chip){ chip.textContent = table; chip.classList.add('show'); }
+    if (chip){ chip.textContent = currentTable; chip.classList.add('show'); }
     document.querySelectorAll('a[data-nav]').forEach(a=>{
       const base = a.getAttribute('data-nav');
       const sep = base.includes('?') ? '&' : '?';
-      a.setAttribute('href', base + sep + 'table=' + table);
+      a.setAttribute('href', base + sep + 'table=' + currentTable);
     });
   }
 })();
@@ -743,12 +752,9 @@ const NEAR_RADIUS_M  = 500;
 const SPIN_STORAGE_KEY = "neelkanth_spin_data";
 const MAX_SPINS_PER_DAY = 1;
 
-/* ============================================================
-   UPDATED PRIZE POOL
-   Mathematically forced to 95% LOSE, 5% P10.
-   The others (JACKPOT, P50, P25, FREE) exist only for the
-   wheel visuals — their weights are 0 so they are never picked.
-   ============================================================ */
+/* ============================================================ */
+/* UPDATED PRIZE POOL (95% Lose, 5% P10) */
+/* ============================================================ */
 const PRIZE_POOL = [
   { key:"P10",     weight:5,  title:"10% OFF", desc:"You won 10% off your next order!", emoji:"🎉", color:"#1B3A6B" },
   { key:"LOSE",    weight:95, title:"Better Luck Next Time", desc:"No win this time. Come back tomorrow and try again!", emoji:"🙏", color:"#4A4A5E" },
@@ -804,9 +810,9 @@ function saveSpinHistory(){
   localStorage.setItem(SPIN_STORAGE_KEY, JSON.stringify(spinHistory));
 }
 
-/* ============================================================
-   LOCATION GATE
-   ============================================================ */
+/* ============================================================ */
+/* LOCATION GATE */
+/* ============================================================ */
 function haversineMeters(lat1, lon1, lat2, lon2){
   const R = 6371000;
   const toRad = (d)=> d * Math.PI / 180;
@@ -903,9 +909,9 @@ gateBack.addEventListener("click", ()=>{
   window.location.href = "menu.html";
 });
 
-/* ============================================================
-   WHEEL DRAW
-   ============================================================ */
+/* ============================================================ */
+/* WHEEL DRAW */
+/* ============================================================ */
 const canvas = $("#wheel");
 const ctx = canvas.getContext("2d");
 const CX = canvas.width / 2;
@@ -966,9 +972,9 @@ function drawWheel(){
 }
 drawWheel();
 
-/* ============================================================
-   SPIN LOGIC
-   ============================================================ */
+/* ============================================================ */
+/* SPIN LOGIC */
+/* ============================================================ */
 function pickPrize(){
   const totalWeight = PRIZE_POOL.reduce((a, p)=> a + p.weight, 0);
   let r = Math.random() * totalWeight;
@@ -1071,9 +1077,9 @@ function spin(){
 }
 $("#spinBtn").addEventListener("click", spin);
 
-/* ============================================================
-   RESULT MODAL
-   ============================================================ */
+/* ============================================================ */
+/* RESULT MODAL */
+/* ============================================================ */
 function showResult(prize){
   $("#step1").style.display = "block";
   $("#step2").style.display = "none";
@@ -1097,7 +1103,11 @@ $("#closeBtn2").addEventListener("click", closeModal);
 $("#modalOverlay").addEventListener("click", (e)=>{
   if (e.target === $("#modalOverlay")) closeModal();
 });
-$("#claimBtn").addEventListener("click", ()=>{
+
+/* ============================================================ */
+/* CLAIM COUPON (WITH SUPABASE) */
+/* ============================================================ */
+$("#claimBtn").addEventListener("click", async ()=>{
   if (!currentPrize) return;
   if (currentPrize.key === "LOSE"){ closeModal(); return; }
   const num = $("#numInput").value.trim();
@@ -1106,11 +1116,39 @@ $("#claimBtn").addEventListener("click", ()=>{
     return;
   }
   $("#numWrap").classList.remove("err");
-  currentPrize.coupon = "NEEL-" + randCode(6);
+
+  // Generate Coupon Code
+  const code = "NEEL-" + randCode(6);
+  currentPrize.coupon = code;
   currentPrize.mobile = num;
   currentPrize.issued = new Date().toISOString();
+
+  // Save to Supabase Database
+  const btn = $("#claimBtn");
+  btn.textContent = "Saving to Database...";
+  btn.disabled = true;
+
+  const { error } = await supabaseClient
+    .from('coupons')
+    .insert([{ 
+      code: code, 
+      table_number: currentTable ? parseInt(currentTable) : 1, 
+      discount_percent: 10, 
+      is_used: false 
+    }]);
+
+  btn.textContent = "Claim Coupon";
+  btn.disabled = false;
+
+  if (error) {
+    // If database fails, we still show the coupon visually but warn in console
+    console.error("Database save failed: ", error);
+    toast("⚠️ Database error. Coupon might not work.");
+  }
+
   showCoupon();
 });
+
 function randCode(len){
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let out = "";
@@ -1134,7 +1172,7 @@ function showCoupon(){
   startConfetti();
 }
 
-/* SAVE COUPON */
+/* SAVE COUPON IMAGE */
 $("#saveBtn").addEventListener("click", ()=>{
   if (!currentPrize || !currentPrize.coupon){
     toast("No coupon to save");
