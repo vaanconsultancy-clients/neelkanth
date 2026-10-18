@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+<title>Kitchen Display — Neelkanth Star</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --navy: #1B3A6B; --navy-dark: #142C52; --gold: #F2C200;
+    --red: #D62828; --green: #1E7A3A; --ink: #1A1A2E; --bg: #0f1115;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
+  body { background: var(--bg); color: white; display: flex; height: 100vh; overflow: hidden; }
+
+  /* Login Screen */
+  #login-screen { position: fixed; inset: 0; background: var(--navy-dark); display: flex; align-items: center; justify-content: center; z-index: 100; }
+  .login-box { background: white; padding: 30px; border-radius: 12px; width: 300px; text-align: center; color: var(--ink); }
+  .login-box h2 { margin-bottom: 20px; color: var(--navy); }
+  .login-box input { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 6px; }
+  .login-box button { width: 100%; padding: 14px; background: var(--gold); color: var(--navy); border: none; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; }
+
+  /* Header */
+  .header { position: fixed; top: 0; left: 0; right: 0; height: 70px; background: var(--navy); display: flex; align-items: center; justify-content: space-between; padding: 0 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 50; }
+  .header h1 { font-size: 24px; letter-spacing: 1px; color: var(--gold); font-family: 'Cinzel', serif; }
+  .header .status { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 20px; font-weight: bold; }
+  .header .status::before { content: ''; width: 10px; height: 10px; border-radius: 50%; background: #888; }
+  .header .status.live::before { background: var(--green); animation: pulse 2s infinite; }
+  
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(30, 122, 58, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(30, 122, 58, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(30, 122, 58, 0); }
+  }
+
+  /* Main Content */
+  .main { margin-top: 70px; padding: 25px; width: 100%; height: calc(100vh - 70px); overflow-y: auto; }
+  .orders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px; }
+  
+  /* Order Card */
+  .order-card { background: #1a1d24; border-radius: 12px; border: 2px solid #333; overflow: hidden; display: flex; flex-direction: column; }
+  .order-card.urgent { border-color: var(--red); animation: urgentPulse 2s infinite; }
+  
+  @keyframes urgentPulse {
+    0% { box-shadow: 0 0 0 0 rgba(214, 40, 40, 0.4); }
+    50% { box-shadow: 0 0 20px 0 rgba(214, 40, 40, 0.6); }
+    100% { box-shadow: 0 0 0 0 rgba(214, 40, 40, 0.4); }
+  }
+
+  .card-header { background: #252932; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #333; }
+  .table-num { font-size: 28px; font-weight: 800; color: var(--gold); }
+  .time { font-size: 14px; font-weight: bold; color: #aaa; display: flex; align-items: center; gap: 5px; }
+  .time.over-10 { color: var(--red); }
+
+  .card-body { padding: 20px; flex: 1; }
+  .item-list { list-style: none; }
+  .item-list li { display: flex; justify-content: space-between; font-size: 20px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed #333; }
+  .item-list li:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .item-list li span:first-child { font-weight: 800; color: white; }
+  .item-list li span:last-child { color: var(--gold); font-weight: 800; font-size: 22px; }
+
+  .card-footer { padding: 15px; background: #252932; border-top: 2px solid #333; }
+  .btn-done { width: 100%; padding: 18px; background: var(--green); color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s; }
+  .btn-done:active { transform: scale(0.97); }
+  .btn-done:disabled { background: #444; cursor: not-allowed; }
+
+  .empty-state { text-align: center; margin-top: 100px; color: #666; font-size: 24px; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-box">
+    <h2>Kitchen Login</h2>
+    <input type="email" id="email" placeholder="Email Address" value="cashier@neelkanth.com" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="login()" id="login-btn">Start Kitchen Display</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header" id="header" style="display:none;">
+  <h1>KITCHEN DISPLAY</h1>
+  <div class="status" id="conn-status">Connecting...</div>
+</div>
+
+<!-- MAIN PANEL -->
+<div class="main" id="main-panel" style="display:none;">
+  <div class="orders-grid" id="orders-container">
+    <!-- Orders will be injected here -->
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   SUPABASE CREDENTIALS
+   ========================================================= */
+const SUPABASE_URL = 'https://scuiidvmhsyknhqlszzg.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjdWlpZHZtaHN5a25ocWxzenpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzNDgyOTEsImV4cCI6MjEwNzkyNDI5MX0.AiZgUL1lOcp7LHIP1JgQipXbtC-NPCBQjcWJAK_br-0';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let currentOrders = [];
+let realtimeChannel = null;
+let timerInterval = null;
+
+/* =========================================================
+   AUTHENTICATION
+   ========================================================= */
+async function login() {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  const btn = document.getElementById('login-btn');
+
+  btn.textContent = 'Connecting...';
+
+  const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    alert(error.message);
+    btn.textContent = 'Start Kitchen Display';
+  } else {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('header').style.display = 'flex';
+    document.getElementById('main-panel').style.display = 'block';
+    initRealtime();
+    startClock();
+  }
+}
+
+// Check if already logged in
+async function checkSession() {
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if (session) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('header').style.display = 'flex';
+    document.getElementById('main-panel').style.display = 'block';
+    initRealtime();
+    startClock();
+  }
+}
+
+/* =========================================================
+   REALTIME DATA (Only show 'PREPARING' orders)
+   ========================================================= */
+async function fetchOrders() {
+  // The kitchen only cares about orders that the Cashier has accepted.
+  const { data, error } = await supabaseClient
+    .from('orders')
+    .select('*')
+    .eq('status', 'PREPARING') 
+    .order('created_at', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching orders:', error);
+    return;
+  }
+  
+  currentOrders = data || [];
+  renderOrders();
+}
+
+function initRealtime() {
+  const statusEl = document.getElementById('conn-status');
+  statusEl.textContent = 'LIVE';
+  statusEl.classList.add('live');
+
+  fetchOrders();
+
+  if (realtimeChannel) supabaseClient.removeChannel(realtimeChannel);
+  
+  realtimeChannel = supabaseClient
+    .channel('kitchen_orders')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, payload => {
+      // If an order moves to PREPARING, it appears here.
+      // If it moves to PREPARED, it disappears from here.
+      fetchOrders(); 
+    })
+    .subscribe();
+}
+
+/* =========================================================
+   RENDER UI
+   ========================================================= */
+function renderOrders() {
+  const container = document.getElementById('orders-container');
+  container.innerHTML = '';
+
+  if (currentOrders.length === 0) {
+    container.innerHTML = '<div class="empty-state">No pending orders.<br>Waiting for cashier to accept...</div>';
+    return;
+  }
+
+  currentOrders.forEach(order => {
+    const card = document.createElement('div');
+    card.className = `order-card`;
+    card.setAttribute('data-id', order.id);
+    card.setAttribute('data-time', new Date(order.created_at).getTime());
+
+    // Build items HTML
+    let itemsHtml = '';
+    if (Array.isArray(order.items)) {
+      order.items.forEach(item => {
+        itemsHtml += `<li><span>${item.qty}x ${item.name}</span> <span>x${item.qty}</span></li>`;
+      });
+    }
+
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="table-num">TABLE ${order.table_number}</div>
+        <div class="time" id="time-${order.id}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>Just now</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <ul class="item-list">
+          ${itemsHtml}
+        </ul>
+      </div>
+      <div class="card-footer">
+        <button class="btn-done" onclick="markPrepared(${order.id})">✓ Mark Prepared</button>
+      </div>
+    `;
+    
+    container.appendChild(card);
+  });
+
+  updateTimers(); // Run once immediately to set initial times
+}
+
+/* =========================================================
+   TIMERS (Show how long the order has been cooking)
+   ========================================================= */
+function startClock() {
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(updateTimers, 10000); // Update every 10 seconds
+}
+
+function updateTimers() {
+  const now = Date.now();
+  document.querySelectorAll('.order-card').forEach(card => {
+    const timeEl = card.querySelector('.time');
+    if (!timeEl) return;
+
+    const createdTime = parseInt(card.getAttribute('data-time'));
+    const diffMins = Math.floor((now - createdTime) / 60000);
+
+    if (diffMins < 1) {
+      timeEl.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> <span>Just now</span>`;
+      timeEl.classList.remove('over-10');
+      card.classList.remove('urgent');
+    } else {
+      timeEl.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> <span>${diffMins} min ago</span>`;
+      
+      // If order is older than 10 mins, make it red and urgent
+      if (diffMins >= 10) {
+        timeEl.classList.add('over-10');
+        card.classList.add('urgent');
+      } else {
+        timeEl.classList.remove('over-10');
+        card.classList.remove('urgent');
+      }
+    }
+  });
+}
+
+/* =========================================================
+   UPDATE STATUS (Mark Prepared)
+   ========================================================= */
+async function markPrepared(orderId) {
+  const btn = event.target;
+  btn.textContent = "Updating...";
+  btn.disabled = true;
+
+  // Update database to PREPARED. 
+  // This will trigger the realtime event, which removes it from this screen.
+  const { error } = await supabaseClient
+    .from('orders')
+    .update({ status: 'PREPARED' })
+    .eq('id', orderId);
+
+  if (error) {
+    alert('Error updating: ' + error.message);
+    btn.textContent = "✓ Mark Prepared";
+    btn.disabled = false;
+  }
+}
+
+/* INIT */
+checkSession();
+</script>
+</body>
+</html>
