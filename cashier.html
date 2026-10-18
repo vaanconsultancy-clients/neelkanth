@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <style>
   :root {
@@ -18,90 +19,76 @@
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
   body { background: #f4f4f4; color: var(--ink); display: flex; height: 100vh; overflow: hidden; }
 
-  /* Login Screen */
+  /* Login */
   #login-screen { position: fixed; inset: 0; background: var(--navy-dark); display: flex; align-items: center; justify-content: center; z-index: 100; }
   .login-box { background: white; padding: 30px; border-radius: 12px; width: 100%; max-width: 340px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
   .login-box h2 { color: var(--navy); margin-bottom: 20px; font-family: 'Cinzel', serif; }
   .login-box input { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
-  .login-box button { width: 100%; padding: 14px; background: var(--gold); color: var(--navy); border: none; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; transition: 0.2s; }
-  .login-box button:hover { background: #e0b000; }
+  .login-box button { width: 100%; padding: 14px; background: var(--gold); color: var(--navy); border: none; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; }
 
   /* Sidebar */
   .sidebar { width: 260px; background: var(--navy-dark); color: white; padding: 20px; display: flex; flex-direction: column; }
   .sidebar h1 { font-size: 22px; margin-bottom: 5px; color: var(--gold); font-family: 'Cinzel', serif; }
-  .sidebar p { font-size: 12px; opacity: 0.7; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px; }
-  .sidebar .nav-btn { padding: 14px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border: none; color: white; text-align: left; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 600; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
-  .sidebar .nav-btn:hover { background: rgba(255,255,255,0.1); }
+  .sidebar p { font-size: 12px; opacity: 0.7; margin-bottom: 30px; text-transform: uppercase; }
+  .sidebar .nav-btn { padding: 14px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border: none; color: white; text-align: left; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
   .sidebar .nav-btn.active { background: var(--gold); color: var(--navy-dark); }
-  .sidebar .logout { margin-top: auto; background: transparent; color: #ff6b6b; padding: 12px; border: 1px solid #ff6b6b; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-  .sidebar .logout:hover { background: var(--red); color: white; }
+  .sidebar .logout { margin-top: auto; background: transparent; color: #ff6b6b; padding: 12px; border: 1px solid #ff6b6b; border-radius: 8px; cursor: pointer; font-weight: bold; }
 
-  /* Main Content */
+  /* Main */
   .main { flex: 1; padding: 25px; overflow-y: auto; }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
-  
   .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
   .header h2 { font-size: 26px; color: var(--navy); }
   .connection-status { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; background: var(--gray); color: #666; display: flex; align-items: center; gap: 6px; }
-  .connection-status::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #999; }
   .connection-status.live { background: #d4edda; color: var(--green); }
-  .connection-status.live::before { background: var(--green); animation: pulse 2s infinite; }
+  .connection-status.live::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
   @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(30, 122, 58, 0.4); } 70% { box-shadow: 0 0 0 6px rgba(30, 122, 58, 0); } 100% { box-shadow: 0 0 0 0 rgba(30, 122, 58, 0); } }
 
-  /* --- TAB 1: ORDERS GRID --- */
-  .orders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
-  .order-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 6px solid var(--gray); display: flex; flex-direction: column; }
-  .order-card.ORDERED { border-left-color: var(--navy); }
-  .order-card.PREPARING { border-left-color: var(--gold); }
-  .order-card.PREPARED { border-left-color: var(--green); background: #f0fff4; }
+  /* Table Tabs Grid */
+  .table-tabs { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+  .tab-card { background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 6px solid var(--gold); display: flex; flex-direction: column; overflow: hidden; }
   
-  .card-header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #eee; background: #fafafa; }
-  .table-num { font-size: 22px; font-weight: 800; color: var(--ink); }
-  .order-time { font-size: 12px; color: #888; font-weight: 500; }
-  .card-body { padding: 20px; flex: 1; }
-  .item-list { list-style: none; margin-bottom: 0; }
-  .item-list li { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #f0f0f0; }
-  .item-list li:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-  .item-list li span:first-child { font-weight: 600; }
-  .card-footer { padding: 20px; background: #fff; border-top: 1px solid #eee; }
-  .total-row { display: flex; justify-content: space-between; font-weight: 800; font-size: 18px; margin-bottom: 15px; color: var(--navy); }
-  .action-btns { display: flex; gap: 10px; }
-  .action-btns button { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
-  .btn-start { background: var(--navy); color: white; }
-  .btn-ready { background: var(--gold); color: var(--navy); }
-  .btn-paid { background: var(--green); color: white; }
-  .badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
-  .badge.ORDERED { background: #e3f2fd; color: var(--navy); }
-  .badge.PREPARING { background: #fff9e6; color: #b8860b; }
-  .badge.PREPARED { background: #e8f5e9; color: var(--green); }
-
-  /* --- TAB 2: COUPONS --- */
-  .coupon-search { display: flex; gap: 10px; margin-bottom: 30px; max-width: 500px; }
-  .coupon-search input { flex: 1; padding: 14px; border: 2px solid #ccc; border-radius: 8px; font-size: 16px; text-transform: uppercase; }
-  .coupon-search button { padding: 14px 24px; background: var(--navy); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-  .coupon-result { background: white; padding: 20px; border-radius: 12px; max-width: 500px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: none; margin-bottom: 30px;}
-  .coupon-result.valid { border-left: 6px solid var(--green); }
-  .coupon-result.invalid { border-left: 6px solid var(--red); }
-  .coupon-list table { width: 100%; background: white; border-collapse: collapse; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-  .coupon-list th, .coupon-list td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
-  .coupon-list th { background: var(--navy); color: white; font-weight: 600; }
-  .c-badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
-  .c-badge.active { background: #e8f5e9; color: var(--green); }
-  .c-badge.used { background: #ffebee; color: var(--red); text-decoration: line-through; }
-  .c-badge.expired { background: #eeeeee; color: #999; text-decoration: line-through; }
-
-  /* --- TAB 3: MENU MANAGER --- */
-  .menu-table { width: 100%; background: white; border-collapse: collapse; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-  .menu-table th, .menu-table td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
-  .menu-table th { background: var(--navy); color: white; font-weight: 600; }
-  .menu-table input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-  .menu-table select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-  .btn-edit { background: var(--gold); color: var(--navy); border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
-  .btn-delete { background: var(--red); color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
-  .btn-add { background: var(--green); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; margin-bottom: 20px; }
+  .tab-head { padding: 15px 20px; background: #fafafa; border-bottom: 1px dashed #eee; display: flex; justify-content: space-between; align-items: center; }
+  .tab-head h3 { font-family: 'Cinzel', serif; font-size: 20px; color: var(--navy); }
+  .bill-id { font-size: 12px; background: var(--navy); color: var(--gold); padding: 4px 8px; border-radius: 4px; font-weight: bold; letter-spacing: 1px; }
+  
+  .tab-body { padding: 20px; flex: 1; max-height: 250px; overflow-y: auto; }
+  .item-row { display: flex; justify-content: space-between; font-size: 14px; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+  .item-row span:first-child { font-weight: 600; }
+  
+  .tab-foot { padding: 20px; background: #fff; border-top: 1px solid #eee; }
+  .tab-total { display: flex; justify-content: space-between; font-weight: 800; font-size: 20px; color: var(--navy); margin-bottom: 15px; }
+  .btn-generate { width: 100%; padding: 14px; background: var(--green); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; text-transform: uppercase; cursor: pointer; letter-spacing: 1px; }
 
   .empty-state { text-align: center; padding: 50px; color: #888; font-size: 15px; }
+
+  /* --- BILL MODAL --- */
+  #bill-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; display: none; place-items: center; padding: 20px; }
+  #bill-modal.show { display: grid; }
+  .bill-box { background: white; width: 100%; max-width: 380px; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+  
+  .bill-header { text-align: center; padding: 20px; background: var(--navy); color: white; }
+  .bill-header img { height: 50px; margin-bottom: 10px; }
+  .bill-header h3 { font-family: 'Cinzel', serif; font-size: 20px; color: var(--gold); }
+  .bill-header p { font-size: 11px; opacity: 0.8; margin-top: 4px; }
+  
+  .bill-body { padding: 20px; }
+  .bill-info { display: flex; justify-content: space-between; font-size: 12px; color: #666; margin-bottom: 15px; border-bottom: 1px dashed #ccc; padding-bottom: 10px; }
+  .bill-items { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 15px; }
+  .bill-items th { text-align: left; border-bottom: 2px solid #eee; padding-bottom: 5px; font-weight: 700; }
+  .bill-items td { padding: 8px 0; border-bottom: 1px solid #f9f9f9; }
+  
+  .bill-total { display: flex; justify-content: space-between; font-weight: 800; font-size: 18px; color: var(--navy); border-top: 2px dashed #ccc; padding-top: 10px; }
+  
+  .bill-qr { text-align: center; margin-top: 20px; }
+  .bill-qr #qrcode { display: inline-block; padding: 10px; background: white; border: 1px solid #eee; border-radius: 8px; }
+  .bill-qr p { font-size: 10px; color: #888; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
+  
+  .bill-actions { display: flex; gap: 10px; padding: 20px; background: #f9f9f9; border-top: 1px solid #eee; }
+  .bill-actions button { flex: 1; padding: 14px; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; }
+  .btn-print { background: var(--navy); color: white; }
+  .btn-paid { background: var(--green); color: white; }
 </style>
 </head>
 <body>
@@ -120,134 +107,81 @@
 <div class="sidebar" id="sidebar" style="display:none;">
   <h1>Neelkanth Star</h1>
   <p>Cashier Panel</p>
-  
-  <button class="nav-btn active" onclick="switchTab('tab-orders', this)">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-    Live Orders
-  </button>
-  
-  <button class="nav-btn" onclick="switchTab('tab-coupons', this)">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
-    Coupons & Offers
-  </button>
-  
-  <button class="nav-btn" onclick="switchTab('tab-menu', this)">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-    Menu Manager
-  </button>
-  
+  <button class="nav-btn active" onclick="switchTab('tab-orders', this)">Live Tables</button>
   <button class="logout" onclick="logout()">Logout</button>
 </div>
 
 <!-- MAIN PANEL -->
 <div class="main" id="main-panel" style="display:none;">
-  
   <div class="header">
-    <h2 id="page-title">Live Orders</h2>
+    <h2>Live Table Tabs</h2>
     <div class="connection-status" id="conn-status">Connecting...</div>
   </div>
 
-  <!-- TAB 1: LIVE ORDERS -->
   <div id="tab-orders" class="tab-content active">
-    <div class="orders-grid" id="orders-container"></div>
+    <div class="table-tabs" id="orders-container"></div>
   </div>
+</div>
 
-  <!-- TAB 2: COUPONS -->
-  <div id="tab-coupons" class="tab-content">
-    <!-- Quick Verifier -->
-    <div class="coupon-search">
-      <input type="text" id="coupon-input" placeholder="Enter code (e.g. NEEL-A7X9K2)" />
-      <button onclick="checkCoupon()">Verify Code</button>
+<!-- BILL MODAL -->
+<div id="bill-modal">
+  <div class="bill-box">
+    <div class="bill-header">
+      <img src="neelkanthlogo.png" alt="Logo" onerror="this.style.display='none'">
+      <h3>NEELKANTH STAR</h3>
+      <p>GT Road, Karnal, Haryana</p>
     </div>
-    <div class="coupon-result" id="coupon-result">
-      <h3 id="c-res-title">Coupon Status</h3>
-      <p id="c-res-desc"></p>
-      <button id="c-use-btn" style="display:none; margin-top:15px; padding:10px 20px; background:var(--green); color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="markCouponUsed()">Mark as Used</button>
-    </div>
-
-    <!-- All Coupons List -->
-    <h3 style="margin-bottom:15px; color:var(--navy);">All Generated Coupons</h3>
-    <div class="coupon-list">
-      <table>
-        <thead>
-          <tr>
-            <th>Code</th>
-            <th>Discount</th>
-            <th>Table</th>
-            <th>Issued Date</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="coupon-list-container">
-          <tr><td colspan="5">Loading...</td></tr>
-        </tbody>
+    <div class="bill-body">
+      <div class="bill-info">
+        <span>Table: <strong id="b-table">-</strong></span>
+        <span>Bill ID: <strong id="b-id">-</strong></span>
+      </div>
+      <table class="bill-items">
+        <thead><tr><th>Item</th><th style="text-align:center;">Qty</th><th style="text-align:right;">Price</th></tr></thead>
+        <tbody id="b-items"></tbody>
       </table>
+      <div class="bill-total">
+        <span>Total</span>
+        <span id="b-total">₹0</span>
+      </div>
+      <div class="bill-qr">
+        <div id="qrcode"></div>
+        <p>Scan to Pay via UPI</p>
+      </div>
+    </div>
+    <div class="bill-actions">
+      <button class="btn-print" onclick="window.print()">Print Bill</button>
+      <button class="btn-paid" onclick="confirmPayment()">Mark Paid & Close</button>
     </div>
   </div>
-
-  <!-- TAB 3: MENU MANAGER -->
-  <div id="tab-menu" class="tab-content">
-    <button class="btn-add" onclick="addNewItem()">+ Add New Dish</button>
-    <table class="menu-table">
-      <thead>
-        <tr>
-          <th>Dish Name</th>
-          <th>Price (₹)</th>
-          <th>Category</th>
-          <th>Available</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="menu-container">
-        <!-- Menu items load here -->
-      </tbody>
-    </table>
-  </div>
-
 </div>
 
 <script>
-/* =========================================================
-   SUPABASE CREDENTIALS
-   ========================================================= */
+/* ========================================================= */
+/* SUPABASE CONFIG */
+/* ========================================================= */
 const SUPABASE_URL = 'https://scuiidvmhsyknhqlszzg.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjdWlpZHZtaHN5a25ocWxzenpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzNDgyOTEsImV4cCI6MjEwNzkyNDI5MX0.AiZgUL1lOcp7LHIP1JgQipXbtC-NPCBQjcWJAK_br-0';
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-let currentOrders = [];
+let activeTabs = {}; // Stores grouped orders by table_number
 let realtimeChannel = null;
-let activeCouponId = null;
+let currentBill = null; // Stores the tab being billed
 
-// All available categories for the dropdown
-const CATEGORIES = [
-  "Beverages", "Desserts", "Rice", "Salad & Raita", "Chinese", 
-  "Indian Main Course", "Mini Meals", "Snack", "Pakora Superhit", 
-  "Breads", "Combos & Thali", "Street Style", "Tandoori Local", "Sweets Treat"
-];
-
-/* =========================================================
-   AUTHENTICATION
-   ========================================================= */
+/* ========================================================= */
+/* AUTHENTICATION */
+/* ========================================================= */
 async function login() {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
   const btn = document.getElementById('login-btn');
-
   btn.textContent = 'Logging in...';
   const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-
-  if (error) {
-    alert(error.message);
-    btn.textContent = 'Login to Panel';
-  } else {
-    initDashboard();
-  }
+  if (error) { alert(error.message); btn.textContent = 'Login'; }
+  else initDashboard();
 }
 
-async function logout() {
-  await supabaseClient.auth.signOut();
-  window.location.reload();
-}
+async function logout() { await supabaseClient.auth.signOut(); window.location.reload(); }
 
 async function checkSession() {
   const { data: { session } } = await supabaseClient.auth.getSession();
@@ -258,290 +192,156 @@ function initDashboard() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('sidebar').style.display = 'flex';
   document.getElementById('main-panel').style.display = 'block';
-  
   initRealtime();
-  loadMenu();
-  loadCoupons(); // Load coupons on start
 }
 
-/* =========================================================
-   TAB SWITCHING
-   ========================================================= */
-function switchTab(tabId, btn) {
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  
-  document.getElementById(tabId).classList.add('active');
-  btn.classList.add('active');
-
-  const titles = {
-    'tab-orders': 'Live Orders',
-    'tab-coupons': 'Coupons & Offers',
-    'tab-menu': 'Menu Manager'
-  };
-  document.getElementById('page-title').textContent = titles[tabId];
-  
-  if (tabId === 'tab-coupons') loadCoupons();
-}
-
-/* =========================================================
-   TAB 1: LIVE ORDERS
-   ========================================================= */
+/* ========================================================= */
+/* TAB LOGIC & REALTIME */
+/* ========================================================= */
 async function fetchOrders() {
+  // Fetch all active orders (ORDERED, PREPARING, PREPARED)
   const { data, error } = await supabaseClient
     .from('orders')
     .select('*')
-    .neq('status', 'PAID') 
+    .neq('status', 'PAID')
     .order('created_at', { ascending: true });
 
-  if (error) { console.error(error); return; }
-  
-  currentOrders = data || [];
-  renderOrders();
+  if (error) return;
+
+  // Group orders by Table Number
+  activeTabs = {};
+  data.forEach(order => {
+    if (!activeTabs[order.table_number]) {
+      // Create a new Tab for this table
+      activeTabs[order.table_number] = {
+        table: order.table_number,
+        bill_id: `#NK-${5000 + order.id}`, // Unique Bill ID based on first order
+        orders: [],
+        total: 0
+      };
+    }
+    // Add items to the tab
+    activeTabs[order.table_number].orders.push(order);
+    activeTabs[order.table_number].total += order.total_amount;
+  });
+
+  renderTabs();
 }
 
 function initRealtime() {
   const statusEl = document.getElementById('conn-status');
-  statusEl.textContent = 'LIVE';
-  statusEl.classList.add('live');
-
+  statusEl.textContent = 'LIVE'; statusEl.classList.add('live');
   fetchOrders();
-
   if (realtimeChannel) supabaseClient.removeChannel(realtimeChannel);
-  
-  realtimeChannel = supabaseClient
-    .channel('public:orders')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => {
-      fetchOrders(); 
-    })
-    .subscribe();
+  realtimeChannel = supabaseClient.channel('public:orders').on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => fetchOrders()).subscribe();
 }
 
-function renderOrders() {
+function renderTabs() {
   const container = document.getElementById('orders-container');
   container.innerHTML = '';
 
-  if (currentOrders.length === 0) {
-    container.innerHTML = '<div class="empty-state">No active orders right now.<br>New orders will appear here automatically.</div>';
+  const tables = Object.values(activeTabs);
+  if (tables.length === 0) {
+    container.innerHTML = '<div class="empty-state">No active tables right now.<br>New orders will appear here.</div>';
     return;
   }
 
-  currentOrders.forEach(order => {
+  tables.forEach(tab => {
     const card = document.createElement('div');
-    card.className = `order-card ${order.status}`;
-    const time = new Date(order.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    card.className = 'tab-card';
+
+    // Flatten all items from all orders in this tab
+    let allItems = [];
+    tab.orders.forEach(o => {
+      if (Array.isArray(o.items)) allItems = allItems.concat(o.items);
+    });
+
+    // Group identical items (e.g., if they ordered Dal Makhani twice)
+    const groupedItems = {};
+    allItems.forEach(item => {
+      if (!groupedItems[item.name]) groupedItems[item.name] = { name: item.name, qty: 0, price: item.price };
+      groupedItems[item.name].qty += item.qty;
+    });
 
     let itemsHtml = '';
-    if (Array.isArray(order.items)) {
-      order.items.forEach(item => {
-        itemsHtml += `<li><span>${item.qty}x ${item.name}</span> <span>₹${item.price * item.qty}</span></li>`;
-      });
-    }
-
-    let actionBtns = '';
-    if (order.status === 'ORDERED') {
-      actionBtns = `<button class="btn-start" onclick="updateStatus(${order.id}, 'PREPARING')">Accept Order</button>`;
-    } else if (order.status === 'PREPARING') {
-      actionBtns = `<button class="btn-ready" onclick="updateStatus(${order.id}, 'PREPARED')">Mark Prepared</button>`;
-    } else if (order.status === 'PREPARED') {
-      actionBtns = `<button class="btn-paid" onclick="updateStatus(${order.id}, 'PAID')">Collect Payment</button>`;
-    }
+    Object.values(groupedItems).forEach(item => {
+      itemsHtml += `<div class="item-row"><span>${item.qty}x ${item.name}</span> <span>₹${item.price * item.qty}</span></div>`;
+    });
 
     card.innerHTML = `
-      <div class="card-header">
-        <div class="table-num">Table ${order.table_number}</div>
-        <div class="order-time">${time}</div>
+      <div class="tab-head">
+        <h3>Table ${tab.table}</h3>
+        <span class="bill-id">${tab.bill_id}</span>
       </div>
-      <div class="card-body">
-        <div style="margin-bottom: 12px;"><span class="badge ${order.status}">${order.status}</span></div>
-        <ul class="item-list">${itemsHtml}</ul>
+      <div class="tab-body">
+        ${itemsHtml}
       </div>
-      <div class="card-footer">
-        <div class="total-row"><span>Total</span><span>₹${order.total_amount}</span></div>
-        <div class="action-btns">${actionBtns}</div>
+      <div class="tab-foot">
+        <div class="tab-total"><span>Total</span><span>₹${tab.total}</span></div>
+        <button class="btn-generate" onclick="openBill(${tab.table})">Generate Bill</button>
       </div>
     `;
     container.appendChild(card);
   });
 }
 
-async function updateStatus(orderId, newStatus) {
-  const { error } = await supabaseClient.from('orders').update({ status: newStatus }).eq('id', orderId);
-  if (error) alert('Error updating order: ' + error.message);
-}
+/* ========================================================= */
+/* BILL GENERATION */
+/* ========================================================= */
+function openBill(tableNumber) {
+  currentBill = activeTabs[tableNumber];
+  if (!currentBill) return;
 
-/* =========================================================
-   TAB 2: COUPONS
-   ========================================================= */
-async function loadCoupons() {
-  const tbody = document.getElementById('coupon-list-container');
-  tbody.innerHTML = '<tr><td colspan="5">Loading...</td></tr>';
+  // Fill Bill Details
+  document.getElementById('b-table').textContent = currentBill.table;
+  document.getElementById('b-id').textContent = currentBill.bill_id;
+  document.getElementById('b-total').textContent = `₹${currentBill.total}`;
 
-  const { data, error } = await supabaseClient
-    .from('coupons')
-    .select('*')
-    .order('created_at', { ascending: false });
-
-  if (error || !data) {
-    tbody.innerHTML = '<tr><td colspan="5">Error loading coupons.</td></tr>';
-    return;
-  }
-
-  if (data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5">No coupons generated yet.</td></tr>';
-    return;
-  }
-
-  tbody.innerHTML = '';
-  const now = new Date();
-
-  data.forEach(c => {
-    const issued = new Date(c.created_at);
-    const diffDays = Math.floor((now - issued) / (1000 * 60 * 60 * 24));
-    
-    // Auto-delete expired coupons from UI (older than 30 days)
-    if (diffDays > 30) return; 
-
-    let statusHtml = '';
-    if (c.is_used) {
-      statusHtml = `<span class="c-badge used">Used</span>`;
-    } else if (diffDays > 30) {
-      statusHtml = `<span class="c-badge expired">Expired</span>`;
-    } else {
-      statusHtml = `<span class="c-badge active">Active</span>`;
-    }
-
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td><strong>${c.code}</strong></td>
-      <td>${c.discount_percent}% OFF</td>
-      <td>Table ${c.table_number}</td>
-      <td>${issued.toLocaleDateString()}</td>
-      <td>${statusHtml}</td>
-    `;
-    tbody.appendChild(tr);
+  // Flatten and group items
+  let allItems = [];
+  currentBill.orders.forEach(o => { allItems = allItems.concat(o.items); });
+  const groupedItems = {};
+  allItems.forEach(item => {
+    if (!groupedItems[item.name]) groupedItems[item.name] = { name: item.name, qty: 0, price: item.price };
+    groupedItems[item.name].qty += item.qty;
   });
+
+  const tbody = document.getElementById('b-items');
+  tbody.innerHTML = '';
+  Object.values(groupedItems).forEach(item => {
+    tbody.innerHTML += `<tr><td>${item.name}</td><td style="text-align:center;">${item.qty}</td><td style="text-align:right;">₹${item.price * item.qty}</td></tr>`;
+  });
+
+  // Generate UPI QR
+  document.getElementById('qrcode').innerHTML = '';
+  const upiString = `upi://pay?pa=neelkanthstar@upi&pn=Neelkanth%20Star&am=${currentBill.total}&cu=INR`;
+  new QRCode(document.getElementById("qrcode"), {
+    text: upiString,
+    width: 120, height: 120,
+    colorDark : "#1B3A6B", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H
+  });
+
+  document.getElementById('bill-modal').classList.add('show');
 }
 
-// Quick Search Verify
-async function checkCoupon() {
-  const code = document.getElementById('coupon-input').value.trim().toUpperCase();
-  const resBox = document.getElementById('coupon-result');
-  const title = document.getElementById('c-res-title');
-  const desc = document.getElementById('c-res-desc');
-  const btn = document.getElementById('c-use-btn');
+async function confirmPayment() {
+  if (!currentBill) return;
 
-  if (!code) return;
+  // Mark ALL orders for this table as PAID
+  const orderIds = currentBill.orders.map(o => o.id);
+  
+  const { error } = await supabaseClient
+    .from('orders')
+    .update({ status: 'PAID' })
+    .in('id', orderIds);
 
-  resBox.style.display = 'block';
-  resBox.className = 'coupon-result';
-  title.textContent = 'Checking...';
-  desc.textContent = '';
-  btn.style.display = 'none';
-
-  const { data, error } = await supabaseClient.from('coupons').select('*').eq('code', code).single();
-
-  if (error || !data) {
-    resBox.classList.add('invalid');
-    title.textContent = '❌ Invalid Coupon';
-    desc.textContent = 'This code does not exist in the system.';
-    return;
-  }
-
-  activeCouponId = data.id;
-  const issued = new Date(data.created_at);
-  const diffDays = Math.floor((new Date() - issued) / (1000 * 60 * 60 * 24));
-
-  if (diffDays > 30) {
-    resBox.classList.add('invalid');
-    title.textContent = '❌ Coupon Expired';
-    desc.textContent = `This coupon was issued on ${issued.toLocaleDateString()} and has expired.`;
-  } else if (data.is_used) {
-    resBox.classList.add('invalid');
-    title.textContent = '⚠️ Coupon Already Used';
-    desc.textContent = `This coupon (${data.discount_percent}% OFF) was already marked as used.`;
+  if (error) {
+    alert("Error marking paid: " + error.message);
   } else {
-    resBox.classList.add('valid');
-    title.textContent = '✅ Valid Coupon';
-    desc.textContent = `Discount: ${data.discount_percent}% OFF · Issued: ${issued.toLocaleDateString()}`;
-    btn.style.display = 'inline-block';
+    document.getElementById('bill-modal').classList.remove('show');
+    currentBill = null;
+    // The realtime listener will automatically refresh the tabs and remove this table
   }
-}
-
-async function markCouponUsed() {
-  if (!activeCouponId) return;
-  await supabaseClient.from('coupons').update({ is_used: true }).eq('id', activeCouponId);
-  
-  document.getElementById('coupon-result').className = 'coupon-result invalid';
-  document.getElementById('c-res-title').textContent = 'Coupon Marked Used';
-  document.getElementById('c-res-desc').textContent = 'You can now apply the discount to their bill.';
-  document.getElementById('c-use-btn').style.display = 'none';
-  document.getElementById('coupon-input').value = '';
-  loadCoupons(); // Refresh the list below
-}
-
-/* =========================================================
-   TAB 3: MENU MANAGER
-   ========================================================= */
-async function loadMenu() {
-  const tbody = document.getElementById('menu-container');
-  tbody.innerHTML = '<tr><td colspan="5">Loading menu...</td></tr>';
-
-  const { data, error } = await supabaseClient.from('menu_items').select('*').order('id', { ascending: false });
-
-  if (error) { tbody.innerHTML = `<tr><td colspan="5">Error loading menu.</td></tr>`; return; }
-  if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="5">No items found. Add your first dish.</td></tr>'; return; }
-
-  tbody.innerHTML = '';
-  data.forEach(item => {
-    const catOptions = CATEGORIES.map(c => `<option value="${c}" ${item.category === c ? 'selected' : ''}>${c}</option>`).join('');
-
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td><input type="text" id="name-${item.id}" value="${item.name}" /></td>
-      <td><input type="number" id="price-${item.id}" value="${item.price}" style="width:100px;" /></td>
-      <td><select id="cat-${item.id}">${catOptions}</select></td>
-      <td><input type="checkbox" id="avail-${item.id}" ${item.is_available ? 'checked' : ''} style="width:20px;height:20px;" /></td>
-      <td>
-        <button class="btn-edit" onclick="saveMenuItem(${item.id})">Save</button>
-        <button class="btn-delete" onclick="deleteMenuItem(${item.id})">Del</button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-
-async function saveMenuItem(id) {
-  const name = document.getElementById(`name-${id}`).value;
-  const price = parseInt(document.getElementById(`price-${id}`).value);
-  const category = document.getElementById(`cat-${id}`).value;
-  const is_available = document.getElementById(`avail-${id}`).checked;
-
-  const { error } = await supabaseClient.from('menu_items').update({ name, price, category, is_available }).eq('id', id);
-  if (error) alert("Error saving: " + error.message);
-  else alert("Item updated successfully!");
-}
-
-async function deleteMenuItem(id) {
-  if (!confirm("Are you sure you want to delete this dish?")) return;
-  const { error } = await supabaseClient.from('menu_items').delete().eq('id', id);
-  if (error) alert("Error deleting: " + error.message);
-  else loadMenu();
-}
-
-async function addNewItem() {
-  const name = prompt("Enter Dish Name:");
-  if (!name) return;
-  const price = parseInt(prompt("Enter Price (₹):"));
-  if (!price) return;
-  
-  const catString = CATEGORIES.join(", ");
-  const category = prompt(`Enter Category (Options: ${catString}):`);
-  if (!category) return;
-
-  const { error } = await supabaseClient.from('menu_items').insert([{ name, price, category, is_available: true, is_veg: true }]);
-  if (error) alert("Error adding: " + error.message);
-  else loadMenu();
 }
 
 /* INIT */
