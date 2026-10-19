@@ -114,13 +114,11 @@ body{
 .item:hover,.item:focus-visible{ transform:translateY(-2px); box-shadow:var(--shadow-sm);
   border-color:rgba(242,194,0,.5); outline:none; }
 
-/* SVG icon — unchanged behaviour, but now supports <img> override */
 .dish-svg{ flex:0 0 auto; width:52px; height:52px; display:block;
   transition:transform .35s cubic-bezier(.2,.8,.25,1);
   filter:drop-shadow(0 4px 6px rgba(27,58,107,.18)); }
 .item:hover .dish-svg{ transform:scale(1.08) rotate(-3deg); }
 
-/* NEW: photo variant */
 .dish-img{ flex:0 0 auto; width:52px; height:52px; border-radius:10px; object-fit:cover;
   display:block; transition:transform .35s cubic-bezier(.2,.8,.25,1);
   box-shadow:0 4px 10px -4px rgba(27,58,107,.35); }
@@ -569,9 +567,10 @@ const WA_NUMBER = "919812400009";
 const RESTAURANT_LAT = 29.6493081;
 const RESTAURANT_LNG = 76.9853392;
 const NEAR_RADIUS_M  = 500;
+const GOOGLE_REVIEW_URL = "https://www.google.com/search?q=neelkanthstarkarnal";
 
 /* ============================================================ */
-/* DISH SVG LIBRARY — FULL DETAIL (restored to original) */
+/* DISH SVG LIBRARY — FULL DETAIL */
 /* ============================================================ */
 const DISH_SVG = {
   tea: `<svg class="dish-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><ellipse cx="50" cy="80" rx="32" ry="6" fill="#000" opacity=".12"/><path d="M22 40 Q22 72 50 72 Q78 72 78 40 Z" fill="#F5E6C8" stroke="#8B5A2B" stroke-width="3"/><ellipse cx="50" cy="40" rx="28" ry="7" fill="#FFF8E6" stroke="#8B5A2B" stroke-width="3"/><ellipse cx="50" cy="41" rx="22" ry="5" fill="#8B4A1A"/><path d="M78 48 Q92 48 90 62 Q88 72 76 68" fill="none" stroke="#8B5A2B" stroke-width="4" stroke-linecap="round"/><path d="M42 32 Q40 24 46 20" fill="none" stroke="#FFF" stroke-width="2" opacity=".7"/><path d="M54 30 Q52 22 58 18" fill="none" stroke="#FFF" stroke-width="2" opacity=".7"/></svg>`,
@@ -607,9 +606,6 @@ const DISH_SVG = {
   faludaShake: `<svg class="dish-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><ellipse cx="50" cy="88" rx="24" ry="4" fill="#000" opacity=".12"/><path d="M32 20 L28 82 Q50 88 72 82 L68 20 Z" fill="#FFE0D0" stroke="#A82810" stroke-width="3"/><ellipse cx="50" cy="20" rx="18" ry="5" fill="#FFD0B0" stroke="#A82810" stroke-width="3"/><path d="M34 45 Q50 38 66 45 L66 78 Q50 84 34 78 Z" fill="#FF8A5A"/><circle cx="42" cy="55" r="3" fill="#FFF0E0"/><circle cx="56" cy="60" r="2.5" fill="#FFF0E0"/></svg>`
 };
 
-/* ============================================================ */
-/* MENU SEED (will be replaced by Supabase when admin panel lands) */
-/* ============================================================ */
 const MENU = [
   { id:"beverages", name:"Beverages", items:[
     { n:"Tea", p:49, ico:"tea" }, { n:"Black Tea", p:49, ico:"tea" }, { n:"Dip Tea", p:49, ico:"tea" }, { n:"Lemon Tea", p:49, ico:"tea" },
@@ -721,19 +717,14 @@ function toast(msg){
   t._tm = setTimeout(()=>t.classList.remove("show"), 1900);
 }
 
-/* Build the visual element for a dish:
-   - If image_url present → <img>
-   - Else if ico matches DISH_SVG → full SVG
-   - Else → paneer SVG */
-function dishVisual(item, context){
-  // context: "list" or "sheet" — sheet uses bigger size, handled by CSS
+/* Build visual for a dish — img if image_url, else full SVG, else paneer */
+function dishVisual(item){
   if (item.image_url){
-    const fallback = (DISH_SVG[item.ico] || DISH_SVG.paneer).replace('dish-svg','dish-svg');
-    return `<img class="dish-img" src="${item.image_url}" alt="${item.n}"
-              loading="lazy" onerror="this.outerHTML='${fallback.replace(/'/g,"\\'")}'"/>`;
+    const fallback = DISH_SVG[item.ico] || DISH_SVG.paneer;
+    const safeFallback = fallback.replace(/"/g, '&quot;');
+    return `<img class="dish-img" src="${item.image_url}" alt="${item.n}" loading="lazy" onerror="this.outerHTML='${safeFallback}'"/>`;
   }
-  const svg = DISH_SVG[item.ico] || DISH_SVG.paneer;
-  return svg;
+  return DISH_SVG[item.ico] || DISH_SVG.paneer;
 }
 
 /* ============================================================ */
@@ -760,6 +751,56 @@ function initTable(){
 }
 
 /* ============================================================ */
+/* THANK YOU (PAID) */
+/* ============================================================ */
+function showPaidThankYou(){
+  const modal = $("#trackModal");
+  const box = modal.querySelector('.track-box');
+  if (!box) return;
+
+  if (!box.dataset.originalHtml){
+    box.dataset.originalHtml = box.innerHTML;
+  }
+
+  box.innerHTML = `
+    <div style="padding:20px 0 10px;">
+      <div style="font-size:64px; line-height:1; margin-bottom:14px; animation:pop .5s cubic-bezier(.2,1.4,.4,1);">🙏</div>
+      <div style="font-family:'Cinzel',serif; font-size:22px; font-weight:800; color:var(--navy); margin-bottom:8px;">
+        Payment Received
+      </div>
+      <div style="font-size:14px; color:var(--ink-soft); line-height:1.6; margin-bottom:20px;">
+        Thank you for dining with us!<br/>
+        We hope to see you again soon.
+      </div>
+      <a href="${GOOGLE_REVIEW_URL}" target="_blank" rel="noopener"
+         style="display:inline-flex; align-items:center; justify-content:center; gap:8px;
+                width:100%; padding:13px 18px; border-radius:12px;
+                background:linear-gradient(135deg,#4285F4,#1A73E8); color:#fff;
+                font-family:'Cinzel',serif; font-weight:800; font-size:13px;
+                letter-spacing:.05em; text-transform:uppercase;
+                text-decoration:none; box-shadow:0 8px 20px -8px rgba(66,133,244,.7);">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+        Rate us on Google
+      </a>
+      <div style="font-size:11px; color:#8a8a9a; margin-top:12px; letter-spacing:.03em;">
+        Your feedback helps us serve you better
+      </div>
+    </div>
+  `;
+
+  modal.classList.add('show');
+
+  setTimeout(() => {
+    modal.classList.remove('show');
+    setTimeout(() => {
+      box.innerHTML = box.dataset.originalHtml;
+    }, 400);
+  }, 5000);
+}
+
+/* ============================================================ */
 /* TRACK ACTIVE ORDER */
 /* ============================================================ */
 async function checkActiveOrder() {
@@ -770,6 +811,19 @@ async function checkActiveOrder() {
   if (error || !data){
     localStorage.removeItem('neelkanth_active_order');
     activeOrderId = null;
+    $("#trackBar").classList.remove('active');
+    $("#trackBar").classList.remove('bill-req');
+    if (cartCount() === 0) $("#bottomBars").classList.remove('show');
+    return;
+  }
+
+  if (data.status === 'PAID'){
+    showPaidThankYou();
+    localStorage.removeItem('neelkanth_active_order');
+    activeOrderId = null;
+    $("#trackBar").classList.remove('active');
+    $("#trackBar").classList.remove('bill-req');
+    if (cartCount() === 0) $("#bottomBars").classList.remove('show');
     return;
   }
 
@@ -779,8 +833,7 @@ async function checkActiveOrder() {
   const statusMap = {
     'ORDERED': 'Order Sent!',
     'PREPARING': 'Preparing...',
-    'PREPARED': 'Food is Ready!',
-    'PAID': 'Paid'
+    'PREPARED': 'Food is Ready!'
   };
   const billRequested = !!data.bill_requested;
 
@@ -807,7 +860,6 @@ async function checkActiveOrder() {
   if (data.status === 'ORDERED') stepOrdered.classList.add('active');
   else if (data.status === 'PREPARING'){ stepOrdered.classList.add('done'); stepPreparing.classList.add('active'); }
   else if (data.status === 'PREPARED'){ stepOrdered.classList.add('done'); stepPreparing.classList.add('done'); stepPrepared.classList.add('active'); }
-  else if (data.status === 'PAID'){ stepOrdered.classList.add('done'); stepPreparing.classList.add('done'); stepPrepared.classList.add('done'); }
 }
 
 supabaseClient.channel('track_order')
@@ -894,7 +946,7 @@ function renderMenu(){
       el.className = "item";
       el.tabIndex = 0;
       el.innerHTML = `
-        ${dishVisual(item, "list")}
+        ${dishVisual(item)}
         <div class="item-body"><div class="item-name">${item.n}</div></div>
         <span class="veg-mark" aria-label="Veg"></span>
         <div class="item-price">${priceLabel(item.p)}</div>
@@ -915,7 +967,7 @@ function openSheet(sec, item){
   $("#sheetDesc").textContent = sec.name;
   $("#sheetPrice").textContent = priceLabel(item.p);
   $("#qtyVal").textContent = "1";
-  $("#sheetIco").innerHTML = dishVisual(item, "sheet");
+  $("#sheetIco").innerHTML = dishVisual(item);
   $("#sheetOverlay").classList.add("show");
   $("#sheet").classList.add("show");
   document.body.style.overflow = "hidden";
@@ -1090,7 +1142,7 @@ $("#waBtn").addEventListener("click", async ()=>{
   if (keys.length === 0) return;
   if (!currentTable){ askTableNumber(); return; }
 
-    const orderItems = keys.map(k => ({
+  const orderItems = keys.map(k => ({
     name: cart[k].name,
     qty: cart[k].qty,
     price: getSafePrice(cart[k].price),
