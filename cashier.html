@@ -71,7 +71,7 @@
   .status-light.green{ background:var(--green); box-shadow:0 0 8px rgba(30,122,58,.7); }
   @keyframes redPulse{ 0%,100%{ opacity:1; } 50%{ opacity:.35; } }
   .item-row .item-name{ font-weight:600; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .item-row .item-name.done{ color:var(--ink-soft,#4A4A5E); text-decoration:line-through; text-decoration-color:rgba(30,122,58,.6); }
+  .item-row .item-name.done{ color:#4A4A5E; text-decoration:line-through; text-decoration-color:rgba(30,122,58,.6); }
   .item-row .item-amt{ font-weight:700; color:var(--navy); white-space:nowrap; }
 
   .tab-foot{ padding:18px 20px; background:#fff; border-top:1px solid #eee; }
@@ -408,7 +408,6 @@ function renderTabs(){
     const card = document.createElement('div');
     card.className = 'tab-card' + (tab.billRequested ? ' bill-req' : '');
 
-    // Aggregate all items across orders of this table
     let allItems = [];
     let preparedSet = new Set();
     tab.orders.forEach(o => {
@@ -418,7 +417,7 @@ function renderTabs(){
 
     const grouped = {};
     allItems.forEach(item => {
-      if (!grouped[item.name]) grouped[item.name] = { name: item.name, qty: 0, price: safePrice(item.price) };
+      if (!grouped[item.name]) grouped[item.name] = { name: item.name, qty: 0, price: safePrice(item.price), is_mrp: !!item.is_mrp };
       grouped[item.name].qty += item.qty || 0;
     });
 
@@ -427,13 +426,14 @@ function renderTabs(){
       const isDone = preparedSet.has(item.name);
       const lightClass = isDone ? 'green' : 'red';
       const nameClass = isDone ? 'item-name done' : 'item-name';
+      const priceText = item.is_mrp ? 'MRP' : fmt(item.price * item.qty);
       itemsHtml += `
         <div class="item-row">
           <div class="item-name-wrap">
             <span class="status-light ${lightClass}" title="${isDone ? 'Prepared' : 'Pending'}"></span>
             <span class="${nameClass}">${item.qty}x ${item.name}</span>
           </div>
-          <span class="item-amt">${fmt(item.price * item.qty)}</span>
+          <span class="item-amt">${priceText}</span>
         </div>`;
     });
 
@@ -490,14 +490,15 @@ function openBill(tableNumber){
   currentBill.orders.forEach(o => { if (Array.isArray(o.items)) allItems = allItems.concat(o.items); });
   const grouped = {};
   allItems.forEach(item => {
-    if (!grouped[item.name]) grouped[item.name] = { name: item.name, qty: 0, price: safePrice(item.price) };
+    if (!grouped[item.name]) grouped[item.name] = { name: item.name, qty: 0, price: safePrice(item.price), is_mrp: !!item.is_mrp };
     grouped[item.name].qty += item.qty || 0;
   });
 
   const tbody = document.getElementById('b-items');
   tbody.innerHTML = '';
   Object.values(grouped).forEach(item => {
-    tbody.innerHTML += `<tr><td>${item.name}</td><td style="text-align:center;">${item.qty}</td><td style="text-align:right;">${fmt(item.price * item.qty)}</td></tr>`;
+    const priceCell = item.is_mrp ? "MRP" : fmt(item.price * item.qty);
+    tbody.innerHTML += `<tr><td>${item.name}</td><td style="text-align:center;">${item.qty}</td><td style="text-align:right;">${priceCell}</td></tr>`;
   });
 
   document.getElementById('qrcode').innerHTML = '';
@@ -537,12 +538,11 @@ function sendWhatsAppBill(){
   if (!/^[6-9]\d{9}$/.test(raw)){ alert('Enter a valid 10-digit mobile number.'); return; }
   if (!currentBill){ alert('No bill open.'); return; }
 
-  // Build grouped items
   let allItems = [];
   currentBill.orders.forEach(o => { if (Array.isArray(o.items)) allItems = allItems.concat(o.items); });
   const grouped = {};
   allItems.forEach(it => {
-    if (!grouped[it.name]) grouped[it.name] = { name: it.name, qty: 0, price: safePrice(it.price) };
+    if (!grouped[it.name]) grouped[it.name] = { name: it.name, qty: 0, price: safePrice(it.price), is_mrp: !!it.is_mrp };
     grouped[it.name].qty += it.qty || 0;
   });
 
@@ -555,7 +555,7 @@ function sendWhatsAppBill(){
   msg += `--------------------------------\n\n`;
 
   Object.values(grouped).forEach(it => {
-    msg += `${it.qty} x ${it.name} — ${fmt(it.price * it.qty)}\n`;
+    msg += `${it.qty} x ${it.name} — ${it.is_mrp ? "MRP" : fmt(it.price * it.qty)}\n`;
   });
 
   msg += `\n--------------------------------\n`;
