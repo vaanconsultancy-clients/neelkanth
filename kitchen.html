@@ -11,69 +11,156 @@
 
 <style>
   :root {
-    --navy: #1B3A6B; --navy-dark: #142C52; --gold: #F2C200;
-    --red: #D62828; --green: #1E7A3A; --ink: #1A1A2E; --bg: #0f1115;
+    --navy:#1B3A6B; --navy-dark:#142C52; --gold:#F2C200;
+    --red:#D62828; --green:#1E7A3A; --blue:#2563EB;
+    --ink:#1A1A2E; --bg:#0f1115;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
-  body { background: var(--bg); color: white; display: flex; height: 100vh; overflow: hidden; }
+  *{ box-sizing:border-box; margin:0; padding:0; font-family:'Inter',system-ui,sans-serif; -webkit-tap-highlight-color:transparent; }
+  body{ background:var(--bg); color:white; min-height:100dvh; }
 
-  /* Login Screen */
-  #login-screen { position: fixed; inset: 0; background: var(--navy-dark); display: flex; align-items: center; justify-content: center; z-index: 100; }
-  .login-box { background: white; padding: 30px; border-radius: 12px; width: 300px; text-align: center; color: var(--ink); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-  .login-box h2 { margin-bottom: 20px; color: var(--navy); font-family: 'Cinzel', serif; }
-  .login-box input { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 6px; }
-  .login-box button { width: 100%; padding: 14px; background: var(--gold); color: var(--navy); border: none; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; }
+  /* ---------- LOGIN ---------- */
+  #login-screen{ position:fixed; inset:0; background:var(--navy-dark); display:flex; align-items:center; justify-content:center; z-index:100; padding:20px; }
+  .login-box{ background:white; padding:30px; border-radius:12px; width:100%; max-width:320px; text-align:center; color:var(--ink); box-shadow:0 10px 30px rgba(0,0,0,.3); }
+  .login-box h2{ margin-bottom:20px; color:var(--navy); font-family:'Cinzel',serif; }
+  .login-box input{ width:100%; padding:12px; margin-bottom:12px; border:1px solid #ccc; border-radius:6px; font-size:14px; }
+  .login-box button{ width:100%; padding:14px; background:var(--gold); color:var(--navy); border:none; border-radius:6px; font-weight:bold; font-size:15px; cursor:pointer; }
 
-  /* Header */
-  .header { position: fixed; top: 0; left: 0; right: 0; height: 70px; background: var(--navy); display: flex; align-items: center; justify-content: space-between; padding: 0 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 50; }
-  .header h1 { font-size: 24px; letter-spacing: 1px; color: var(--gold); font-family: 'Cinzel', serif; }
-  .header .status { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 20px; font-weight: bold; }
-  .header .status::before { content: ''; width: 10px; height: 10px; border-radius: 50%; background: #888; }
-  .header .status.live::before { background: var(--green); animation: pulse 2s infinite; }
-  
-  @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(30, 122, 58, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(30, 122, 58, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(30, 122, 58, 0); }
-  }
-
-  /* Main Content */
-  .main { margin-top: 70px; padding: 25px; width: 100%; height: calc(100vh - 70px); overflow-y: auto; }
-  .orders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px; }
-  
-  /* Order Card */
-  .order-card { background: #1a1d24; border-radius: 12px; border: 2px solid #333; overflow: hidden; display: flex; flex-direction: column; }
-  .order-card.urgent { border-color: var(--red); animation: urgentPulse 2s infinite; }
-  
-  @keyframes urgentPulse {
-    0% { box-shadow: 0 0 0 0 rgba(214, 40, 40, 0.4); }
-    50% { box-shadow: 0 0 20px 0 rgba(214, 40, 40, 0.6); }
-    100% { box-shadow: 0 0 0 0 rgba(214, 40, 40, 0.4); }
+  /* ---------- HEADER ---------- */
+  .header{ position:sticky; top:0; z-index:50; height:64px; background:var(--navy); display:flex; align-items:center; justify-content:space-between; padding:0 18px; box-shadow:0 4px 10px rgba(0,0,0,.3); gap:10px; }
+  .header h1{ font-size:20px; letter-spacing:1px; color:var(--gold); font-family:'Cinzel',serif; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .header .status{ display:flex; align-items:center; gap:8px; background:rgba(255,255,255,.1); padding:7px 13px; border-radius:20px; font-weight:bold; font-size:12px; white-space:nowrap; }
+  .header .status::before{ content:''; width:9px; height:9px; border-radius:50%; background:#888; }
+  .header .status.live::before{ background:var(--green); animation:pulse 2s infinite; }
+  @keyframes pulse{
+    0%{ box-shadow:0 0 0 0 rgba(30,122,58,.7); }
+    70%{ box-shadow:0 0 0 10px rgba(30,122,58,0); }
+    100%{ box-shadow:0 0 0 0 rgba(30,122,58,0); }
   }
 
-  .card-header { background: #252932; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #333; }
-  .table-num { font-size: 28px; font-weight: 800; color: var(--gold); }
-  .time { font-size: 14px; font-weight: bold; color: #aaa; display: flex; align-items: center; gap: 5px; }
-  .time.over-10 { color: var(--red); }
+  /* ---------- MAIN ---------- */
+  .main{ padding:18px; max-width:1600px; margin:0 auto; }
+  .orders-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:18px; }
 
-  .card-body { padding: 20px; flex: 1; }
-  .item-list { list-style: none; }
-  .item-list li { display: flex; justify-content: space-between; font-size: 20px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed #333; }
-  .item-list li:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-  .item-list li span:first-child { font-weight: 800; color: white; }
-  .item-list li span:last-child { color: var(--gold); font-weight: 800; font-size: 22px; }
+  /* ---------- ORDER CARD ---------- */
+  .order-card{ background:#1a1d24; border-radius:12px; border:2px solid #333; overflow:hidden; display:flex; flex-direction:column; transition:border-color .3s; }
+  .order-card.urgent{ border-color:var(--red); animation:urgentPulse 2s infinite; }
+  @keyframes urgentPulse{
+    0%{ box-shadow:0 0 0 0 rgba(214,40,40,.4); }
+    50%{ box-shadow:0 0 20px 0 rgba(214,40,40,.6); }
+    100%{ box-shadow:0 0 0 0 rgba(214,40,40,.4); }
+  }
+  .order-card.all-done{ border-color:var(--green); }
 
-  .card-footer { padding: 15px; background: #252932; border-top: 2px solid #333; }
-  .btn-done { width: 100%; padding: 18px; background: var(--green); color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s; }
-  .btn-done:active { transform: scale(0.97); }
-  .btn-done:disabled { background: #444; cursor: not-allowed; }
+  .card-header{ background:#252932; padding:13px 16px; display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #333; gap:8px; }
+  .table-num{ font-size:22px; font-weight:800; color:var(--gold); }
+  .time{ font-size:13px; font-weight:bold; color:#aaa; display:flex; align-items:center; gap:5px; white-space:nowrap; }
+  .time.over-10{ color:var(--red); }
 
-  .empty-state { text-align: center; margin-top: 100px; color: #666; font-size: 24px; }
+  .card-body{ padding:14px 16px; flex:1; }
+
+  /* Per-dish tap-to-prepare rows */
+  .dish-row{
+    display:flex; align-items:center; gap:11px;
+    padding:12px 10px;
+    margin-bottom:8px;
+    background:#23272f;
+    border-radius:10px;
+    border:2px solid #333;
+    cursor:pointer;
+    transition:all .2s;
+    user-select:none;
+  }
+  .dish-row:active{ transform:scale(.98); }
+  .dish-row.done{
+    background:rgba(30,122,58,.15);
+    border-color:var(--green);
+  }
+  .dish-row .dot{
+    flex:0 0 auto;
+    width:22px; height:22px;
+    border-radius:50%;
+    background:#444;
+    display:grid; place-items:center;
+    font-size:12px; font-weight:800; color:#fff;
+    transition:all .2s;
+  }
+  .dish-row.done .dot{ background:var(--green); box-shadow:0 0 10px rgba(30,122,58,.7); }
+  .dish-row .qty{
+    flex:0 0 auto;
+    min-width:30px;
+    padding:3px 8px;
+    background:var(--gold);
+    color:var(--navy-dark);
+    border-radius:6px;
+    font-weight:800;
+    font-size:13px;
+    text-align:center;
+  }
+  .dish-row .name{
+    flex:1;
+    font-size:16px;
+    font-weight:700;
+    color:#fff;
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .dish-row.done .name{
+    color:#8dd;
+    text-decoration:line-through;
+    text-decoration-color:rgba(30,122,58,.7);
+  }
+  .dish-row .check{
+    flex:0 0 auto;
+    font-size:14px;
+    color:var(--green);
+    opacity:0;
+    transition:opacity .2s;
+  }
+  .dish-row.done .check{ opacity:1; }
+
+  .card-footer{ padding:13px 16px; background:#252932; border-top:2px solid #333; display:grid; gap:8px; }
+  .btn-done{
+    width:100%; padding:15px;
+    background:var(--green); color:white;
+    border:none; border-radius:8px;
+    font-size:15px; font-weight:800;
+    cursor:pointer; text-transform:uppercase;
+    letter-spacing:.5px; transition:.2s;
+  }
+  .btn-done:active{ transform:scale(.97); }
+  .btn-done:disabled{ background:#444; cursor:not-allowed; }
+  .btn-mark-all{
+    width:100%; padding:11px;
+    background:transparent;
+    color:var(--gold);
+    border:1.5px solid var(--gold);
+    border-radius:8px;
+    font-size:12px; font-weight:700;
+    cursor:pointer; text-transform:uppercase;
+    letter-spacing:.5px; transition:.2s;
+  }
+  .btn-mark-all:active{ transform:scale(.97); }
+  .btn-mark-all:disabled{ opacity:.4; cursor:not-allowed; }
+
+  .empty-state{ text-align:center; margin-top:80px; color:#666; font-size:20px; padding:0 20px; }
+
+  /* ---------- MOBILE ---------- */
+  @media (max-width:700px){
+    .header{ height:56px; padding:0 12px; }
+    .header h1{ font-size:16px; letter-spacing:.5px; }
+    .header .status{ padding:6px 10px; font-size:11px; }
+    .main{ padding:12px; }
+    .orders-grid{ grid-template-columns:1fr; gap:14px; }
+    .table-num{ font-size:20px; }
+    .dish-row{ padding:13px 10px; }
+    .dish-row .name{ font-size:15px; }
+  }
 </style>
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
+<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
     <h2>Kitchen Login</h2>
@@ -85,21 +172,19 @@
 
 <!-- HEADER -->
 <div class="header" id="header" style="display:none;">
-  <h1>KITCHEN DISPLAY</h1>
+  <h1>KITCHEN</h1>
   <div class="status" id="conn-status">Connecting...</div>
 </div>
 
-<!-- MAIN PANEL -->
+<!-- MAIN -->
 <div class="main" id="main-panel" style="display:none;">
-  <div class="orders-grid" id="orders-container">
-    <!-- Orders will be injected here -->
-  </div>
+  <div class="orders-grid" id="orders-container"></div>
 </div>
 
 <script>
-/* =========================================================
-   SUPABASE CREDENTIALS
-   ========================================================= */
+/* ========================================================= */
+/* SUPABASE */
+/* ========================================================= */
 const SUPABASE_URL = 'https://scuiidvmhsyknhqlszzg.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjdWlpZHZtaHN5a25ocWxzenpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzNDgyOTEsImV4cCI6MjEwNzkyNDI5MX0.AiZgUL1lOcp7LHIP1JgQipXbtC-NPCBQjcWJAK_br-0';
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -108,32 +193,23 @@ let currentOrders = [];
 let realtimeChannel = null;
 let timerInterval = null;
 
-/* =========================================================
-   AUTHENTICATION
-   ========================================================= */
-async function login() {
+/* ========================================================= */
+/* AUTH */
+/* ========================================================= */
+async function login(){
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
   const btn = document.getElementById('login-btn');
-
   btn.textContent = 'Connecting...';
-
   const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-
-  if (error) {
-    alert(error.message);
-    btn.textContent = 'Start Kitchen Display';
-  } else {
-    initDashboard();
-  }
+  if (error){ alert(error.message); btn.textContent = 'Start Kitchen Display'; }
+  else initDashboard();
 }
-
-async function checkSession() {
+async function checkSession(){
   const { data: { session } } = await supabaseClient.auth.getSession();
   if (session) initDashboard();
 }
-
-function initDashboard() {
+function initDashboard(){
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('header').style.display = 'flex';
   document.getElementById('main-panel').style.display = 'block';
@@ -141,121 +217,123 @@ function initDashboard() {
   startClock();
 }
 
-/* =========================================================
-   REALTIME DATA (Only show 'PREPARING' orders)
-   ========================================================= */
-async function fetchOrders() {
-  // The kitchen only cares about orders that the Cashier has accepted.
+/* ========================================================= */
+/* REALTIME — kitchen sees PREPARING (accepted) orders */
+/* ========================================================= */
+async function fetchOrders(){
   const { data, error } = await supabaseClient
-    .from('orders')
-    .select('*')
-    .eq('status', 'PREPARING') 
+    .from('orders').select('*')
+    .eq('status', 'PREPARING')
     .order('created_at', { ascending: true });
 
-  if (error) {
-    console.error('Error fetching orders:', error);
-    return;
-  }
-  
+  if (error){ console.error('Fetch error:', error); return; }
   currentOrders = data || [];
   renderOrders();
 }
 
-function initRealtime() {
+function initRealtime(){
   const statusEl = document.getElementById('conn-status');
   statusEl.textContent = 'LIVE';
   statusEl.classList.add('live');
-
   fetchOrders();
-
   if (realtimeChannel) supabaseClient.removeChannel(realtimeChannel);
-  
   realtimeChannel = supabaseClient
     .channel('kitchen_orders')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, payload => {
-      // If an order moves to PREPARING, it appears here.
-      // If it moves to PREPARED, it disappears from here.
-      fetchOrders(); 
-    })
+    .on('postgres_changes', { event:'*', schema:'public', table:'orders' }, () => fetchOrders())
     .subscribe();
 }
 
-/* =========================================================
-   RENDER UI
-   ========================================================= */
-function renderOrders() {
+/* ========================================================= */
+/* RENDER */
+/* ========================================================= */
+function renderOrders(){
   const container = document.getElementById('orders-container');
   container.innerHTML = '';
 
-  if (currentOrders.length === 0) {
+  if (currentOrders.length === 0){
     container.innerHTML = '<div class="empty-state">No pending orders.<br>Waiting for cashier to accept...</div>';
     return;
   }
 
   currentOrders.forEach(order => {
     const card = document.createElement('div');
-    card.className = `order-card`;
+    card.className = 'order-card';
     card.setAttribute('data-id', order.id);
     card.setAttribute('data-time', new Date(order.created_at).getTime());
 
-    // Build items HTML
-    let itemsHtml = '';
-    if (Array.isArray(order.items)) {
-      order.items.forEach(item => {
-        itemsHtml += `<li><span>${item.qty}x ${item.name}</span> <span>${item.qty}</span></li>`;
-      });
-    }
+    const items = Array.isArray(order.items) ? order.items : [];
+    const preparedArr = Array.isArray(order.prepared_items) ? order.prepared_items : [];
+    const preparedSet = new Set(preparedArr);
+
+    // group items by name (sum qty)
+    const grouped = {};
+    items.forEach(it => {
+      if (!grouped[it.name]) grouped[it.name] = { name: it.name, qty: 0 };
+      grouped[it.name].qty += it.qty || 0;
+    });
+
+    let dishesHtml = '';
+    Object.values(grouped).forEach(it => {
+      const isDone = preparedSet.has(it.name);
+      dishesHtml += `
+        <div class="dish-row ${isDone ? 'done' : ''}"
+             data-dish="${it.name.replace(/"/g,'&quot;')}"
+             onclick="toggleDish(${order.id}, this)">
+          <div class="dot">${isDone ? '✓' : ''}</div>
+          <div class="qty">${it.qty}x</div>
+          <div class="name">${it.name}</div>
+          <div class="check">✓</div>
+        </div>`;
+    });
+
+    const allDone = Object.keys(grouped).every(n => preparedSet.has(n));
+    if (allDone) card.classList.add('all-done');
 
     card.innerHTML = `
       <div class="card-header">
         <div class="table-num">TABLE ${order.table_number}</div>
-        <div class="time" id="time-${order.id}">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          <span>Just now</span>
+        <div class="time">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span class="time-text">Just now</span>
         </div>
       </div>
-      <div class="card-body">
-        <ul class="item-list">
-          ${itemsHtml}
-        </ul>
-      </div>
+      <div class="card-body">${dishesHtml}</div>
       <div class="card-footer">
-        <button class="btn-done" onclick="markPrepared(${order.id}, this)">✓ Mark Prepared</button>
+        <button class="btn-mark-all" onclick="markAllPrepared(${order.id}, this)" ${allDone ? 'disabled' : ''}>
+          Mark All Prepared
+        </button>
+        <button class="btn-done" onclick="markOrderPrepared(${order.id}, this)">✓ Send to Cashier</button>
       </div>
     `;
-    
+
     container.appendChild(card);
   });
 
-  updateTimers(); // Run once immediately to set initial times
+  updateTimers();
 }
 
-/* =========================================================
-   TIMERS (Show how long the order has been cooking)
-   ========================================================= */
-function startClock() {
+/* ========================================================= */
+/* TIMERS */
+/* ========================================================= */
+function startClock(){
   if (timerInterval) clearInterval(timerInterval);
-  timerInterval = setInterval(updateTimers, 10000); // Update every 10 seconds
+  timerInterval = setInterval(updateTimers, 10000);
 }
-
-function updateTimers() {
+function updateTimers(){
   const now = Date.now();
   document.querySelectorAll('.order-card').forEach(card => {
     const timeEl = card.querySelector('.time');
-    if (!timeEl) return;
-
-    const createdTime = parseInt(card.getAttribute('data-time'));
+    const textEl = card.querySelector('.time-text');
+    if (!timeEl || !textEl) return;
+    const createdTime = parseInt(card.getAttribute('data-time'), 10);
     const diffMins = Math.floor((now - createdTime) / 60000);
-
-    if (diffMins < 1) {
-      timeEl.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> <span>Just now</span>`;
+    if (diffMins < 1){
+      textEl.textContent = 'Just now';
       timeEl.classList.remove('over-10');
       card.classList.remove('urgent');
     } else {
-      timeEl.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> <span>${diffMins} min ago</span>`;
-      
-      // If order is older than 10 mins, make it red and urgent
-      if (diffMins >= 10) {
+      textEl.textContent = diffMins + ' min ago';
+      if (diffMins >= 10){
         timeEl.classList.add('over-10');
         card.classList.add('urgent');
       } else {
@@ -266,24 +344,98 @@ function updateTimers() {
   });
 }
 
-/* =========================================================
-   UPDATE STATUS (Mark Prepared)
-   ========================================================= */
-async function markPrepared(orderId, btn) {
-  btn.textContent = "Updating...";
-  btn.disabled = true;
+/* ========================================================= */
+/* PER-DISH TOGGLE */
+/* ========================================================= */
+async function toggleDish(orderId, rowEl){
+  const order = currentOrders.find(o => o.id === orderId);
+  if (!order) return;
 
-  // Update database to PREPARED. 
-  // This will trigger the realtime event, which removes it from this screen.
+  const dishName = rowEl.getAttribute('data-dish');
+  const current = Array.isArray(order.prepared_items) ? [...order.prepared_items] : [];
+
+  let next;
+  if (current.includes(dishName)){
+    next = current.filter(n => n !== dishName);
+  } else {
+    next = [...current, dishName];
+  }
+
+  // optimistic UI
+  if (next.includes(dishName)){
+    rowEl.classList.add('done');
+    rowEl.querySelector('.dot').textContent = '✓';
+  } else {
+    rowEl.classList.remove('done');
+    rowEl.querySelector('.dot').textContent = '';
+  }
+
   const { error } = await supabaseClient
     .from('orders')
-    .update({ status: 'PREPARED' })
+    .update({ prepared_items: next })
     .eq('id', orderId);
 
-  if (error) {
-    alert('Error updating: ' + error.message);
-    btn.textContent = "✓ Mark Prepared";
+  if (error){
+    console.error('Toggle failed:', error);
+    // revert
+    if (next.includes(dishName)){
+      rowEl.classList.remove('done');
+      rowEl.querySelector('.dot').textContent = '';
+    } else {
+      rowEl.classList.add('done');
+      rowEl.querySelector('.dot').textContent = '✓';
+    }
+    alert('Could not update dish. Check connection.');
+  }
+}
+
+/* ========================================================= */
+/* MARK ALL PREPARED (per order) */
+/* ========================================================= */
+async function markAllPrepared(orderId, btn){
+  const order = currentOrders.find(o => o.id === orderId);
+  if (!order) return;
+  const items = Array.isArray(order.items) ? order.items : [];
+  const allNames = [...new Set(items.map(it => it.name))];
+
+  btn.disabled = true;
+  btn.textContent = 'Updating...';
+
+  const { error } = await supabaseClient
+    .from('orders')
+    .update({ prepared_items: allNames })
+    .eq('id', orderId);
+
+  if (error){
+    alert('Error: ' + error.message);
     btn.disabled = false;
+    btn.textContent = 'Mark All Prepared';
+  }
+}
+
+/* ========================================================= */
+/* MARK ORDER PREPARED (send to cashier) */
+/* ========================================================= */
+async function markOrderPrepared(orderId, btn){
+  const order = currentOrders.find(o => o.id === orderId);
+  if (!order) return;
+
+  // Also fill prepared_items in case some dishes weren't tapped
+  const items = Array.isArray(order.items) ? order.items : [];
+  const allNames = [...new Set(items.map(it => it.name))];
+
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+
+  const { error } = await supabaseClient
+    .from('orders')
+    .update({ status: 'PREPARED', prepared_items: allNames })
+    .eq('id', orderId);
+
+  if (error){
+    alert('Error updating: ' + error.message);
+    btn.disabled = false;
+    btn.textContent = '✓ Send to Cashier';
   }
 }
 
