@@ -6,113 +6,177 @@
 <title>Cashier Panel — Neelkanth Star</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <style>
   :root {
-    --navy: #1B3A6B; --navy-dark: #142C52; --gold: #F2C200;
-    --red: #D62828; --green: #1E7A3A; --cream: #FBF6EC;
-    --ink: #1A1A2E; --gray: #E0E0E0;
+    --navy:#1B3A6B; --navy-dark:#142C52; --gold:#F2C200;
+    --red:#D62828; --green:#1E7A3A; --blue:#2563EB; --cream:#FBF6EC;
+    --ink:#1A1A2E; --gray:#E0E0E0;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
-  body { background: #f4f4f4; color: var(--ink); display: flex; height: 100vh; overflow: hidden; }
+  *{ box-sizing:border-box; margin:0; padding:0; font-family:'Inter',system-ui,sans-serif; -webkit-tap-highlight-color:transparent; }
+  body{ background:#f4f4f4; color:var(--ink); display:flex; min-height:100dvh; }
 
-  /* Login Screen */
-  #login-screen { position: fixed; inset: 0; background: var(--navy-dark); display: flex; align-items: center; justify-content: center; z-index: 100; }
-  .login-box { background: white; padding: 30px; border-radius: 12px; width: 100%; max-width: 340px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-  .login-box h2 { color: var(--navy); margin-bottom: 20px; font-family: 'Cinzel', serif; }
-  .login-box input { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
-  .login-box button { width: 100%; padding: 14px; background: var(--gold); color: var(--navy); border: none; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; transition: 0.2s; }
+  /* ---------- LOGIN ---------- */
+  #login-screen{ position:fixed; inset:0; background:var(--navy-dark); display:flex; align-items:center; justify-content:center; z-index:100; padding:20px; }
+  .login-box{ background:white; padding:30px; border-radius:12px; width:100%; max-width:340px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.2); }
+  .login-box h2{ color:var(--navy); margin-bottom:20px; font-family:'Cinzel',serif; }
+  .login-box input{ width:100%; padding:12px; margin-bottom:12px; border:1px solid #ccc; border-radius:6px; font-size:14px; }
+  .login-box button{ width:100%; padding:14px; background:var(--gold); color:var(--navy); border:none; border-radius:6px; font-weight:bold; font-size:15px; cursor:pointer; }
 
-  /* Sidebar */
-  .sidebar { width: 260px; background: var(--navy-dark); color: white; padding: 20px; display: flex; flex-direction: column; }
-  .sidebar h1 { font-size: 22px; margin-bottom: 5px; color: var(--gold); font-family: 'Cinzel', serif; }
-  .sidebar p { font-size: 12px; opacity: 0.7; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px; }
-  .sidebar .nav-btn { padding: 14px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border: none; color: white; text-align: left; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 600; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
-  .sidebar .nav-btn:hover { background: rgba(255,255,255,0.1); }
-  .sidebar .nav-btn.active { background: var(--gold); color: var(--navy-dark); }
-  .sidebar .logout { margin-top: auto; background: transparent; color: #ff6b6b; padding: 12px; border: 1px solid #ff6b6b; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+  /* ---------- SIDEBAR ---------- */
+  .sidebar{ width:260px; background:var(--navy-dark); color:white; padding:20px; display:flex; flex-direction:column; flex-shrink:0; }
+  .sidebar h1{ font-size:22px; margin-bottom:5px; color:var(--gold); font-family:'Cinzel',serif; }
+  .sidebar p{ font-size:12px; opacity:0.7; margin-bottom:30px; text-transform:uppercase; letter-spacing:1px; }
+  .sidebar .nav-btn{ padding:14px; margin-bottom:10px; background:rgba(255,255,255,0.05); border:none; color:white; text-align:left; border-radius:8px; cursor:pointer; font-size:15px; font-weight:600; transition:0.2s; display:flex; align-items:center; gap:10px; }
+  .sidebar .nav-btn:hover{ background:rgba(255,255,255,0.1); }
+  .sidebar .nav-btn.active{ background:var(--gold); color:var(--navy-dark); }
+  .sidebar .logout{ margin-top:auto; background:transparent; color:#ff6b6b; padding:12px; border:1px solid #ff6b6b; border-radius:8px; cursor:pointer; font-weight:bold; transition:0.2s; }
 
-  /* Main Content */
-  .main { flex: 1; padding: 25px; overflow-y: auto; }
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
-  
-  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-  .header h2 { font-size: 26px; color: var(--navy); }
-  .connection-status { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; background: var(--gray); color: #666; display: flex; align-items: center; gap: 6px; }
-  .connection-status::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #999; }
-  .connection-status.live { background: #d4edda; color: var(--green); }
-  .connection-status.live::before { background: var(--green); animation: pulse 2s infinite; }
-  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(30, 122, 58, 0.4); } 70% { box-shadow: 0 0 0 6px rgba(30, 122, 58, 0); } 100% { box-shadow: 0 0 0 0 rgba(30, 122, 58, 0); } }
+  /* ---------- MAIN ---------- */
+  .main{ flex:1; padding:25px; overflow-y:auto; min-width:0; }
+  .tab-content{ display:none; }
+  .tab-content.active{ display:block; }
 
-  /* --- TAB 1: TABLE TABS (LIVE ORDERS) --- */
-  .table-tabs { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
-  .tab-card { background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 6px solid var(--gold); display: flex; flex-direction: column; overflow: hidden; }
-  .tab-head { padding: 15px 20px; background: #fafafa; border-bottom: 1px dashed #eee; display: flex; justify-content: space-between; align-items: center; }
-  .tab-head h3 { font-family: 'Cinzel', serif; font-size: 20px; color: var(--navy); }
-  .bill-id { font-size: 12px; background: var(--navy); color: var(--gold); padding: 4px 8px; border-radius: 4px; font-weight: bold; letter-spacing: 1px; }
-  .tab-body { padding: 20px; flex: 1; max-height: 250px; overflow-y: auto; }
-  .item-row { display: flex; justify-content: space-between; font-size: 14px; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
-  .item-row span:first-child { font-weight: 600; }
-  .tab-foot { padding: 20px; background: #fff; border-top: 1px solid #eee; }
-  .tab-total { display: flex; justify-content: space-between; font-weight: 800; font-size: 20px; color: var(--navy); margin-bottom: 15px; }
-  .btn-generate { width: 100%; padding: 14px; background: var(--green); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; text-transform: uppercase; cursor: pointer; letter-spacing: 1px; }
+  .header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; gap:12px; flex-wrap:wrap; }
+  .header h2{ font-size:26px; color:var(--navy); }
+  .connection-status{ padding:6px 12px; border-radius:20px; font-size:12px; font-weight:bold; background:var(--gray); color:#666; display:flex; align-items:center; gap:6px; }
+  .connection-status::before{ content:''; width:8px; height:8px; border-radius:50%; background:#999; }
+  .connection-status.live{ background:#d4edda; color:var(--green); }
+  .connection-status.live::before{ background:var(--green); animation:pulse 2s infinite; }
+  @keyframes pulse{ 0%{box-shadow:0 0 0 0 rgba(30,122,58,.4);} 70%{box-shadow:0 0 0 6px rgba(30,122,58,0);} 100%{box-shadow:0 0 0 0 rgba(30,122,58,0);} }
 
-  /* --- TAB 2: COUPONS --- */
-  .coupon-search { display: flex; gap: 10px; margin-bottom: 30px; max-width: 500px; }
-  .coupon-search input { flex: 1; padding: 14px; border: 2px solid #ccc; border-radius: 8px; font-size: 16px; text-transform: uppercase; }
-  .coupon-search button { padding: 14px 24px; background: var(--navy); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-  .coupon-result { background: white; padding: 20px; border-radius: 12px; max-width: 500px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: none; margin-bottom: 30px;}
-  .coupon-result.valid { border-left: 6px solid var(--green); }
-  .coupon-result.invalid { border-left: 6px solid var(--red); }
-  .coupon-list table { width: 100%; background: white; border-collapse: collapse; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-  .coupon-list th, .coupon-list td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
-  .coupon-list th { background: var(--navy); color: white; font-weight: 600; }
-  .c-badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
-  .c-badge.active { background: #e8f5e9; color: var(--green); }
-  .c-badge.used { background: #ffebee; color: var(--red); text-decoration: line-through; }
+  /* ---------- LIVE ORDERS ---------- */
+  .table-tabs{ display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:20px; }
+  .tab-card{ background:white; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,.05); border-left:6px solid var(--gold); display:flex; flex-direction:column; overflow:hidden; position:relative; }
+  .tab-card.bill-req{ border-left-color:var(--blue); box-shadow:0 0 0 2px var(--blue), 0 0 24px rgba(37,99,235,.45); animation:blueGlow 1.8s ease-in-out infinite; }
+  @keyframes blueGlow{ 0%,100%{ box-shadow:0 0 0 2px var(--blue), 0 0 18px rgba(37,99,235,.35); } 50%{ box-shadow:0 0 0 3px var(--blue), 0 0 32px rgba(37,99,235,.75); } }
 
-  /* --- TAB 3: MENU MANAGER --- */
-  .menu-table { width: 100%; background: white; border-collapse: collapse; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-  .menu-table th, .menu-table td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
-  .menu-table th { background: var(--navy); color: white; font-weight: 600; }
-  .menu-table input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-  .menu-table select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-  .btn-edit { background: var(--gold); color: var(--navy); border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
-  .btn-delete { background: var(--red); color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
-  .btn-add { background: var(--green); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; margin-bottom: 20px; }
+  .bill-req-badge{ position:absolute; top:12px; right:12px; background:var(--blue); color:#fff; font-size:10px; font-weight:800; letter-spacing:.08em; padding:5px 10px; border-radius:999px; text-transform:uppercase; box-shadow:0 0 14px rgba(37,99,235,.8); animation:pulseBlue 1.5s infinite; z-index:2; }
+  @keyframes pulseBlue{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.08); } }
 
-  .empty-state { text-align: center; padding: 50px; color: #888; font-size: 15px; }
+  .tab-head{ padding:15px 20px; background:#fafafa; border-bottom:1px dashed #eee; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .tab-head h3{ font-family:'Cinzel',serif; font-size:20px; color:var(--navy); }
+  .bill-id{ font-size:12px; background:var(--navy); color:var(--gold); padding:4px 8px; border-radius:4px; font-weight:bold; letter-spacing:1px; }
+  .tab-body{ padding:20px; flex:1; max-height:320px; overflow-y:auto; }
 
-  /* --- BILL MODAL --- */
-  #bill-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; display: none; place-items: center; padding: 20px; }
-  #bill-modal.show { display: grid; }
-  .bill-box { background: white; width: 100%; max-width: 380px; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
-  .bill-header { text-align: center; padding: 20px; background: var(--navy); color: white; }
-  .bill-header img { height: 50px; margin-bottom: 10px; }
-  .bill-header h3 { font-family: 'Cinzel', serif; font-size: 20px; color: var(--gold); }
-  .bill-header p { font-size: 11px; opacity: 0.8; margin-top: 4px; }
-  .bill-body { padding: 20px; }
-  .bill-info { display: flex; justify-content: space-between; font-size: 12px; color: #666; margin-bottom: 15px; border-bottom: 1px dashed #ccc; padding-bottom: 10px; }
-  .bill-items { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 15px; }
-  .bill-items th { text-align: left; border-bottom: 2px solid #eee; padding-bottom: 5px; font-weight: 700; }
-  .bill-items td { padding: 8px 0; border-bottom: 1px solid #f9f9f9; }
-  .bill-total { display: flex; justify-content: space-between; font-weight: 800; font-size: 18px; color: var(--navy); border-top: 2px dashed #ccc; padding-top: 10px; }
-  .bill-qr { text-align: center; margin-top: 20px; }
-  .bill-qr #qrcode { display: inline-block; padding: 10px; background: white; border: 1px solid #eee; border-radius: 8px; }
-  .bill-qr p { font-size: 10px; color: #888; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
-  .bill-actions { display: flex; gap: 10px; padding: 20px; background: #f9f9f9; border-top: 1px solid #eee; }
-  .bill-actions button { flex: 1; padding: 14px; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; }
-  .btn-print { background: var(--navy); color: white; }
-  .btn-paid { background: var(--green); color: white; }
+  /* Per-dish row with status light */
+  .item-row{ display:flex; align-items:center; justify-content:space-between; font-size:14px; padding:9px 0; border-bottom:1px solid #f0f0f0; gap:10px; }
+  .item-row:last-child{ border-bottom:none; }
+  .item-name-wrap{ display:flex; align-items:center; gap:9px; flex:1; min-width:0; }
+  .status-light{ flex:0 0 auto; width:11px; height:11px; border-radius:50%; background:#ccc; box-shadow:0 0 0 2px rgba(0,0,0,.04); }
+  .status-light.red{ background:var(--red); box-shadow:0 0 8px rgba(214,40,40,.7); animation:redPulse 1.6s infinite; }
+  .status-light.green{ background:var(--green); box-shadow:0 0 8px rgba(30,122,58,.7); }
+  @keyframes redPulse{ 0%,100%{ opacity:1; } 50%{ opacity:.35; } }
+  .item-row .item-name{ font-weight:600; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .item-row .item-name.done{ color:var(--ink-soft,#4A4A5E); text-decoration:line-through; text-decoration-color:rgba(30,122,58,.6); }
+  .item-row .item-amt{ font-weight:700; color:var(--navy); white-space:nowrap; }
+
+  .tab-foot{ padding:18px 20px; background:#fff; border-top:1px solid #eee; }
+  .tab-total{ display:flex; justify-content:space-between; font-weight:800; font-size:20px; color:var(--navy); margin-bottom:14px; }
+  .btn-generate{ width:100%; padding:13px; background:var(--green); color:white; border:none; border-radius:8px; font-weight:bold; font-size:13px; text-transform:uppercase; cursor:pointer; letter-spacing:.6px; transition:.2s; }
+  .btn-generate:active{ transform:scale(.97); }
+  .btn-generate:disabled{ opacity:.5; cursor:not-allowed; }
+  .btn-generate.blue{ background:linear-gradient(135deg,#2563EB,#1E40AF); box-shadow:0 0 14px rgba(37,99,235,.5); }
+
+  /* ---------- COUPONS ---------- */
+  .coupon-search{ display:flex; gap:10px; margin-bottom:30px; max-width:520px; flex-wrap:wrap; }
+  .coupon-search input{ flex:1; min-width:0; padding:14px; border:2px solid #ccc; border-radius:8px; font-size:16px; text-transform:uppercase; }
+  .coupon-search button{ padding:14px 24px; background:var(--navy); color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer; }
+  .coupon-result{ background:white; padding:20px; border-radius:12px; max-width:520px; box-shadow:0 4px 15px rgba(0,0,0,.05); display:none; margin-bottom:30px; }
+  .coupon-result.valid{ border-left:6px solid var(--green); }
+  .coupon-result.invalid{ border-left:6px solid var(--red); }
+  .coupon-list{ overflow-x:auto; }
+  .coupon-list table{ width:100%; background:white; border-collapse:collapse; border-radius:12px; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,.05); min-width:520px; }
+  .coupon-list th,.coupon-list td{ padding:15px; text-align:left; border-bottom:1px solid #eee; }
+  .coupon-list th{ background:var(--navy); color:white; font-weight:600; }
+  .c-badge{ padding:4px 8px; border-radius:4px; font-size:11px; font-weight:bold; }
+  .c-badge.active{ background:#e8f5e9; color:var(--green); }
+  .c-badge.used{ background:#ffebee; color:var(--red); text-decoration:line-through; }
+
+  /* ---------- MENU MANAGER ---------- */
+  .menu-table-wrap{ overflow-x:auto; }
+  .menu-table{ width:100%; background:white; border-collapse:collapse; border-radius:12px; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,.05); min-width:640px; }
+  .menu-table th,.menu-table td{ padding:15px; text-align:left; border-bottom:1px solid #eee; }
+  .menu-table th{ background:var(--navy); color:white; font-weight:600; }
+  .menu-table input{ width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; }
+  .menu-table select{ padding:8px; border:1px solid #ccc; border-radius:4px; }
+  .btn-edit{ background:var(--gold); color:var(--navy); border:none; padding:6px 12px; border-radius:4px; font-weight:bold; cursor:pointer; margin-right:6px; }
+  .btn-delete{ background:var(--red); color:white; border:none; padding:6px 12px; border-radius:4px; font-weight:bold; cursor:pointer; }
+  .btn-add{ background:var(--green); color:white; border:none; padding:12px 20px; border-radius:8px; font-weight:bold; font-size:15px; cursor:pointer; margin-bottom:20px; }
+
+  .empty-state{ text-align:center; padding:50px; color:#888; font-size:15px; }
+
+  /* ---------- BILL MODAL ---------- */
+  #bill-modal{ position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:200; display:none; place-items:center; padding:16px; overflow-y:auto; }
+  #bill-modal.show{ display:grid; }
+  .bill-box{ background:white; width:100%; max-width:400px; border-radius:12px; overflow:hidden; box-shadow:0 10px 40px rgba(0,0,0,.3); margin:auto; }
+  .bill-header{ text-align:center; padding:20px; background:var(--navy); color:white; }
+  .bill-header img{ height:50px; margin-bottom:10px; }
+  .bill-header h3{ font-family:'Cinzel',serif; font-size:20px; color:var(--gold); }
+  .bill-header p{ font-size:11px; opacity:.8; margin-top:4px; }
+  .bill-body{ padding:20px; }
+  .bill-info{ display:flex; justify-content:space-between; font-size:12px; color:#666; margin-bottom:15px; border-bottom:1px dashed #ccc; padding-bottom:10px; gap:8px; flex-wrap:wrap; }
+  .bill-items{ width:100%; border-collapse:collapse; font-size:13px; margin-bottom:15px; }
+  .bill-items th{ text-align:left; border-bottom:2px solid #eee; padding-bottom:5px; font-weight:700; }
+  .bill-items td{ padding:8px 0; border-bottom:1px solid #f9f9f9; }
+  .bill-total{ display:flex; justify-content:space-between; font-weight:800; font-size:18px; color:var(--navy); border-top:2px dashed #ccc; padding-top:10px; }
+  .bill-qr{ text-align:center; margin-top:20px; }
+  .bill-qr #qrcode{ display:inline-block; padding:10px; background:white; border:1px solid #eee; border-radius:8px; }
+  .bill-qr p{ font-size:10px; color:#888; margin-top:5px; text-transform:uppercase; letter-spacing:1px; }
+  .bill-actions{ display:grid; grid-template-columns:1fr; gap:10px; padding:20px; background:#f9f9f9; border-top:1px solid #eee; }
+  .bill-actions button{ padding:14px; border:none; border-radius:8px; font-weight:bold; font-size:13px; cursor:pointer; text-transform:uppercase; letter-spacing:.5px; }
+  .btn-print{ background:var(--navy); color:white; }
+  .btn-wa{ background:#25D366; color:#fff; }
+  .btn-paid{ background:var(--green); color:white; }
+
+  /* WhatsApp number prompt */
+  #wa-prompt{ position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:210; display:none; place-items:center; padding:20px; }
+  #wa-prompt.show{ display:grid; }
+  .wa-box{ background:#fff; border-radius:12px; padding:24px; width:100%; max-width:340px; text-align:center; }
+  .wa-box h3{ font-family:'Cinzel',serif; color:var(--navy); font-size:18px; margin-bottom:8px; }
+  .wa-box p{ font-size:13px; color:#666; margin-bottom:16px; }
+  .wa-box input{ width:100%; padding:14px; border:2px solid #ccc; border-radius:8px; font-size:16px; text-align:center; letter-spacing:1px; margin-bottom:12px; }
+  .wa-box .wa-actions{ display:flex; gap:8px; }
+  .wa-box button{ flex:1; padding:12px; border:none; border-radius:8px; font-weight:bold; cursor:pointer; font-size:13px; }
+  .wa-cancel{ background:#eee; color:#333; }
+  .wa-send{ background:#25D366; color:#fff; }
+
+  /* ---------- MOBILE ---------- */
+  @media (max-width:900px){
+    body{ flex-direction:column; }
+    .sidebar{ width:100%; padding:12px 14px; flex-direction:row; flex-wrap:wrap; align-items:center; gap:8px; }
+    .sidebar h1{ font-size:16px; margin-bottom:0; }
+    .sidebar p{ display:none; }
+    .sidebar .nav-btn{ margin-bottom:0; padding:9px 12px; font-size:13px; flex:0 0 auto; }
+    .sidebar .nav-btn svg{ display:none; }
+    .sidebar .logout{ margin-top:0; margin-left:auto; padding:9px 12px; font-size:12px; }
+    .main{ padding:14px; }
+    .header h2{ font-size:20px; }
+    .table-tabs{ grid-template-columns:1fr; gap:14px; }
+    .tab-body{ max-height:260px; }
+    .header{ margin-bottom:16px; }
+  }
+  @media (max-width:480px){
+    .tab-head h3{ font-size:17px; }
+    .bill-id{ font-size:10px; padding:3px 6px; }
+    .tab-total{ font-size:17px; }
+    .btn-generate{ font-size:12px; padding:12px; }
+  }
+
+  @media print {
+    body * { visibility:hidden; }
+    #bill-modal, #bill-modal * { visibility:visible; }
+    #bill-modal{ position:absolute; inset:0; background:#fff; }
+    .bill-actions{ display:none !important; }
+  }
 </style>
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
+<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
     <h2>Cashier Login</h2>
@@ -126,28 +190,27 @@
 <div class="sidebar" id="sidebar" style="display:none;">
   <h1>Neelkanth Star</h1>
   <p>Cashier Panel</p>
-  
+
   <button class="nav-btn active" onclick="switchTab('tab-orders', this)">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
     Live Orders
   </button>
-  
+
   <button class="nav-btn" onclick="switchTab('tab-coupons', this)">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
     Coupons
   </button>
-  
+
   <button class="nav-btn" onclick="switchTab('tab-menu', this)">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
     Menu Manager
   </button>
-  
+
   <button class="logout" onclick="logout()">Logout</button>
 </div>
 
-<!-- MAIN PANEL -->
+<!-- MAIN -->
 <div class="main" id="main-panel" style="display:none;">
-  
   <div class="header">
     <h2 id="page-title">Live Orders</h2>
     <div class="connection-status" id="conn-status">Connecting...</div>
@@ -180,12 +243,13 @@
   <!-- TAB 3: MENU MANAGER -->
   <div id="tab-menu" class="tab-content">
     <button class="btn-add" onclick="addNewItem()">+ Add New Dish</button>
-    <table class="menu-table">
-      <thead><tr><th>Dish Name</th><th>Price (₹)</th><th>Category</th><th>Available</th><th>Actions</th></tr></thead>
-      <tbody id="menu-container"></tbody>
-    </table>
+    <div class="menu-table-wrap">
+      <table class="menu-table">
+        <thead><tr><th>Dish Name</th><th>Price (₹)</th><th>Category</th><th>Available</th><th>Actions</th></tr></thead>
+        <tbody id="menu-container"></tbody>
+      </table>
+    </div>
   </div>
-
 </div>
 
 <!-- BILL MODAL -->
@@ -215,8 +279,22 @@
       </div>
     </div>
     <div class="bill-actions">
-      <button class="btn-print" onclick="window.print()">Print Bill</button>
-      <button class="btn-paid" onclick="confirmPayment()">Mark Paid & Close</button>
+      <button class="btn-print" onclick="window.print()">🖨 Print Bill</button>
+      <button class="btn-wa" onclick="promptWhatsApp()">📲 Send on WhatsApp</button>
+      <button class="btn-paid" onclick="confirmPayment()">✅ Mark Paid &amp; Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- WHATSAPP NUMBER PROMPT -->
+<div id="wa-prompt">
+  <div class="wa-box">
+    <h3>Send Bill on WhatsApp</h3>
+    <p>Enter the customer's 10-digit mobile number.</p>
+    <input type="tel" id="wa-number" inputmode="numeric" maxlength="10" placeholder="9876543210" />
+    <div class="wa-actions">
+      <button class="wa-cancel" onclick="closeWaPrompt()">Cancel</button>
+      <button class="wa-send" onclick="sendWhatsAppBill()">Send</button>
     </div>
   </div>
 </div>
@@ -234,29 +312,30 @@ let realtimeChannel = null;
 let activeCouponId = null;
 let currentBill = null;
 
-const CATEGORIES = ["Beverages", "Desserts", "Rice", "Salad & Raita", "Chinese", "Indian Main Course", "Mini Meals", "Snack", "Pakora Superhit", "Breads", "Combos & Thali", "Street Style", "Tandoori Local", "Sweets Treat"];
+const CATEGORIES = ["Beverages","Desserts","Rice","Salad & Raita","Chinese","Indian Main Course","Mini Meals","Snack","Pakora Superhit","Breads","Combos & Thali","Street Style","Tandoori Local","Sweets Treat"];
+
+/* MRP-SAFE HELPERS */
+const safePrice = (p) => (typeof p === 'number' ? p : 0);
+const fmt = (n) => '₹' + Number(n).toLocaleString('en-IN');
 
 /* ========================================================= */
-/* AUTHENTICATION */
+/* AUTH */
 /* ========================================================= */
-async function login() {
+async function login(){
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
   const btn = document.getElementById('login-btn');
   btn.textContent = 'Logging in...';
   const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-  if (error) { alert(error.message); btn.textContent = 'Login to Panel'; }
+  if (error){ alert(error.message); btn.textContent = 'Login to Panel'; }
   else initDashboard();
 }
-
-async function logout() { await supabaseClient.auth.signOut(); window.location.reload(); }
-
-async function checkSession() {
+async function logout(){ await supabaseClient.auth.signOut(); window.location.reload(); }
+async function checkSession(){
   const { data: { session } } = await supabaseClient.auth.getSession();
   if (session) initDashboard();
 }
-
-function initDashboard() {
+function initDashboard(){
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('sidebar').style.display = 'flex';
   document.getElementById('main-panel').style.display = 'block';
@@ -266,140 +345,176 @@ function initDashboard() {
 /* ========================================================= */
 /* TAB SWITCHING */
 /* ========================================================= */
-function switchTab(tabId, btn) {
+function switchTab(tabId, btn){
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById(tabId).classList.add('active');
   btn.classList.add('active');
-  const titles = { 'tab-orders': 'Live Orders', 'tab-coupons': 'Coupons & Offers', 'tab-menu': 'Menu Manager' };
+  const titles = { 'tab-orders':'Live Orders', 'tab-coupons':'Coupons & Offers', 'tab-menu':'Menu Manager' };
   document.getElementById('page-title').textContent = titles[tabId];
   if (tabId === 'tab-coupons') loadCoupons();
 }
 
 /* ========================================================= */
-/* TAB 1: LIVE ORDERS (THE TAB SYSTEM) */
+/* TAB 1: LIVE ORDERS */
 /* ========================================================= */
-async function fetchOrders() {
-  const { data, error } = await supabaseClient.from('orders').select('*').neq('status', 'PAID').order('created_at', { ascending: true });
+async function fetchOrders(){
+  const { data, error } = await supabaseClient
+    .from('orders').select('*').neq('status', 'PAID')
+    .order('created_at', { ascending: true });
   if (error) return;
 
   activeTabs = {};
-  data.forEach(order => {
-    if (!activeTabs[order.table_number]) {
+  (data || []).forEach(order => {
+    if (!activeTabs[order.table_number]){
       activeTabs[order.table_number] = {
         table: order.table_number,
         bill_id: `#NK-${5000 + order.id}`,
         orders: [],
-        total: 0
+        total: 0,
+        billRequested: false
       };
     }
-    activeTabs[order.table_number].orders.push(order);
-    activeTabs[order.table_number].total += order.total_amount;
+    const t = activeTabs[order.table_number];
+    t.orders.push(order);
+    t.total += safePrice(order.total_amount);
+    if (order.bill_requested) t.billRequested = true;
   });
 
   renderTabs();
 }
 
-function initRealtime() {
+function initRealtime(){
   const statusEl = document.getElementById('conn-status');
   statusEl.textContent = 'LIVE'; statusEl.classList.add('live');
   fetchOrders();
   if (realtimeChannel) supabaseClient.removeChannel(realtimeChannel);
-  realtimeChannel = supabaseClient.channel('public:orders').on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => fetchOrders()).subscribe();
+  realtimeChannel = supabaseClient.channel('public:orders')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => fetchOrders())
+    .subscribe();
 }
 
-function renderTabs() {
+function renderTabs(){
   const container = document.getElementById('orders-container');
   container.innerHTML = '';
 
   const tables = Object.values(activeTabs);
-  if (tables.length === 0) {
+  if (tables.length === 0){
     container.innerHTML = '<div class="empty-state">No active tables right now.<br>New orders will appear here.</div>';
     return;
   }
 
   tables.forEach(tab => {
     const card = document.createElement('div');
-    card.className = 'tab-card';
+    card.className = 'tab-card' + (tab.billRequested ? ' bill-req' : '');
 
+    // Aggregate all items across orders of this table
     let allItems = [];
-    tab.orders.forEach(o => { if (Array.isArray(o.items)) allItems = allItems.concat(o.items); });
+    let preparedSet = new Set();
+    tab.orders.forEach(o => {
+      if (Array.isArray(o.items)) allItems = allItems.concat(o.items);
+      if (Array.isArray(o.prepared_items)) o.prepared_items.forEach(n => preparedSet.add(n));
+    });
 
-    const groupedItems = {};
+    const grouped = {};
     allItems.forEach(item => {
-      if (!groupedItems[item.name]) groupedItems[item.name] = { name: item.name, qty: 0, price: item.price };
-      groupedItems[item.name].qty += item.qty;
+      if (!grouped[item.name]) grouped[item.name] = { name: item.name, qty: 0, price: safePrice(item.price) };
+      grouped[item.name].qty += item.qty || 0;
     });
 
     let itemsHtml = '';
-    Object.values(groupedItems).forEach(item => {
-      itemsHtml += `<div class="item-row"><span>${item.qty}x ${item.name}</span> <span>₹${item.price * item.qty}</span></div>`;
+    Object.values(grouped).forEach(item => {
+      const isDone = preparedSet.has(item.name);
+      const lightClass = isDone ? 'green' : 'red';
+      const nameClass = isDone ? 'item-name done' : 'item-name';
+      itemsHtml += `
+        <div class="item-row">
+          <div class="item-name-wrap">
+            <span class="status-light ${lightClass}" title="${isDone ? 'Prepared' : 'Pending'}"></span>
+            <span class="${nameClass}">${item.qty}x ${item.name}</span>
+          </div>
+          <span class="item-amt">${fmt(item.price * item.qty)}</span>
+        </div>`;
     });
 
-    // Check if ALL orders for this table are marked as PREPARED by the kitchen
-const allPrepared = tab.orders.every(o => o.status === 'PREPARED');
+    const allPrepared = Object.values(grouped).every(it => preparedSet.has(it.name));
+    const billBtnClass = (allPrepared && tab.billRequested) ? 'btn-generate blue' : 'btn-generate';
+    const billBtnText = tab.billRequested
+      ? '🔔 Bill Requested — Generate'
+      : (allPrepared ? '🍽 Food Ready — Generate Bill' : 'Generate Bill');
 
-// Change button color/text if food is ready
-let billBtnHtml = allPrepared 
-  ? `<button class="btn-generate" style="background:var(--gold); color:var(--navy);" onclick="openBill(${tab.table})">Food Ready - Generate Bill</button>`
-  : `<button class="btn-generate" onclick="openBill(${tab.table})">Generate Bill</button>`;
+    const badge = tab.billRequested ? `<span class="bill-req-badge">Bill Req</span>` : '';
 
-card.innerHTML = `
-  <div class="tab-head"><h3>Table ${tab.table}</h3><span class="bill-id">${tab.bill_id}</span></div>
-  <div class="tab-body">${itemsHtml}</div>
-<div class="tab-foot">
-  <div class="tab-total"><span>Total</span><span>₹${tab.total}</span></div>
-  <div style="display:flex; gap:10px;">
-    <button class="btn-generate" style="background:var(--navy);" onclick="sendToKitchen(${tab.table})">Accept & Send to Kitchen</button>
-    <button class="btn-generate" onclick="openBill(${tab.table})">Bill</button>
-  </div>
-</div>
-`;
+    card.innerHTML = `
+      ${badge}
+      <div class="tab-head">
+        <h3>Table ${tab.table}</h3>
+        <span class="bill-id">${tab.bill_id}</span>
+      </div>
+      <div class="tab-body">${itemsHtml}</div>
+      <div class="tab-foot">
+        <div class="tab-total"><span>Total</span><span>${fmt(tab.total)}</span></div>
+        <div style="display:grid; gap:10px;">
+          <button class="btn-generate" style="background:var(--navy);" onclick="sendToKitchen(${tab.table})">Accept &amp; Send to Kitchen</button>
+          <button class="${billBtnClass}" onclick="openBill(${tab.table})">${billBtnText}</button>
+        </div>
+      </div>
+    `;
     container.appendChild(card);
   });
 }
 
+async function sendToKitchen(tableNumber){
+  const tab = activeTabs[tableNumber];
+  if (!tab) return;
+  const orderIds = tab.orders.filter(o => o.status === 'ORDERED').map(o => o.id);
+  if (orderIds.length === 0){ alert('These orders are already with the kitchen.'); return; }
+
+  const { error } = await supabaseClient.from('orders').update({ status:'PREPARING' }).in('id', orderIds);
+  if (error) alert('Error sending to kitchen: ' + error.message);
+  else alert('Order sent to Kitchen!');
+}
+
 /* ========================================================= */
-/* BILL GENERATION & PAYMENT */
+/* BILL GENERATION */
 /* ========================================================= */
-function openBill(tableNumber) {
+function openBill(tableNumber){
   currentBill = activeTabs[tableNumber];
   if (!currentBill) return;
 
   document.getElementById('b-table').textContent = currentBill.table;
   document.getElementById('b-id').textContent = currentBill.bill_id;
-  document.getElementById('b-total').textContent = `₹${currentBill.total}`;
+  document.getElementById('b-total').textContent = fmt(currentBill.total);
 
   let allItems = [];
-  currentBill.orders.forEach(o => { allItems = allItems.concat(o.items); });
-  const groupedItems = {};
+  currentBill.orders.forEach(o => { if (Array.isArray(o.items)) allItems = allItems.concat(o.items); });
+  const grouped = {};
   allItems.forEach(item => {
-    if (!groupedItems[item.name]) groupedItems[item.name] = { name: item.name, qty: 0, price: item.price };
-    groupedItems[item.name].qty += item.qty;
+    if (!grouped[item.name]) grouped[item.name] = { name: item.name, qty: 0, price: safePrice(item.price) };
+    grouped[item.name].qty += item.qty || 0;
   });
 
   const tbody = document.getElementById('b-items');
   tbody.innerHTML = '';
-  Object.values(groupedItems).forEach(item => {
-    tbody.innerHTML += `<tr><td>${item.name}</td><td style="text-align:center;">${item.qty}</td><td style="text-align:right;">₹${item.price * item.qty}</td></tr>`;
+  Object.values(grouped).forEach(item => {
+    tbody.innerHTML += `<tr><td>${item.name}</td><td style="text-align:center;">${item.qty}</td><td style="text-align:right;">${fmt(item.price * item.qty)}</td></tr>`;
   });
 
   document.getElementById('qrcode').innerHTML = '';
-  const upiString = `upi://pay?pa=neelkanthstar@upi&pn=Neelkanth%20Star&am=${currentBill.total}&cu=INR`;
-  new QRCode(document.getElementById("qrcode"), {
-    text: upiString, width: 120, height: 120,
-    colorDark : "#1B3A6B", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H
+  const upi = `upi://pay?pa=neelkanthstar@upi&pn=Neelkanth%20Star&am=${currentBill.total}&cu=INR`;
+  new QRCode(document.getElementById('qrcode'), {
+    text: upi, width: 120, height: 120,
+    colorDark: '#1B3A6B', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H
   });
 
   document.getElementById('bill-modal').classList.add('show');
 }
 
-async function confirmPayment() {
+async function confirmPayment(){
   if (!currentBill) return;
   const orderIds = currentBill.orders.map(o => o.id);
-  const { error } = await supabaseClient.from('orders').update({ status: 'PAID' }).in('id', orderIds);
-  
-  if (error) alert("Error marking paid: " + error.message);
+  const { error } = await supabaseClient.from('orders').update({ status:'PAID', bill_requested:false }).in('id', orderIds);
+  if (error) alert('Error marking paid: ' + error.message);
   else {
     document.getElementById('bill-modal').classList.remove('show');
     currentBill = null;
@@ -407,34 +522,83 @@ async function confirmPayment() {
 }
 
 /* ========================================================= */
+/* WHATSAPP BILL */
+/* ========================================================= */
+function promptWhatsApp(){
+  if (!currentBill){ alert('Open a bill first.'); return; }
+  document.getElementById('wa-number').value = '';
+  document.getElementById('wa-prompt').classList.add('show');
+  setTimeout(()=> document.getElementById('wa-number').focus(), 100);
+}
+function closeWaPrompt(){ document.getElementById('wa-prompt').classList.remove('show'); }
+
+function sendWhatsAppBill(){
+  const raw = document.getElementById('wa-number').value.replace(/\D/g,'');
+  if (!/^[6-9]\d{9}$/.test(raw)){ alert('Enter a valid 10-digit mobile number.'); return; }
+  if (!currentBill){ alert('No bill open.'); return; }
+
+  // Build grouped items
+  let allItems = [];
+  currentBill.orders.forEach(o => { if (Array.isArray(o.items)) allItems = allItems.concat(o.items); });
+  const grouped = {};
+  allItems.forEach(it => {
+    if (!grouped[it.name]) grouped[it.name] = { name: it.name, qty: 0, price: safePrice(it.price) };
+    grouped[it.name].qty += it.qty || 0;
+  });
+
+  let msg = `*NEELKANTH STAR*\n`;
+  msg += `GT Road, Karnal, Haryana\n`;
+  msg += `--------------------------------\n`;
+  msg += `Bill ID: ${currentBill.bill_id}\n`;
+  msg += `Table: ${currentBill.table}\n`;
+  msg += `Date: ${new Date().toLocaleString('en-IN')}\n`;
+  msg += `--------------------------------\n\n`;
+
+  Object.values(grouped).forEach(it => {
+    msg += `${it.qty} x ${it.name} — ${fmt(it.price * it.qty)}\n`;
+  });
+
+  msg += `\n--------------------------------\n`;
+  msg += `*TOTAL: ${fmt(currentBill.total)}*\n`;
+  msg += `--------------------------------\n\n`;
+  msg += `Pay via UPI: neelkanthstar@upi\n`;
+  msg += `Thank you for dining with us! 🙏\n`;
+  msg += `Powered by VAAN Consultancy`;
+
+  const waUrl = `https://wa.me/91${raw}?text=${encodeURIComponent(msg)}`;
+  window.open(waUrl, '_blank');
+  closeWaPrompt();
+}
+
+/* ========================================================= */
 /* TAB 2: COUPONS */
 /* ========================================================= */
-async function loadCoupons() {
+async function loadCoupons(){
   const tbody = document.getElementById('coupon-list-container');
   tbody.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
   const { data, error } = await supabaseClient.from('coupons').select('*').order('created_at', { ascending: false });
-  if (error || !data) { tbody.innerHTML = '<tr><td colspan="4">Error loading coupons.</td></tr>'; return; }
-  if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="4">No coupons generated yet.</td></tr>'; return; }
+  if (error || !data){ tbody.innerHTML = '<tr><td colspan="4">Error loading coupons.</td></tr>'; return; }
+  if (data.length === 0){ tbody.innerHTML = '<tr><td colspan="4">No coupons generated yet.</td></tr>'; return; }
 
   tbody.innerHTML = '';
   data.forEach(c => {
     const issued = new Date(c.created_at);
-    const diffDays = Math.floor((new Date() - issued) / (1000 * 60 * 60 * 24));
+    const diffDays = Math.floor((new Date() - issued) / (1000*60*60*24));
     if (diffDays > 30) return;
-
-    let statusHtml = c.is_used ? `<span class="c-badge used">Used</span>` : `<span class="c-badge active">Active</span>`;
+    const statusHtml = c.is_used
+      ? `<span class="c-badge used">Used</span>`
+      : `<span class="c-badge active">Active</span>`;
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td><strong>${c.code}</strong></td>
       <td>${c.discount_percent}% OFF</td>
       <td>Table ${c.table_number}</td>
-      <td>${statusHtml}</td>
-    `;
+      <td>${statusHtml}</td>`;
     tbody.appendChild(tr);
   });
 }
 
-async function checkCoupon() {
+async function checkCoupon(){
   const code = document.getElementById('coupon-input').value.trim().toUpperCase();
   const resBox = document.getElementById('coupon-result');
   const title = document.getElementById('c-res-title');
@@ -446,24 +610,25 @@ async function checkCoupon() {
   title.textContent = 'Checking...'; desc.textContent = ''; btn.style.display = 'none';
 
   const { data, error } = await supabaseClient.from('coupons').select('*').eq('code', code).single();
-  if (error || !data) {
-    resBox.classList.add('invalid'); title.textContent = '❌ Invalid Coupon'; desc.textContent = 'This code does not exist.';
-    return;
+  if (error || !data){
+    resBox.classList.add('invalid'); title.textContent = '❌ Invalid Coupon';
+    desc.textContent = 'This code does not exist.'; return;
   }
 
   activeCouponId = data.id;
-  const issued = new Date(data.created_at);
-  if (data.is_used) {
-    resBox.classList.add('invalid'); title.textContent = '⚠️ Coupon Used'; desc.textContent = 'Already marked as used.';
+  if (data.is_used){
+    resBox.classList.add('invalid'); title.textContent = '⚠️ Coupon Used';
+    desc.textContent = 'Already marked as used.';
   } else {
-    resBox.classList.add('valid'); title.textContent = '✅ Valid Coupon'; desc.textContent = `${data.discount_percent}% OFF · Table ${data.table_number}`;
+    resBox.classList.add('valid'); title.textContent = '✅ Valid Coupon';
+    desc.textContent = `${data.discount_percent}% OFF · Table ${data.table_number}`;
     btn.style.display = 'inline-block';
   }
 }
 
-async function markCouponUsed() {
+async function markCouponUsed(){
   if (!activeCouponId) return;
-  await supabaseClient.from('coupons').update({ is_used: true }).eq('id', activeCouponId);
+  await supabaseClient.from('coupons').update({ is_used:true }).eq('id', activeCouponId);
   document.getElementById('coupon-result').className = 'coupon-result invalid';
   document.getElementById('c-res-title').textContent = 'Coupon Marked Used';
   document.getElementById('c-use-btn').style.display = 'none';
@@ -473,12 +638,12 @@ async function markCouponUsed() {
 /* ========================================================= */
 /* TAB 3: MENU MANAGER */
 /* ========================================================= */
-async function loadMenu() {
+async function loadMenu(){
   const tbody = document.getElementById('menu-container');
   tbody.innerHTML = '<tr><td colspan="5">Loading menu...</td></tr>';
   const { data, error } = await supabaseClient.from('menu_items').select('*').order('id', { ascending: false });
-  if (error) { tbody.innerHTML = `<tr><td colspan="5">Error loading menu.</td></tr>`; return; }
-  if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="5">No items found.</td></tr>'; return; }
+  if (error){ tbody.innerHTML = `<tr><td colspan="5">Error loading menu.</td></tr>`; return; }
+  if (data.length === 0){ tbody.innerHTML = '<tr><td colspan="5">No items found.</td></tr>'; return; }
 
   tbody.innerHTML = '';
   data.forEach(item => {
@@ -492,62 +657,36 @@ async function loadMenu() {
       <td>
         <button class="btn-edit" onclick="saveMenuItem(${item.id})">Save</button>
         <button class="btn-delete" onclick="deleteMenuItem(${item.id})">Del</button>
-      </td>
-    `;
+      </td>`;
     tbody.appendChild(tr);
   });
 }
 
-async function saveMenuItem(id) {
+async function saveMenuItem(id){
   const name = document.getElementById(`name-${id}`).value;
-  const price = parseInt(document.getElementById(`price-${id}`).value);
+  const price = parseInt(document.getElementById(`price-${id}`).value, 10);
   const category = document.getElementById(`cat-${id}`).value;
   const is_available = document.getElementById(`avail-${id}`).checked;
   const { error } = await supabaseClient.from('menu_items').update({ name, price, category, is_available }).eq('id', id);
-  if (error) alert("Error saving: " + error.message);
-  else alert("Item updated!");
+  if (error) alert('Error saving: ' + error.message);
+  else alert('Item updated!');
 }
 
-async function deleteMenuItem(id) {
-  if (!confirm("Delete this dish?")) return;
+async function deleteMenuItem(id){
+  if (!confirm('Delete this dish?')) return;
   await supabaseClient.from('menu_items').delete().eq('id', id);
   loadMenu();
 }
 
-async function addNewItem() {
-  const name = prompt("Enter Dish Name:"); if (!name) return;
-  const price = parseInt(prompt("Enter Price (₹):")); if (!price) return;
-  const category = prompt(`Category (${CATEGORIES.join(", ")}):`); if (!category) return;
-  await supabaseClient.from('menu_items').insert([{ name, price, category, is_available: true, is_veg: true }]);
+async function addNewItem(){
+  const name = prompt('Enter Dish Name:'); if (!name) return;
+  const price = parseInt(prompt('Enter Price (₹):'), 10); if (!price) return;
+  const category = prompt(`Category (${CATEGORIES.join(', ')}):`); if (!category) return;
+  await supabaseClient.from('menu_items').insert([{ name, price, category, is_available:true, is_veg:true }]);
   loadMenu();
 }
 
 /* INIT */
-  async function sendToKitchen(tableNumber) {
-  const tab = activeTabs[tableNumber];
-  if (!tab) return;
-  
-  // Find only the orders in this tab that are still 'ORDERED'
-  const orderIds = tab.orders.filter(o => o.status === 'ORDERED').map(o => o.id);
-  
-  if (orderIds.length === 0) {
-    alert("These orders are already with the kitchen.");
-    return;
-  }
-
-  // Update them to PREPARING
-  const { error } = await supabaseClient
-    .from('orders')
-    .update({ status: 'PREPARING' })
-    .in('id', orderIds);
-
-  if (error) {
-    alert("Error sending to kitchen: " + error.message);
-  } else {
-    // Optional: If you want a visual notification
-    alert("Order sent to Kitchen!");
-  }
-  }
 checkSession();
 </script>
 </body>
