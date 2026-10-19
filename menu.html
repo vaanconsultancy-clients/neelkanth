@@ -1090,10 +1090,11 @@ $("#waBtn").addEventListener("click", async ()=>{
   if (keys.length === 0) return;
   if (!currentTable){ askTableNumber(); return; }
 
-  const orderItems = keys.map(k => ({
+    const orderItems = keys.map(k => ({
     name: cart[k].name,
     qty: cart[k].qty,
-    price: getSafePrice(cart[k].price)
+    price: getSafePrice(cart[k].price),
+    is_mrp: cart[k].price === "MRP"
   }));
   const totalAmount = keys.reduce((sum, k) => sum + (getSafePrice(cart[k].price) * cart[k].qty), 0);
 
