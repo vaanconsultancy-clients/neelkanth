@@ -1168,20 +1168,23 @@ $("#waBtn").addEventListener("click", async ()=>{
   const waUrl = `https://wa.me/${WA_NUMBER}?text=${msg}`;
 
   if(!error && data && data.length > 0){
-    activeOrderId = data[0].id;
-    localStorage.setItem('neelkanth_active_order', activeOrderId);
-    localStorage.removeItem('neelkanth_cart');
-    cart = {};
-    renderCart();
-    updateBadges();
-    checkActiveOrder();
-    pendingWAMessage = waUrl;
-    openLocModal();
-    checkLocationAndSend();
-  } else {
-    alert("Kitchen Panel Error: " + (error ? error.message : "Unknown"));
-    window.open(waUrl, "_blank");
-  }
+  activeOrderId = data[0].id;
+  localStorage.setItem('neelkanth_active_order', activeOrderId);
+  localStorage.removeItem('neelkanth_cart');
+  cart = {};
+  renderCart();
+  updateBadges();
+  checkActiveOrder();
+
+  // Silent background location check (no blocking, just console logging)
+  backgroundLocationCheck();
+
+  // Open WhatsApp immediately — no gate
+  window.open(waUrl, "_blank");
+} else {
+  alert("Kitchen Panel Error: " + (error ? error.message : "Unknown"));
+  window.open(waUrl, "_blank");
+}
 
   btn.textContent = "Order on WhatsApp"; btn.disabled = false;
 });
