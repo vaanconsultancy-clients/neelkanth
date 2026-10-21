@@ -1176,9 +1176,8 @@ $("#waBtn").addEventListener("click", async ()=>{
   updateBadges();
   checkActiveOrder();
 
-  // Silent background location check (no blocking, just console logging)
-  backgroundLocationCheck();
-
+  // Silent background location check (disabled for now)
+// backgroundLocationCheck();
   // Open WhatsApp immediately — no gate
   window.open(waUrl, "_blank");
 } else {
