@@ -48,11 +48,31 @@
   .connection-status.live::before{ background:var(--green); animation:pulse 2s infinite; }
   @keyframes pulse{ 0%{box-shadow:0 0 0 0 rgba(30,122,58,.4);} 70%{box-shadow:0 0 0 6px rgba(30,122,58,0);} 100%{box-shadow:0 0 0 0 rgba(30,122,58,0);} }
 
+  /* Mute button */
+  .mute-btn{
+    background:rgba(27,58,107,.1); border:none; color:var(--navy);
+    width:38px; height:38px; border-radius:10px; font-size:18px;
+    cursor:pointer; transition:.2s; display:grid; place-items:center;
+  }
+  .mute-btn:hover{ background:rgba(27,58,107,.18); }
+  .mute-btn.muted{ background:rgba(214,40,40,.12); color:var(--red); }
+
   /* ---------- LIVE ORDERS ---------- */
   .table-tabs{ display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:20px; }
   .tab-card{ background:white; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,.05); border-left:6px solid var(--gold); display:flex; flex-direction:column; overflow:hidden; position:relative; }
   .tab-card.bill-req{ border-left-color:var(--blue); box-shadow:0 0 0 2px var(--blue), 0 0 24px rgba(37,99,235,.45); animation:blueGlow 1.8s ease-in-out infinite; }
   @keyframes blueGlow{ 0%,100%{ box-shadow:0 0 0 2px var(--blue), 0 0 18px rgba(37,99,235,.35); } 50%{ box-shadow:0 0 0 3px var(--blue), 0 0 32px rgba(37,99,235,.75); } }
+
+  /* New order alert */
+  .tab-card.alert-new{
+    animation: alertBlink 1s ease-in-out 3;
+    border-left-color: var(--red) !important;
+    box-shadow: 0 0 0 3px var(--red), 0 0 30px rgba(214,40,40,.6) !important;
+  }
+  @keyframes alertBlink{
+    0%,100%{ box-shadow: 0 0 0 3px var(--red), 0 0 30px rgba(214,40,40,.6); }
+    50%{ box-shadow: 0 0 0 6px var(--gold), 0 0 50px rgba(242,194,0,.8); }
+  }
 
   .bill-req-badge{ position:absolute; top:12px; right:12px; background:var(--blue); color:#fff; font-size:10px; font-weight:800; letter-spacing:.08em; padding:5px 10px; border-radius:999px; text-transform:uppercase; box-shadow:0 0 14px rgba(37,99,235,.8); animation:pulseBlue 1.5s infinite; z-index:2; }
   @keyframes pulseBlue{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.08); } }
@@ -144,6 +164,30 @@
   .wa-cancel{ background:#eee; color:#333; }
   .wa-send{ background:#25D366; color:#fff; }
 
+  /* ---------- NEW ORDER BANNER ---------- */
+  #new-order-banner{
+    position:fixed; top:16px; left:50%; transform:translateX(-50%) translateY(-120%);
+    background:linear-gradient(135deg,#D62828,#A51828); color:#fff;
+    padding:14px 28px; border-radius:999px; font-weight:800;
+    font-size:15px; letter-spacing:.05em; text-transform:uppercase;
+    box-shadow:0 10px 40px rgba(214,40,40,.6);
+    z-index:300; display:flex; align-items:center; gap:10px;
+    transition:transform .4s cubic-bezier(.2,.8,.25,1);
+    font-family:'Cinzel',serif;
+    border:2px solid var(--gold);
+    pointer-events:none;
+  }
+  #new-order-banner.show{ transform:translateX(-50%) translateY(0); }
+  #new-order-banner::before{
+    content:'🔔'; font-size:20px;
+    animation:ringBell .5s ease-in-out infinite;
+  }
+  @keyframes ringBell{
+    0%,100%{ transform:rotate(0); }
+    25%{ transform:rotate(15deg); }
+    75%{ transform:rotate(-15deg); }
+  }
+
   /* ---------- MOBILE ---------- */
   @media (max-width:900px){
     body{ flex-direction:column; }
@@ -164,6 +208,7 @@
     .bill-id{ font-size:10px; padding:3px 6px; }
     .tab-total{ font-size:17px; }
     .btn-generate{ font-size:12px; padding:12px; }
+    #new-order-banner{ font-size:12px; padding:11px 20px; }
   }
 
   @media print {
@@ -213,7 +258,10 @@
 <div class="main" id="main-panel" style="display:none;">
   <div class="header">
     <h2 id="page-title">Live Orders</h2>
-    <div class="connection-status" id="conn-status">Connecting...</div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <button class="mute-btn" id="mute-btn" onclick="toggleMute()" title="Mute alerts">🔔</button>
+      <div class="connection-status" id="conn-status">Connecting...</div>
+    </div>
   </div>
 
   <!-- TAB 1: LIVE ORDERS -->
@@ -251,6 +299,9 @@
     </div>
   </div>
 </div>
+
+<!-- NEW ORDER BANNER -->
+<div id="new-order-banner">New Order Arrived</div>
 
 <!-- BILL MODAL -->
 <div id="bill-modal">
@@ -312,9 +363,144 @@ let realtimeChannel = null;
 let activeCouponId = null;
 let currentBill = null;
 
+/* ========================================================= */
+/* ALERT SYSTEM — sound + blink on new orders */
+/* ========================================================= */
+let alertMuted = localStorage.getItem('cashier_muted') === 'true';
+let knownState = {};
+let alertAudioCtx = null;
+let bannerTimer = null;
+let firstFetchDone = false;
+
+function initAudio(){
+  if (!alertAudioCtx){
+    try {
+      alertAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    } catch(e){ console.warn('Audio not supported', e); }
+  }
+  if (alertAudioCtx && alertAudioCtx.state === 'suspended'){
+    alertAudioCtx.resume();
+  }
+}
+
+function playAlertSound(){
+  if (alertMuted) return;
+  initAudio();
+  if (!alertAudioCtx) return;
+
+  const now = alertAudioCtx.currentTime;
+
+  const osc1 = alertAudioCtx.createOscillator();
+  const gain1 = alertAudioCtx.createGain();
+  osc1.type = 'sine';
+  osc1.frequency.value = 880;
+  gain1.gain.setValueAtTime(0, now);
+  gain1.gain.linearRampToValueAtTime(0.35, now + 0.02);
+  gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+  osc1.connect(gain1); gain1.connect(alertAudioCtx.destination);
+  osc1.start(now); osc1.stop(now + 0.45);
+
+  const osc2 = alertAudioCtx.createOscillator();
+  const gain2 = alertAudioCtx.createGain();
+  osc2.type = 'sine';
+  osc2.frequency.value = 660;
+  gain2.gain.setValueAtTime(0, now + 0.18);
+  gain2.gain.linearRampToValueAtTime(0.35, now + 0.20);
+  gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+  osc2.connect(gain2); gain2.connect(alertAudioCtx.destination);
+  osc2.start(now + 0.18); osc2.stop(now + 0.65);
+}
+
+function showBanner(text){
+  const banner = document.getElementById('new-order-banner');
+  if (!banner) return;
+  banner.textContent = text;
+  banner.classList.add('show');
+  clearTimeout(bannerTimer);
+  bannerTimer = setTimeout(()=> banner.classList.remove('show'), 3500);
+}
+
+function toggleMute(){
+  alertMuted = !alertMuted;
+  localStorage.setItem('cashier_muted', alertMuted);
+  const btn = document.getElementById('mute-btn');
+  if (btn){
+    btn.textContent = alertMuted ? '🔕' : '🔔';
+    btn.classList.toggle('muted', alertMuted);
+    btn.title = alertMuted ? 'Unmute alerts' : 'Mute alerts';
+  }
+  if (!alertMuted) playAlertSound();
+}
+
+function detectNewActivity(){
+  const current = {};
+  Object.values(activeTabs).forEach(tab => {
+    let count = 0;
+    tab.orders.forEach(o => {
+      if (Array.isArray(o.items)) o.items.forEach(it => { count += it.qty || 0; });
+    });
+    current[tab.table] = count;
+  });
+
+  // Skip alert on very first load
+  if (!firstFetchDone){
+    knownState = current;
+    firstFetchDone = true;
+    return;
+  }
+
+  let hasNewTable = false;
+  let hasNewItems = false;
+  let newTables = [];
+  let changedTables = [];
+
+  Object.keys(current).forEach(tableNum => {
+    if (!(tableNum in knownState)){
+      hasNewTable = true;
+      newTables.push(tableNum);
+      changedTables.push(tableNum);
+    } else if (current[tableNum] > knownState[tableNum]){
+      hasNewItems = true;
+      changedTables.push(tableNum);
+    }
+  });
+
+  if (hasNewTable || hasNewItems){
+    playAlertSound();
+    if (hasNewTable){
+      showBanner(newTables.length === 1
+        ? `New Order — Table ${newTables[0]}`
+        : `New Orders — ${newTables.length} Tables`);
+    } else if (hasNewItems){
+      showBanner('New Items Added');
+    }
+    applyAlertBlink(changedTables);
+  }
+
+  knownState = current;
+}
+
+function applyAlertBlink(changedTables){
+  if (!changedTables || changedTables.length === 0) return;
+  setTimeout(() => {
+    changedTables.forEach(tableNum => {
+      const card = document.querySelector(`.tab-card[data-table="${tableNum}"]`);
+      if (card){
+        card.classList.add('alert-new');
+        setTimeout(()=> card.classList.remove('alert-new'), 3200);
+      }
+    });
+  }, 50);
+}
+
+document.addEventListener('click', initAudio, { once: true });
+document.addEventListener('touchstart', initAudio, { once: true });
+
+/* ========================================================= */
+/* MRP-SAFE HELPERS */
+/* ========================================================= */
 const CATEGORIES = ["Beverages","Desserts","Rice","Salad & Raita","Chinese","Indian Main Course","Mini Meals","Snack","Pakora Superhit","Breads","Combos & Thali","Street Style","Tandoori Local","Sweets Treat"];
 
-/* MRP-SAFE HELPERS */
 const safePrice = (p) => (typeof p === 'number' ? p : 0);
 const fmt = (n) => '₹' + Number(n).toLocaleString('en-IN');
 
@@ -339,6 +525,14 @@ function initDashboard(){
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('sidebar').style.display = 'flex';
   document.getElementById('main-panel').style.display = 'block';
+
+  const btn = document.getElementById('mute-btn');
+  if (btn){
+    btn.textContent = alertMuted ? '🔕' : '🔔';
+    btn.classList.toggle('muted', alertMuted);
+    btn.title = alertMuted ? 'Unmute alerts' : 'Mute alerts';
+  }
+
   initRealtime(); loadMenu(); loadCoupons();
 }
 
@@ -382,6 +576,7 @@ async function fetchOrders(){
   });
 
   renderTabs();
+  detectNewActivity();
 }
 
 function initRealtime(){
@@ -407,6 +602,7 @@ function renderTabs(){
   tables.forEach(tab => {
     const card = document.createElement('div');
     card.className = 'tab-card' + (tab.billRequested ? ' bill-req' : '');
+    card.setAttribute('data-table', tab.table);
 
     let allItems = [];
     let preparedSet = new Set();
